@@ -3,7 +3,15 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Home, Package, ShoppingCart, LogOut } from 'lucide-react';
+import { 
+  Home, 
+  Package, 
+  ShoppingCart, 
+  LogOut, 
+  BarChart3, 
+  FileText, 
+  Receipt 
+} from 'lucide-react';
 
 export const Navigation = () => {
   const { logout } = useAuth();
@@ -12,7 +20,10 @@ export const Navigation = () => {
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: Home },
     { path: '/products', label: 'Products', icon: Package },
-    { path: '/sales', label: 'Record Sale', icon: ShoppingCart },
+    { path: '/sales', label: 'Sales', icon: ShoppingCart },
+    { path: '/expenses', label: 'Expenses', icon: Receipt },
+    { path: '/analytics', label: 'Analytics', icon: BarChart3 },
+    { path: '/reports', label: 'Reports', icon: FileText },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -48,6 +59,26 @@ export const Navigation = () => {
             <LogOut className="h-4 w-4 mr-2" />
             Logout
           </Button>
+        </div>
+        
+        {/* Mobile Navigation */}
+        <div className="md:hidden pb-4">
+          <div className="flex flex-wrap gap-2">
+            {navItems.map(({ path, label, icon: Icon }) => (
+              <Link
+                key={path}
+                to={path}
+                className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isActive(path)
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+              >
+                <Icon className="h-4 w-4 mr-1" />
+                {label}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </nav>

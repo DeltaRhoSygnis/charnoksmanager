@@ -11,6 +11,10 @@ import { Register } from "@/components/auth/Register";
 import { Dashboard } from "@/components/dashboard/Dashboard";
 import { Products } from "@/components/products/Products";
 import { RecordSale } from "@/components/sales/RecordSale";
+import { Analytics } from "@/components/analytics/Analytics";
+import { Summary } from "@/components/reports/Summary";
+import { RecordExpense } from "@/components/expenses/RecordExpense";
+import { Home } from "@/pages/Home";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
@@ -24,7 +28,8 @@ const App = () => (
       <AuthProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/index" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route 
@@ -48,6 +53,30 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <RecordSale />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/expenses" 
+              element={
+                <ProtectedRoute>
+                  <RecordExpense />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/analytics" 
+              element={
+                <ProtectedRoute>
+                  <Analytics />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/reports" 
+              element={
+                <ProtectedRoute>
+                  <Summary />
                 </ProtectedRoute>
               } 
             />
