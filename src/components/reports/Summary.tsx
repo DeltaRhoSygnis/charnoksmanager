@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { collection, query, orderBy, getDocs, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -9,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Download, Calendar, TrendingUp, TrendingDown } from 'lucide-react';
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subWeeks, subMonths } from 'date-fns';
+import { Sale } from '@/types/sales';
 
 interface SummaryData {
   period: string;
@@ -44,12 +44,17 @@ export const Summary = () => {
         );
 
         const snapshot = await getDocs(salesQuery);
-        const sales = snapshot.docs.map(doc => ({
-          ...doc.data(),
-          timestamp: doc.data().timestamp?.toDate() || new Date()
-        }));
+        const sales: Sale[] = snapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            items: data.items || [],
+            total: data.total || 0,
+            timestamp: data.timestamp?.toDate() || new Date()
+          };
+        });
 
-        const totalSales = sales.reduce((sum, sale) => sum + (sale.total || 0), 0);
+        const totalSales = sales.reduce((sum, sale) => sum + sale.total, 0);
         const totalTransactions = sales.length;
         const averageOrder = totalTransactions > 0 ? totalSales / totalTransactions : 0;
 
@@ -58,7 +63,7 @@ export const Summary = () => {
         
         sales.forEach(sale => {
           if (sale.items && Array.isArray(sale.items)) {
-            sale.items.forEach((item: any) => {
+            sale.items.forEach(item => {
               if (!productSales[item.name]) {
                 productSales[item.name] = { quantity: 0, revenue: 0 };
               }

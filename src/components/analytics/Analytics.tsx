@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { collection, query, orderBy, getDocs, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -6,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { CalendarDays, TrendingUp, DollarSign } from 'lucide-react';
+import { Sale } from '@/types/sales';
 
 interface SaleData {
   date: string;
@@ -37,11 +37,15 @@ export const Analytics = () => {
       );
 
       const snapshot = await getDocs(salesQuery);
-      const sales = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        timestamp: doc.data().timestamp?.toDate() || new Date()
-      }));
+      const sales: Sale[] = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          items: data.items || [],
+          total: data.total || 0,
+          timestamp: data.timestamp?.toDate() || new Date()
+        };
+      });
 
       // Group sales by date
       const salesByDate: { [key: string]: { sales: number; transactions: number } } = {};
@@ -51,7 +55,7 @@ export const Analytics = () => {
         if (!salesByDate[dateKey]) {
           salesByDate[dateKey] = { sales: 0, transactions: 0 };
         }
-        salesByDate[dateKey].sales += sale.total || 0;
+        salesByDate[dateKey].sales += sale.total;
         salesByDate[dateKey].transactions += 1;
       });
 
