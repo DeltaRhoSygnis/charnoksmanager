@@ -116,7 +116,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     try {
       setError(null);
-      const result = await createUserWithEmailAndPassword(auth, email, password);
+      
+      // Store current user info
+      const currentUser = auth.currentUser;
+      
+      // Create worker account without affecting current auth state
+      const { initializeApp } = await import('firebase/app');
+      const { getAuth, createUserWithEmailAndPassword: createUser } = await import('firebase/auth');
+      
+      // Create a temporary app instance for worker creation
+      const tempApp = initializeApp({
+        apiKey: "AIzaSyAPPca8x5cdT_nTHClFlmsGIV3PE7Abdv4",
+        authDomain: "mystoreapp-dcc31.firebaseapp.com",
+        projectId: "mystoreapp-dcc31",
+        storageBucket: "mystoreapp-dcc31.firebasestorage.app",
+        messagingSenderId: "438314522218",
+        appId: "1:438314522218:web:900ba71959d6fcd5cd1c13",
+        measurementId: "G-H2XHWKZD3C"
+      }, 'temp-worker-creation');
+      
+      const tempAuth = getAuth(tempApp);
+      const result = await createUser(tempAuth, email, password);
       
       try {
         await setDoc(doc(db, 'users', result.user.uid), {
@@ -129,6 +149,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         console.error('Failed to save worker data to Firestore:', firestoreError);
         // Continue anyway - worker account is still created
       }
+      
+      // Clean up temporary app
+      await tempApp.delete();
+      
     } catch (error: any) {
       console.error('Worker creation error:', error);
       setError(error.message || 'Failed to create worker account');

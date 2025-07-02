@@ -21,6 +21,7 @@ export const Navigation = () => {
   const ownerNavItems = [
     { path: '/dashboard', label: 'Dashboard', icon: Home },
     { path: '/products', label: 'Products', icon: Package },
+    { path: '/sales', label: 'Sales', icon: ShoppingCart },
     { path: '/expenses', label: 'Expenses', icon: Receipt },
     { path: '/analytics', label: 'Analytics', icon: BarChart3 },
     { path: '/reports', label: 'Reports', icon: FileText },

@@ -1,91 +1,88 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "@/hooks/useAuth";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { Login } from "@/components/auth/Login";
-import { Register } from "@/components/auth/Register";
-import { Dashboard } from "@/components/dashboard/Dashboard";
-import { Products } from "@/components/products/Products";
-import { RecordSale } from "@/components/sales/RecordSale";
-import { Analytics } from "@/components/analytics/Analytics";
-import { Summary } from "@/components/reports/Summary";
-import { RecordExpense } from "@/components/expenses/RecordExpense";
-import { Home } from "@/pages/Home";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from '@/hooks/useAuth';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { Navigation } from '@/components/layout/Navigation';
+import { Login } from '@/components/auth/Login';
+import { Register } from '@/components/auth/Register';
+import { Dashboard } from '@/components/dashboard/Dashboard';
+import { Products } from '@/components/products/Products';
+import { Sales } from '@/pages/Sales';
+import { Expenses } from '@/pages/Expenses';
+import { Analytics } from '@/components/analytics/Analytics';
+import { Summary } from '@/components/reports/Summary';
+import { Toaster } from '@/components/ui/toaster';
+import './App.css';
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <AuthProvider>
-        <BrowserRouter>
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <div className="min-h-screen bg-gray-50">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/index" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route 
-              path="/dashboard" 
+            <Route
+              path="/dashboard"
               element={
                 <ProtectedRoute>
+                  <Navigation />
                   <Dashboard />
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/products" 
+            <Route
+              path="/products"
               element={
                 <ProtectedRoute>
+                  <Navigation />
                   <Products />
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/sales" 
+            <Route
+              path="/sales"
               element={
                 <ProtectedRoute>
-                  <RecordSale />
+                  <Navigation />
+                  <Sales />
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/expenses" 
+            <Route
+              path="/expenses"
               element={
                 <ProtectedRoute>
-                  <RecordExpense />
+                  <Navigation />
+                  <Expenses />
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/analytics" 
+            <Route
+              path="/analytics"
               element={
                 <ProtectedRoute>
+                  <Navigation />
                   <Analytics />
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/reports" 
+            <Route
+              path="/reports"
               element={
                 <ProtectedRoute>
+                  <Navigation />
                   <Summary />
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route path="*" element={<NotFound />} />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Routes>
-        </BrowserRouter>
-      </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+          <Toaster />
+        </div>
+      </Router>
+    </AuthProvider>
+  );
+}
 
 export default App;
