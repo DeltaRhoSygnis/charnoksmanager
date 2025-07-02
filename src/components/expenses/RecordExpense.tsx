@@ -36,6 +36,18 @@ interface Expense {
   timestamp: Date;
 }
 
+interface FirestoreExpenseData {
+  description: string;
+  amount: number;
+  category: string;
+  notes?: string;
+  workerEmail?: string;
+  workerId?: string;
+  timestamp?: {
+    toDate: () => Date;
+  };
+}
+
 const expenseCategories = [
   'Supplies',
   'Utilities',
@@ -93,11 +105,18 @@ export const RecordExpense = () => {
       }
       
       const snapshot = await getDocs(expensesQuery);
-      const expensesData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        timestamp: doc.data().timestamp?.toDate() || new Date()
-      })) as Expense[];
+      const expensesData = snapshot.docs.map(doc => {
+        const data = doc.data() as FirestoreExpenseData;
+        return {
+          id: doc.id,
+          description: data.description,
+          amount: data.amount,
+          category: data.category,
+          notes: data.notes,
+          workerEmail: data.workerEmail,
+          timestamp: data.timestamp?.toDate() || new Date()
+        };
+      }) as Expense[];
       
       setExpenses(expensesData);
       
