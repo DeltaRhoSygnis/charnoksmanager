@@ -124,28 +124,32 @@ export const WorkerDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-orange-100">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm shadow-sm border-b border-white/20">
+      <header className="bg-white/90 backdrop-blur-md shadow-lg border-b border-orange-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-gradient-to-r from-green-600 to-teal-600 rounded-lg flex items-center justify-center">
-                <ShoppingCart className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-                  Worker Dashboard
-                </h1>
-                <p className="text-sm text-gray-500">Record sales and expenses</p>
+          <div className="flex justify-between items-center h-20">
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-4">
+                <img 
+                  src="/lovable-uploads/389a9fc0-9ada-493a-a167-71ea82a7aabb.png" 
+                  alt="Charnoks" 
+                  className="h-12 w-12 object-contain"
+                />
+                <div>
+                  <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                    Charnoks POS
+                  </h1>
+                  <p className="text-sm text-gray-600 font-medium">Worker Dashboard</p>
+                </div>
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2 px-3 py-2 bg-white/50 rounded-lg">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm text-gray-600">{user?.email}</span>
+              <div className="flex items-center space-x-2 px-4 py-2 bg-white/70 rounded-xl shadow-sm">
+                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-sm text-gray-700 font-medium">{user?.email}</span>
               </div>
-              <Button variant="outline" onClick={logout} className="bg-white/50 hover:bg-white/80">
+              <Button variant="outline" onClick={logout} className="bg-white/70 hover:bg-white shadow-sm">
                 Logout
               </Button>
             </div>
@@ -157,28 +161,28 @@ export const WorkerDashboard = () => {
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <Link to="/sales">
-            <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0 hover:shadow-lg transition-shadow cursor-pointer">
-              <CardContent className="p-6">
+            <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0 hover:shadow-xl transition-all duration-200 cursor-pointer transform hover:scale-105">
+              <CardContent className="p-8">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">Record Sale</h3>
+                    <h3 className="text-xl font-bold mb-3">Record Sale</h3>
                     <p className="text-blue-100">Add new sales transactions</p>
                   </div>
-                  <ShoppingCart className="h-8 w-8 text-blue-200" />
+                  <ShoppingCart className="h-12 w-12 text-blue-200" />
                 </div>
               </CardContent>
             </Card>
           </Link>
 
           <Link to="/expenses">
-            <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white border-0 hover:shadow-lg transition-shadow cursor-pointer">
-              <CardContent className="p-6">
+            <Card className="bg-gradient-to-br from-orange-500 to-red-500 text-white border-0 hover:shadow-xl transition-all duration-200 cursor-pointer transform hover:scale-105">
+              <CardContent className="p-8">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">Record Expense</h3>
+                    <h3 className="text-xl font-bold mb-3">Record Expense</h3>
                     <p className="text-orange-100">Add business expenses</p>
                   </div>
-                  <Receipt className="h-8 w-8 text-orange-200" />
+                  <Receipt className="h-12 w-12 text-orange-200" />
                 </div>
               </CardContent>
             </Card>
@@ -187,62 +191,66 @@ export const WorkerDashboard = () => {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="bg-white/70 backdrop-blur-sm border-white/20">
+          <Card className="bg-white/80 backdrop-blur-sm border-orange-100 shadow-xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Today's Sales</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
+              <DollarSign className="h-5 w-5 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">₱{stats.todaySales.toFixed(2)}</div>
-              <p className="text-xs text-muted-foreground">Sales recorded today</p>
+              <div className="text-3xl font-bold text-green-600">₱{stats.todaySales.toFixed(2)}</div>
+              <p className="text-xs text-muted-foreground mt-1">Sales recorded today</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/70 backdrop-blur-sm border-white/20">
+          <Card className="bg-white/80 backdrop-blur-sm border-orange-100 shadow-xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Today's Expenses</CardTitle>
-              <Receipt className="h-4 w-4 text-muted-foreground" />
+              <Receipt className="h-5 w-5 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600">₱{stats.todayExpenses.toFixed(2)}</div>
-              <p className="text-xs text-muted-foreground">Expenses recorded today</p>
+              <div className="text-3xl font-bold text-red-600">₱{stats.todayExpenses.toFixed(2)}</div>
+              <p className="text-xs text-muted-foreground mt-1">Expenses recorded today</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/70 backdrop-blur-sm border-white/20">
+          <Card className="bg-white/80 backdrop-blur-sm border-orange-100 shadow-xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Transactions</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
+              <Package className="h-5 w-5 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalTransactions}</div>
-              <p className="text-xs text-muted-foreground">Today's transactions</p>
+              <div className="text-3xl font-bold text-orange-600">{stats.totalTransactions}</div>
+              <p className="text-xs text-muted-foreground mt-1">Today's transactions</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Recent Transactions */}
-        <Card className="bg-white/70 backdrop-blur-sm border-white/20">
-          <CardHeader>
-            <CardTitle>My Recent Transactions</CardTitle>
-            <CardDescription>Your latest sales and expenses</CardDescription>
+        <Card className="bg-white/80 backdrop-blur-sm border-orange-100 shadow-xl">
+          <CardHeader className="bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-t-lg">
+            <CardTitle className="text-xl">My Recent Transactions</CardTitle>
+            <CardDescription className="text-orange-100">Your latest sales and expenses</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <div className="space-y-4">
               {transactions.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">No transactions recorded yet</p>
+                <div className="text-center py-12">
+                  <Package className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500 text-lg">No transactions recorded yet</p>
+                  <p className="text-gray-400">Start by recording your first sale or expense</p>
+                </div>
               ) : (
                 transactions.map((transaction) => (
-                  <div key={transaction.id} className="flex items-center justify-between p-4 bg-white/50 border border-white/20 rounded-lg">
+                  <div key={transaction.id} className="flex items-center justify-between p-5 bg-gradient-to-r from-white to-orange-50 border border-orange-100 rounded-xl hover:from-orange-50 hover:to-orange-100 transition-all duration-200 shadow-sm hover:shadow-md">
                     <div className="flex items-center space-x-4">
-                      <div className={`w-2 h-2 rounded-full ${
-                        transaction.type === 'sale' ? 'bg-green-500' : 'bg-red-500'
+                      <div className={`w-4 h-4 rounded-full ${
+                        transaction.type === 'sale' ? 'bg-green-500 shadow-green-200 shadow-lg' : 'bg-red-500 shadow-red-200 shadow-lg'
                       }`}></div>
                       <div>
-                        <p className="font-medium">
+                        <p className="font-semibold text-gray-800">
                           {transaction.type === 'sale' ? 'Sale' : 'Expense'}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-600">
                           {transaction.description || 
                             (transaction.items && `${transaction.items.length} item(s)`) || 
                             'Transaction'
@@ -251,12 +259,12 @@ export const WorkerDashboard = () => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className={`font-bold ${
+                      <p className={`font-bold text-lg ${
                         transaction.type === 'sale' ? 'text-green-600' : 'text-red-600'
                       }`}>
                         {transaction.type === 'sale' ? '+' : '-'}₱{transaction.amount.toFixed(2)}
                       </p>
-                      <Badge variant={transaction.type === 'sale' ? 'default' : 'secondary'}>
+                      <Badge variant={transaction.type === 'sale' ? 'default' : 'secondary'} className="shadow-sm">
                         {transaction.type}
                       </Badge>
                     </div>

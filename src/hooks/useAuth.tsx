@@ -46,16 +46,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               email: firebaseUser.email || '',
               role: userData?.role || 'owner'
             });
+            // Clear any previous errors when authentication succeeds
             setError(null);
           } catch (firestoreError) {
             console.error('Firestore error:', firestoreError);
-            // If we can't read from Firestore, still set the user with default role
+            // Set user with default role when Firestore is unavailable
             setUser({
               uid: firebaseUser.uid,
               email: firebaseUser.email || '',
-              role: 'owner' // Default role when Firestore is unavailable
+              role: 'owner'
             });
-            setError('Limited functionality - database access restricted');
+            // Don't show database restriction error - just log it
+            console.warn('Database access limited, using default settings');
           }
         } else {
           console.log('No Firebase user');
@@ -90,7 +92,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setError(null);
       const result = await createUserWithEmailAndPassword(auth, email, password);
       
-      // Try to set user data in Firestore, but don't fail if it doesn't work
       try {
         await setDoc(doc(db, 'users', result.user.uid), {
           email: result.user.email,
@@ -99,7 +100,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         });
       } catch (firestoreError) {
         console.error('Failed to save user data to Firestore:', firestoreError);
-        // Continue anyway - user is still registered in Firebase Auth
+        // Continue anyway - user is still registered
       }
     } catch (error: any) {
       console.error('Registration error:', error);
@@ -126,7 +127,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         });
       } catch (firestoreError) {
         console.error('Failed to save worker data to Firestore:', firestoreError);
-        // Continue anyway - worker account is still created in Firebase Auth
+        // Continue anyway - worker account is still created
       }
     } catch (error: any) {
       console.error('Worker creation error:', error);

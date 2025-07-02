@@ -51,21 +51,30 @@ export const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Sari POS</CardTitle>
-          <CardDescription>Sign in to your account</CardDescription>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-red-50 to-orange-100 px-4">
+      <Card className="w-full max-w-md shadow-2xl border-orange-100">
+        <CardHeader className="text-center pb-8">
+          <div className="flex items-center justify-center space-x-3 mb-4">
+            <img 
+              src="/lovable-uploads/389a9fc0-9ada-493a-a167-71ea82a7aabb.png" 
+              alt="Charnoks" 
+              className="h-12 w-12 object-contain"
+            />
+            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+              Charnoks POS
+            </CardTitle>
+          </div>
+          <CardDescription className="text-gray-600">Sign in to your account</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-gray-700">Email</Label>
               <Input
                 id="email"
                 type="email"
                 {...register('email')}
-                className="mt-1"
+                className="mt-1 border-orange-200 focus:border-orange-500 focus:ring-orange-500"
               />
               {errors.email && (
                 <p className="text-sm text-red-600 mt-1">{errors.email.message}</p>
@@ -73,12 +82,12 @@ export const Login = () => {
             </div>
             
             <div>
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-gray-700">Password</Label>
               <Input
                 id="password"
                 type="password"
                 {...register('password')}
-                className="mt-1"
+                className="mt-1 border-orange-200 focus:border-orange-500 focus:ring-orange-500"
               />
               {errors.password && (
                 <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>
@@ -87,17 +96,17 @@ export const Login = () => {
 
             <Button
               type="submit"
-              className="w-full"
+              className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white border-0 shadow-lg"
               disabled={isLoading}
             >
               {isLoading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
 
-          <div className="mt-4 text-center">
+          <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{' '}
-              <Link to="/register" className="text-blue-600 hover:underline">
+              <Link to="/register" className="text-orange-600 hover:text-red-600 font-medium hover:underline">
                 Sign up
               </Link>
             </p>
