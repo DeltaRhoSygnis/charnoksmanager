@@ -1,7 +1,7 @@
-
 import { useState, useEffect } from 'react';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,6 +29,7 @@ interface SaleItem {
 }
 
 export const RecordSale = () => {
+  const { user } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProductId, setSelectedProductId] = useState<string>('');
   const [saleItems, setSaleItems] = useState<SaleItem[]>([]);
@@ -133,19 +134,12 @@ export const RecordSale = () => {
         items: saleItems,
         total: getTotalAmount(),
         timestamp: new Date(),
+        workerEmail: user?.email,
+        workerId: user?.uid,
       };
 
       await addDoc(collection(db, 'sales'), saleData);
       
-      // Update product stock (simplified - in production, use transactions)
-      for (const item of saleItems) {
-        const product = products.find(p => p.id === item.productId);
-        if (product) {
-          // Note: In production, this should be done atomically with Firestore transactions
-          console.log(`Update stock for ${product.name}: ${product.stock - item.quantity}`);
-        }
-      }
-
       toast({
         title: "Success",
         description: `Sale recorded! Total: ₱${getTotalAmount().toFixed(2)}`,
@@ -153,7 +147,7 @@ export const RecordSale = () => {
 
       setSaleItems([]);
       setSelectedProductId('');
-      fetchProducts(); // Refresh products to update stock
+      fetchProducts();
     } catch (error) {
       console.error('Error processing sale:', error);
       toast({
@@ -168,10 +162,12 @@ export const RecordSale = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Record Sale</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-gray-900">Record Sale</h1>
+          <Badge variant="secondary">Worker: {user?.email}</Badge>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Product Selection */}
           <Card>
             <CardHeader>
               <CardTitle>Add Products</CardTitle>
@@ -206,7 +202,6 @@ export const RecordSale = () => {
             </CardContent>
           </Card>
 
-          {/* Sale Summary */}
           <Card>
             <CardHeader>
               <CardTitle>Sale Summary</CardTitle>
@@ -231,7 +226,6 @@ export const RecordSale = () => {
           </Card>
         </div>
 
-        {/* Sale Items */}
         <Card className="mt-6">
           <CardHeader>
             <CardTitle>Sale Items</CardTitle>

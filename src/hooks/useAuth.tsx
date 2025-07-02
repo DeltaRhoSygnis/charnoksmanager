@@ -7,25 +7,39 @@ import {
   signOut, 
   onAuthStateChanged 
 } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { auth, db } from '@/lib/firebase';
+import { AuthUser } from '@/types/auth';
 
 interface AuthContextType {
-  user: User | null;
+  user: AuthUser | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
+  createWorkerAccount: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+        const userData = userDoc.data();
+        
+        setUser({
+          uid: firebaseUser.uid,
+          email: firebaseUser.email || '',
+          role: userData?.role || 'owner'
+        });
+      } else {
+        setUser(null);
+      }
       setLoading(false);
     });
 
@@ -37,7 +51,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const register = async (email: string, password: string) => {
-    await createUserWithEmailAndPassword(auth, email, password);
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    
+    // Set as owner by default for registration
+    await setDoc(doc(db, 'users', result.user.uid), {
+      email: result.user.email,
+      role: 'owner',
+      createdAt: new Date()
+    });
+  };
+
+  const createWorkerAccount = async (email: string, password: string) => {
+    if (!user || user.role !== 'owner') {
+      throw new Error('Only owners can create worker accounts');
+    }
+
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    
+    await setDoc(doc(db, 'users', result.user.uid), {
+      email: result.user.email,
+      role: 'worker',
+      createdBy: user.uid,
+      createdAt: new Date()
+    });
   };
 
   const logout = async () => {
@@ -49,6 +85,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loading,
     login,
     register,
+    createWorkerAccount,
     logout
   };
 

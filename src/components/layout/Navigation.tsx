@@ -10,22 +10,30 @@ import {
   LogOut, 
   BarChart3, 
   FileText, 
-  Receipt 
+  Receipt,
+  Users
 } from 'lucide-react';
 
 export const Navigation = () => {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const location = useLocation();
 
-  const navItems = [
+  const ownerNavItems = [
     { path: '/dashboard', label: 'Dashboard', icon: Home },
     { path: '/products', label: 'Products', icon: Package },
-    { path: '/sales', label: 'Sales', icon: ShoppingCart },
     { path: '/expenses', label: 'Expenses', icon: Receipt },
     { path: '/analytics', label: 'Analytics', icon: BarChart3 },
     { path: '/reports', label: 'Reports', icon: FileText },
   ];
 
+  const workerNavItems = [
+    { path: '/dashboard', label: 'Dashboard', icon: Home },
+    { path: '/products', label: 'Products', icon: Package },
+    { path: '/sales', label: 'Sales', icon: ShoppingCart },
+    { path: '/expenses', label: 'Expenses', icon: Receipt },
+  ];
+
+  const navItems = user?.role === 'owner' ? ownerNavItems : workerNavItems;
   const isActive = (path: string) => location.pathname === path;
 
   return (
@@ -55,10 +63,15 @@ export const Navigation = () => {
             </div>
           </div>
           
-          <Button variant="outline" onClick={logout}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Logout
-          </Button>
+          <div className="flex items-center space-x-2">
+            <Badge variant={user?.role === 'owner' ? 'default' : 'secondary'}>
+              {user?.role?.toUpperCase()}
+            </Badge>
+            <Button variant="outline" onClick={logout}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
+          </div>
         </div>
         
         {/* Mobile Navigation */}

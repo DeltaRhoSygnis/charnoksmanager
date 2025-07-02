@@ -1,7 +1,7 @@
-
 import { useState, useEffect } from 'react';
 import { collection, addDoc, getDocs, query, orderBy, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { useAuth } from '@/hooks/useAuth';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -32,6 +32,7 @@ interface Expense {
   amount: number;
   category: string;
   notes?: string;
+  workerEmail?: string;
   timestamp: Date;
 }
 
@@ -48,6 +49,7 @@ const expenseCategories = [
 ];
 
 export const RecordExpense = () => {
+  const { user } = useAuth();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [totalExpenses, setTotalExpenses] = useState(0);
@@ -64,18 +66,31 @@ export const RecordExpense = () => {
 
   useEffect(() => {
     fetchExpenses();
-  }, []);
+  }, [user]);
 
   const fetchExpenses = async () => {
     try {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       
-      const expensesQuery = query(
-        collection(db, 'expenses'),
-        where('timestamp', '>=', today),
-        orderBy('timestamp', 'desc')
-      );
+      let expensesQuery;
+      
+      if (user?.role === 'owner') {
+        // Owner sees all expenses
+        expensesQuery = query(
+          collection(db, 'expenses'),
+          where('timestamp', '>=', today),
+          orderBy('timestamp', 'desc')
+        );
+      } else {
+        // Worker sees only their expenses
+        expensesQuery = query(
+          collection(db, 'expenses'),
+          where('workerEmail', '==', user?.email),
+          where('timestamp', '>=', today),
+          orderBy('timestamp', 'desc')
+        );
+      }
       
       const snapshot = await getDocs(expensesQuery);
       const expensesData = snapshot.docs.map(doc => ({
@@ -104,6 +119,8 @@ export const RecordExpense = () => {
       const expenseData = {
         ...data,
         timestamp: new Date(),
+        workerEmail: user?.email,
+        workerId: user?.uid,
       };
 
       await addDoc(collection(db, 'expenses'), expenseData);
@@ -129,7 +146,10 @@ export const RecordExpense = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Record Expense</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-gray-900">Record Expense</h1>
+          <Badge variant="secondary">{user?.role?.toUpperCase()}: {user?.email}</Badge>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Expense Form */}
@@ -217,7 +237,7 @@ export const RecordExpense = () => {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <DollarSign className="h-5 w-5 mr-2" />
-                  Today's Expenses
+                  {user?.role === 'owner' ? "Today's Total Expenses" : "My Today's Expenses"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -235,7 +255,9 @@ export const RecordExpense = () => {
                   <Receipt className="h-5 w-5 mr-2" />
                   Recent Expenses
                 </CardTitle>
-                <CardDescription>Today's expense records</CardDescription>
+                <CardDescription>
+                  {user?.role === 'owner' ? "All expense records for today" : "Your expense records for today"}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 {expenses.length === 0 ? (
@@ -249,6 +271,7 @@ export const RecordExpense = () => {
                         <TableHead>Description</TableHead>
                         <TableHead>Category</TableHead>
                         <TableHead>Amount</TableHead>
+                        {user?.role === 'owner' && <TableHead>Worker</TableHead>}
                         <TableHead>Time</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -269,6 +292,11 @@ export const RecordExpense = () => {
                           <TableCell className="font-medium text-red-600">
                             ₱{expense.amount.toFixed(2)}
                           </TableCell>
+                          {user?.role === 'owner' && (
+                            <TableCell className="text-sm text-gray-500">
+                              {expense.workerEmail}
+                            </TableCell>
+                          )}
                           <TableCell className="text-sm text-gray-500">
                             {format(expense.timestamp, 'HH:mm')}
                           </TableCell>
