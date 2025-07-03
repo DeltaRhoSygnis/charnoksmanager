@@ -9,9 +9,14 @@ export class FirebaseTest {
     try {
       console.log("Testing Firebase connectivity...");
 
+      // Simple timeout wrapper
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Firebase timeout")), 5000),
+      );
+
       // Try to read from a collection (this will fail if permissions are wrong)
       const testQuery = collection(db, "products");
-      await getDocs(testQuery);
+      await Promise.race([getDocs(testQuery), timeoutPromise]);
 
       console.log("✅ Firebase access successful!");
       OfflineState.setFirebaseAccess(true);
@@ -22,15 +27,10 @@ export class FirebaseTest {
 
       return true;
     } catch (error: any) {
-      console.error("❌ Firebase access failed:", error);
-
-      if (OfflineState.isNetworkError(error)) {
-        console.log("🔄 Falling back to demo mode");
-        OfflineState.setFirebaseAccess(false);
-        LocalStorageDB.enableDemoMode();
-        return false;
-      }
-
+      console.error("❌ Firebase access failed:", error.message || error);
+      console.log("🔄 Falling back to demo mode");
+      OfflineState.setFirebaseAccess(false);
+      LocalStorageDB.enableDemoMode();
       return false;
     }
   }
