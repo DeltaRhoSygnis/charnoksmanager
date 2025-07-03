@@ -1,7 +1,7 @@
 import { useAuth } from "@/hooks/useAuth";
 import { RecordSale } from "@/components/sales/RecordSale";
 import { SalesHistory } from "@/components/sales/SalesHistory";
-import { WorkerSalesInterface } from "@/components/sales/WorkerSalesInterface";
+import { EnhancedSalesInterface } from "@/components/sales/EnhancedSalesInterface";
 import { UniversalLayout } from "@/components/layout/UniversalLayout";
 import { ShoppingCart, Star, TrendingUp } from "lucide-react";
 
@@ -28,9 +28,9 @@ export const Sales = () => {
               </p>
             </div>
 
-            {/* Worker Sales Interface */}
+            {/* Enhanced Sales Interface */}
             <div className="animate-slide-in-left delay-300">
-              <WorkerSalesInterface />
+              <EnhancedSalesInterface />
             </div>
           </div>
         </div>

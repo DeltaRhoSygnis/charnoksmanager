@@ -41,6 +41,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { Edit, Trash2, Plus, Package, Star, TrendingUp } from "lucide-react";
 import { UniversalLayout } from "@/components/layout/UniversalLayout";
+import { ImageUpload } from "./ImageUpload";
 
 const productSchema = z.object({
   name: z.string().min(1, "Product name is required"),
@@ -61,6 +62,7 @@ export const Products = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [currentImageUrl, setCurrentImageUrl] = useState<string>("");
 
   const {
     register,
@@ -95,14 +97,19 @@ export const Products = () => {
 
   const onSubmit = async (data: ProductFormData) => {
     try {
+      const productData = {
+        ...data,
+        imageUrl: currentImageUrl || data.imageUrl,
+      };
+
       if (editingProduct) {
-        await updateDoc(doc(db, "products", editingProduct.id), data);
+        await updateDoc(doc(db, "products", editingProduct.id), productData);
         toast({
           title: "Success",
           description: "Product updated successfully",
         });
       } else {
-        await addDoc(collection(db, "products"), data);
+        await addDoc(collection(db, "products"), productData);
         toast({
           title: "Success",
           description: "Product added successfully",
@@ -122,6 +129,7 @@ export const Products = () => {
 
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
+    setCurrentImageUrl(product.imageUrl || "");
     reset(product);
     setIsDialogOpen(true);
   };
@@ -147,6 +155,7 @@ export const Products = () => {
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
     setEditingProduct(null);
+    setCurrentImageUrl("");
     reset();
   };
 
@@ -281,17 +290,10 @@ export const Products = () => {
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="imageUrl" className="text-white font-semibold text-lg">
-                      Image URL (Optional)
-                    </Label>
-                    <Input
-                      id="imageUrl"
-                      {...register("imageUrl")}
-                      className="bg-white/10 border-white/30 text-white placeholder-gray-400 h-12 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                      placeholder="https://example.com/image.jpg"
-                    />
-                  </div>
+                  <ImageUpload
+                    onImageUpload={setCurrentImageUrl}
+                    currentImageUrl={currentImageUrl}
+                  />
 
                   <div className="flex gap-4 pt-6">
                     <Button
