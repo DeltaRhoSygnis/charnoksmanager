@@ -40,6 +40,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import { Edit, Trash2, Plus } from "lucide-react";
+import { ResponsiveLayout } from "@/components/dashboard/ResponsiveLayout";
 
 const productSchema = z.object({
   name: z.string().min(1, "Product name is required"),
@@ -162,23 +163,23 @@ export const Products = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <ResponsiveLayout>
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Products</h1>
+          <h1 className="text-3xl font-bold text-white">Products</h1>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button>
+              <Button className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Product
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="bg-gray-900 border-gray-700">
               <DialogHeader>
-                <DialogTitle>
+                <DialogTitle className="text-white">
                   {editingProduct ? "Edit Product" : "Add New Product"}
                 </DialogTitle>
-                <DialogDescription>
+                <DialogDescription className="text-gray-300">
                   {editingProduct
                     ? "Update product information"
                     : "Add a new product to your inventory"}
@@ -187,92 +188,100 @@ export const Products = () => {
 
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div>
-                  <Label htmlFor="name">Product Name</Label>
-                  <Input id="name" {...register("name")} className="mt-1" />
+                  <Label htmlFor="name" className="text-white">Product Name</Label>
+                  <Input 
+                    id="name" 
+                    {...register("name")} 
+                    className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-gray-400" 
+                  />
                   {errors.name && (
-                    <p className="text-sm text-red-600 mt-1">
+                    <p className="text-sm text-red-400 mt-1">
                       {errors.name.message}
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <Label htmlFor="price">Price (₱)</Label>
+                  <Label htmlFor="price" className="text-white">Price (₱)</Label>
                   <Input
                     id="price"
                     type="number"
                     step="0.01"
                     {...register("price", { valueAsNumber: true })}
-                    className="mt-1"
+                    className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                   />
                   {errors.price && (
-                    <p className="text-sm text-red-600 mt-1">
+                    <p className="text-sm text-red-400 mt-1">
                       {errors.price.message}
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <Label htmlFor="stock">Stock Quantity</Label>
+                  <Label htmlFor="stock" className="text-white">Stock Quantity</Label>
                   <Input
                     id="stock"
                     type="number"
                     {...register("stock", { valueAsNumber: true })}
-                    className="mt-1"
+                    className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                   />
                   {errors.stock && (
-                    <p className="text-sm text-red-600 mt-1">
+                    <p className="text-sm text-red-400 mt-1">
                       {errors.stock.message}
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <Label htmlFor="category">Category</Label>
+                  <Label htmlFor="category" className="text-white">Category</Label>
                   <Input
                     id="category"
                     {...register("category")}
-                    className="mt-1"
+                    className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                   />
                   {errors.category && (
-                    <p className="text-sm text-red-600 mt-1">
+                    <p className="text-sm text-red-400 mt-1">
                       {errors.category.message}
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <Label htmlFor="imageUrl">Image URL (Optional)</Label>
+                  <Label htmlFor="imageUrl" className="text-white">Image URL (Optional)</Label>
                   <Input
                     id="imageUrl"
                     {...register("imageUrl")}
                     placeholder="https://example.com/image.jpg"
-                    className="mt-1"
+                    className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                   />
                   {errors.imageUrl && (
-                    <p className="text-sm text-red-600 mt-1">
+                    <p className="text-sm text-red-400 mt-1">
                       {errors.imageUrl.message}
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <Label htmlFor="description">Description (Optional)</Label>
+                  <Label htmlFor="description" className="text-white">Description (Optional)</Label>
                   <Input
                     id="description"
                     {...register("description")}
                     placeholder="Product description"
-                    className="mt-1"
+                    className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                   />
                   {errors.description && (
-                    <p className="text-sm text-red-600 mt-1">
+                    <p className="text-sm text-red-400 mt-1">
                       {errors.description.message}
                     </p>
                   )}
                 </div>
 
                 <div className="flex space-x-2">
-                  <Button type="submit" disabled={isLoading}>
+                  <Button 
+                    type="submit" 
+                    disabled={isLoading}
+                    className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
+                  >
                     {isLoading
                       ? "Saving..."
                       : editingProduct
@@ -283,6 +292,7 @@ export const Products = () => {
                     type="button"
                     variant="outline"
                     onClick={handleDialogClose}
+                    className="border-white/20 text-white hover:bg-white/10"
                   >
                     Cancel
                   </Button>
@@ -292,21 +302,21 @@ export const Products = () => {
           </Dialog>
         </div>
 
-        <Card>
+        <Card className="bg-white/10 backdrop-blur-md border-white/20">
           <CardHeader>
-            <CardTitle>Product Inventory</CardTitle>
-            <CardDescription>Manage your product catalog</CardDescription>
+            <CardTitle className="text-white">Product Inventory</CardTitle>
+            <CardDescription className="text-gray-300">Manage your product catalog</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Stock</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
+                <TableRow className="border-white/20">
+                  <TableHead className="text-gray-300">Name</TableHead>
+                  <TableHead className="text-gray-300">Category</TableHead>
+                  <TableHead className="text-gray-300">Price</TableHead>
+                  <TableHead className="text-gray-300">Stock</TableHead>
+                  <TableHead className="text-gray-300">Status</TableHead>
+                  <TableHead className="text-gray-300">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -314,25 +324,26 @@ export const Products = () => {
                   <TableRow>
                     <TableCell
                       colSpan={6}
-                      className="text-center py-8 text-gray-500"
+                      className="text-center py-8 text-gray-400"
                     >
                       No products found. Add your first product to get started.
                     </TableCell>
                   </TableRow>
                 ) : (
                   products.map((product) => (
-                    <TableRow key={product.id}>
-                      <TableCell className="font-medium">
+                    <TableRow key={product.id} className="border-white/20">
+                      <TableCell className="font-medium text-white">
                         {product.name}
                       </TableCell>
-                      <TableCell>{product.category}</TableCell>
-                      <TableCell>₱{product.price.toFixed(2)}</TableCell>
-                      <TableCell>{product.stock}</TableCell>
+                      <TableCell className="text-gray-300">{product.category}</TableCell>
+                      <TableCell className="text-white">₱{product.price.toFixed(2)}</TableCell>
+                      <TableCell className="text-gray-300">{product.stock}</TableCell>
                       <TableCell>
                         <Badge
                           variant={
                             product.stock > 0 ? "default" : "destructive"
                           }
+                          className={product.stock > 0 ? "bg-green-600" : "bg-red-600"}
                         >
                           {product.stock > 0 ? "In Stock" : "Out of Stock"}
                         </Badge>
@@ -343,6 +354,7 @@ export const Products = () => {
                             variant="outline"
                             size="sm"
                             onClick={() => handleEdit(product)}
+                            className="border-white/20 text-white hover:bg-white/10"
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -350,6 +362,7 @@ export const Products = () => {
                             variant="outline"
                             size="sm"
                             onClick={() => handleDelete(product.id)}
+                            className="border-white/20 text-white hover:bg-white/10"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -363,6 +376,6 @@ export const Products = () => {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </ResponsiveLayout>
   );
 };

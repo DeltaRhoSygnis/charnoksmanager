@@ -9,6 +9,7 @@ import {
   Receipt,
   BarChart3,
   FileText,
+  Settings,
 } from "lucide-react";
 
 export const MobileNavigation = () => {
@@ -20,8 +21,7 @@ export const MobileNavigation = () => {
     { path: "/products", label: "Products", icon: Package },
     { path: "/sales", label: "Sales", icon: ShoppingCart },
     { path: "/expenses", label: "Expenses", icon: Receipt },
-    { path: "/analytics", label: "Analytics", icon: BarChart3 },
-    { path: "/reports", label: "Reports", icon: FileText },
+    { path: "/settings", label: "Settings", icon: Settings },
   ];
 
   const workerNavItems = [
@@ -29,6 +29,7 @@ export const MobileNavigation = () => {
     { path: "/products", label: "Products", icon: Package },
     { path: "/sales", label: "Sales", icon: ShoppingCart },
     { path: "/expenses", label: "Expenses", icon: Receipt },
+    { path: "/settings", label: "Settings", icon: Settings },
   ];
 
   const navItems = user?.role === "owner" ? ownerNavItems : workerNavItems;
@@ -36,8 +37,8 @@ export const MobileNavigation = () => {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-orange-100 z-50">
-      <div className="grid grid-cols-4 gap-1 px-2 py-2">
-        {navItems.slice(0, 4).map(({ path, label, icon: Icon }) => (
+      <div className="grid grid-cols-5 gap-1 px-2 py-2">
+        {navItems.map(({ path, label, icon: Icon }) => (
           <Link
             key={path}
             to={path}

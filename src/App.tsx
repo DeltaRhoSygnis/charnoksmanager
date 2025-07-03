@@ -17,6 +17,7 @@ import { Sales } from "@/pages/Sales";
 import { Expenses } from "@/pages/Expenses";
 import { Analytics } from "@/components/analytics/Analytics";
 import { Summary } from "@/components/reports/Summary";
+import { Settings } from "@/pages/Settings";
 import { Toaster } from "@/components/ui/toaster";
 import "./App.css";
 
@@ -95,6 +96,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Summary />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
                 </ProtectedRoute>
               }
             />

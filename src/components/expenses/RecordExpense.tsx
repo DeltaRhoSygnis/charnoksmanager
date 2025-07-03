@@ -15,7 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
 import { Plus, Receipt, DollarSign } from 'lucide-react';
-import { format } from 'date-fns';
+import { ResponsiveLayout } from '@/components/dashboard/ResponsiveLayout';
 
 const expenseSchema = z.object({
   description: z.string().min(1, 'Description is required'),
@@ -163,58 +163,60 @@ export const RecordExpense = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <ResponsiveLayout>
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Record Expense</h1>
-          <Badge variant="secondary">{user?.role?.toUpperCase()}: {user?.email}</Badge>
+          <h1 className="text-3xl font-bold text-white">Record Expense</h1>
+          <Badge variant="secondary" className="bg-white/10 text-white border-white/20">
+            {user?.role?.toUpperCase()}: {user?.email}
+          </Badge>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Expense Form */}
           <div className="lg:col-span-1">
-            <Card>
+            <Card className="bg-white/10 backdrop-blur-md border-white/20">
               <CardHeader>
-                <CardTitle className="flex items-center">
+                <CardTitle className="flex items-center text-white">
                   <Plus className="h-5 w-5 mr-2" />
                   New Expense
                 </CardTitle>
-                <CardDescription>Record a new business expense</CardDescription>
+                <CardDescription className="text-gray-300">Record a new business expense</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                   <div>
-                    <Label htmlFor="description">Description</Label>
+                    <Label htmlFor="description" className="text-white">Description</Label>
                     <Input
                       id="description"
                       {...register('description')}
                       placeholder="e.g., Office supplies"
-                      className="mt-1"
+                      className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                     />
                     {errors.description && (
-                      <p className="text-sm text-red-600 mt-1">{errors.description.message}</p>
+                      <p className="text-sm text-red-400 mt-1">{errors.description.message}</p>
                     )}
                   </div>
 
                   <div>
-                    <Label htmlFor="amount">Amount (₱)</Label>
+                    <Label htmlFor="amount" className="text-white">Amount (₱)</Label>
                     <Input
                       id="amount"
                       type="number"
                       step="0.01"
                       {...register('amount', { valueAsNumber: true })}
                       placeholder="0.00"
-                      className="mt-1"
+                      className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                     />
                     {errors.amount && (
-                      <p className="text-sm text-red-600 mt-1">{errors.amount.message}</p>
+                      <p className="text-sm text-red-400 mt-1">{errors.amount.message}</p>
                     )}
                   </div>
 
                   <div>
-                    <Label htmlFor="category">Category</Label>
+                    <Label htmlFor="category" className="text-white">Category</Label>
                     <Select onValueChange={(value) => setValue('category', value)}>
-                      <SelectTrigger className="mt-1">
+                      <SelectTrigger className="mt-1 bg-white/10 border-white/20 text-white">
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
@@ -226,22 +228,22 @@ export const RecordExpense = () => {
                       </SelectContent>
                     </Select>
                     {errors.category && (
-                      <p className="text-sm text-red-600 mt-1">{errors.category.message}</p>
+                      <p className="text-sm text-red-400 mt-1">{errors.category.message}</p>
                     )}
                   </div>
 
                   <div>
-                    <Label htmlFor="notes">Notes (Optional)</Label>
+                    <Label htmlFor="notes" className="text-white">Notes (Optional)</Label>
                     <Textarea
                       id="notes"
                       {...register('notes')}
                       placeholder="Additional details..."
-                      className="mt-1"
+                      className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                       rows={3}
                     />
                   </div>
 
-                  <Button type="submit" disabled={isLoading} className="w-full">
+                  <Button type="submit" disabled={isLoading} className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
                     {isLoading ? 'Recording...' : 'Record Expense'}
                   </Button>
                 </form>
@@ -252,72 +254,78 @@ export const RecordExpense = () => {
           {/* Today's Summary and Expenses List */}
           <div className="lg:col-span-2 space-y-6">
             {/* Today's Summary */}
-            <Card>
+            <Card className="bg-white/10 backdrop-blur-md border-white/20">
               <CardHeader>
-                <CardTitle className="flex items-center">
+                <CardTitle className="flex items-center text-white">
                   <DollarSign className="h-5 w-5 mr-2" />
                   {user?.role === 'owner' ? "Today's Total Expenses" : "My Today's Expenses"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-red-600">
+                <div className="text-3xl font-bold text-red-400">
                   ₱{totalExpenses.toFixed(2)}
                 </div>
-                <p className="text-gray-600">{expenses.length} expense(s) recorded</p>
+                <p className="text-gray-300">{expenses.length} expense(s) recorded</p>
               </CardContent>
             </Card>
 
             {/* Expenses List */}
-            <Card>
+            <Card className="bg-white/10 backdrop-blur-md border-white/20">
               <CardHeader>
-                <CardTitle className="flex items-center">
+                <CardTitle className="flex items-center text-white">
                   <Receipt className="h-5 w-5 mr-2" />
                   Recent Expenses
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-gray-300">
                   {user?.role === 'owner' ? "All expense records for today" : "Your expense records for today"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 {expenses.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">
+                  <p className="text-gray-400 text-center py-8">
                     No expenses recorded today
                   </p>
                 ) : (
                   <Table>
                     <TableHeader>
-                      <TableRow>
-                        <TableHead>Description</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead>Amount</TableHead>
-                        {user?.role === 'owner' && <TableHead>Worker</TableHead>}
-                        <TableHead>Time</TableHead>
+                      <TableRow className="border-white/20">
+                        <TableHead className="text-gray-300">Description</TableHead>
+                        <TableHead className="text-gray-300">Category</TableHead>
+                        <TableHead className="text-gray-300">Amount</TableHead>
+                        {user?.role === 'owner' && <TableHead className="text-gray-300">Worker</TableHead>}
+                        <TableHead className="text-gray-300">Time</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {expenses.map((expense) => (
-                        <TableRow key={expense.id}>
-                          <TableCell>
+                        <TableRow key={expense.id} className="border-white/20">
+                          <TableCell className="text-white">
                             <div>
                               <div className="font-medium">{expense.description}</div>
                               {expense.notes && (
-                                <div className="text-sm text-gray-500">{expense.notes}</div>
+                                <div className="text-sm text-gray-400">{expense.notes}</div>
                               )}
                             </div>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="secondary">{expense.category}</Badge>
+                            <Badge variant="secondary" className="bg-white/10 text-white border-white/20">
+                              {expense.category}
+                            </Badge>
                           </TableCell>
-                          <TableCell className="font-medium text-red-600">
+                          <TableCell className="font-medium text-red-400">
                             ₱{expense.amount.toFixed(2)}
                           </TableCell>
                           {user?.role === 'owner' && (
-                            <TableCell className="text-sm text-gray-500">
+                            <TableCell className="text-sm text-gray-400">
                               {expense.workerEmail}
                             </TableCell>
                           )}
-                          <TableCell className="text-sm text-gray-500">
-                            {format(expense.timestamp, 'HH:mm')}
+                          <TableCell className="text-sm text-gray-400">
+                            {new Date(expense.timestamp).toLocaleTimeString('en-US', { 
+                              hour: '2-digit', 
+                              minute: '2-digit',
+                              hour12: false 
+                            })}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -329,6 +337,6 @@ export const RecordExpense = () => {
           </div>
         </div>
       </div>
-    </div>
+    </ResponsiveLayout>
   );
 };
