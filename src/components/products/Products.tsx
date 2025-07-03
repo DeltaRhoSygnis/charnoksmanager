@@ -241,6 +241,36 @@ export const Products = () => {
                   )}
                 </div>
 
+                <div>
+                  <Label htmlFor="imageUrl">Image URL (Optional)</Label>
+                  <Input
+                    id="imageUrl"
+                    {...register("imageUrl")}
+                    placeholder="https://example.com/image.jpg"
+                    className="mt-1"
+                  />
+                  {errors.imageUrl && (
+                    <p className="text-sm text-red-600 mt-1">
+                      {errors.imageUrl.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="description">Description (Optional)</Label>
+                  <Input
+                    id="description"
+                    {...register("description")}
+                    placeholder="Product description"
+                    className="mt-1"
+                  />
+                  {errors.description && (
+                    <p className="text-sm text-red-600 mt-1">
+                      {errors.description.message}
+                    </p>
+                  )}
+                </div>
+
                 <div className="flex space-x-2">
                   <Button type="submit" disabled={isLoading}>
                     {isLoading
