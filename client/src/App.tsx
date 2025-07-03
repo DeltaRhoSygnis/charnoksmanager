@@ -47,7 +47,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen bg-gradient-to-br from-red-600 via-orange-500 to-yellow-400 animate-gradient-x">
+        <div className="min-h-screen w-full galaxy-animated cosmic-overlay">
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />

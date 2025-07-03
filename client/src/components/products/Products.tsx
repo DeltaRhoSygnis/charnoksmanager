@@ -39,8 +39,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
-import { Edit, Trash2, Plus } from "lucide-react";
-import { ResponsiveLayout } from "@/components/dashboard/ResponsiveLayout";
+import { Edit, Trash2, Plus, Package, Star, TrendingUp } from "lucide-react";
+import { UniversalLayout } from "@/components/layout/UniversalLayout";
 
 const productSchema = z.object({
   name: z.string().min(1, "Product name is required"),
@@ -61,14 +61,12 @@ export const Products = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
-    reset,
-    setValue,
     formState: { errors },
+    reset,
   } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
   });
@@ -79,12 +77,12 @@ export const Products = () => {
 
   const fetchProducts = async () => {
     try {
-      const snapshot = await getDocs(collection(db, "products"));
-      const productsData = snapshot.docs.map((doc) => ({
+      const querySnapshot = await getDocs(collection(db, "products"));
+      const productList = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       })) as Product[];
-      setProducts(productsData);
+      setProducts(productList);
     } catch (error) {
       console.error("Error fetching products:", error);
       toast({
@@ -96,7 +94,6 @@ export const Products = () => {
   };
 
   const onSubmit = async (data: ProductFormData) => {
-    setIsLoading(true);
     try {
       if (editingProduct) {
         await updateDoc(doc(db, "products", editingProduct.id), data);
@@ -111,11 +108,8 @@ export const Products = () => {
           description: "Product added successfully",
         });
       }
-
-      reset();
-      setIsDialogOpen(false);
-      setEditingProduct(null);
       fetchProducts();
+      handleCloseDialog();
     } catch (error) {
       console.error("Error saving product:", error);
       toast({
@@ -124,258 +118,299 @@ export const Products = () => {
         variant: "destructive",
       });
     }
-    setIsLoading(false);
   };
 
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
-    setValue("name", product.name);
-    setValue("price", product.price);
-    setValue("stock", product.stock);
-    setValue("category", product.category);
+    reset(product);
     setIsDialogOpen(true);
   };
 
-  const handleDelete = async (productId: string) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      try {
-        await deleteDoc(doc(db, "products", productId));
-        toast({
-          title: "Success",
-          description: "Product deleted successfully",
-        });
-        fetchProducts();
-      } catch (error) {
-        console.error("Error deleting product:", error);
-        toast({
-          title: "Error",
-          description: "Failed to delete product",
-          variant: "destructive",
-        });
-      }
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, "products", id));
+      toast({
+        title: "Success",
+        description: "Product deleted successfully",
+      });
+      fetchProducts();
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete product",
+        variant: "destructive",
+      });
     }
   };
 
-  const handleDialogClose = () => {
+  const handleCloseDialog = () => {
     setIsDialogOpen(false);
     setEditingProduct(null);
     reset();
   };
 
   return (
-    <ResponsiveLayout>
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-white">Products</h1>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
-                <Plus className="h-4 w-4 mr-2" />
-                Add Product
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="bg-gray-900 border-gray-700">
-              <DialogHeader>
-                <DialogTitle className="text-white">
-                  {editingProduct ? "Edit Product" : "Add New Product"}
-                </DialogTitle>
-                <DialogDescription className="text-gray-300">
-                  {editingProduct
-                    ? "Update product information"
-                    : "Add a new product to your inventory"}
-                </DialogDescription>
-              </DialogHeader>
+    <UniversalLayout>
+      <div className="min-h-screen p-6">
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* Header Section */}
+          <div className="text-center space-y-4 animate-bounce-in">
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="w-16 h-16 bg-black/20 rounded-2xl p-3 border border-white/20 backdrop-blur-sm">
+                <Package className="w-full h-full text-orange-400" />
+              </div>
+            </div>
+            <h1 className="text-5xl font-bold charnoks-text animate-slide-in-left">
+              Product Inventory
+            </h1>
+            <p className="text-xl text-white font-medium animate-slide-in-right">
+              Manage your restaurant menu and inventory
+            </p>
+          </div>
 
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                <div>
-                  <Label htmlFor="name" className="text-white">Product Name</Label>
-                  <Input 
-                    id="name" 
-                    {...register("name")} 
-                    className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-gray-400" 
-                  />
-                  {errors.name && (
-                    <p className="text-sm text-red-400 mt-1">
-                      {errors.name.message}
-                    </p>
-                  )}
-                </div>
+          {/* Add Product Button */}
+          <div className="flex justify-center animate-bounce-in delay-300">
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="charnoks-gradient hover:opacity-90 text-white font-bold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-2xl text-lg">
+                  <Plus className="h-6 w-6 mr-3" />
+                  Add New Product
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-black/80 backdrop-blur-xl border-white/20 rounded-2xl max-w-2xl">
+                <DialogHeader className="space-y-4">
+                  <DialogTitle className="text-white text-2xl font-bold flex items-center gap-3">
+                    <Star className="h-6 w-6 text-yellow-400" />
+                    {editingProduct ? "Edit Product" : "Add New Product"}
+                  </DialogTitle>
+                  <DialogDescription className="text-gray-300 text-lg">
+                    {editingProduct
+                      ? "Update your product information"
+                      : "Add a delicious new item to your menu"}
+                  </DialogDescription>
+                </DialogHeader>
 
-                <div>
-                  <Label htmlFor="price" className="text-white">Price (₱)</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    step="0.01"
-                    {...register("price", { valueAsNumber: true })}
-                    className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-                  />
-                  {errors.price && (
-                    <p className="text-sm text-red-400 mt-1">
-                      {errors.price.message}
-                    </p>
-                  )}
-                </div>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="name" className="text-white font-semibold text-lg">
+                        Product Name
+                      </Label>
+                      <Input
+                        id="name"
+                        {...register("name")}
+                        className="bg-white/10 border-white/30 text-white placeholder-gray-400 h-12 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        placeholder="Enter product name..."
+                      />
+                      {errors.name && (
+                        <p className="text-red-400 text-sm flex items-center gap-2">
+                          <span className="w-2 h-2 bg-red-400 rounded-full"></span>
+                          {errors.name.message}
+                        </p>
+                      )}
+                    </div>
 
-                <div>
-                  <Label htmlFor="stock" className="text-white">Stock Quantity</Label>
-                  <Input
-                    id="stock"
-                    type="number"
-                    {...register("stock", { valueAsNumber: true })}
-                    className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-                  />
-                  {errors.stock && (
-                    <p className="text-sm text-red-400 mt-1">
-                      {errors.stock.message}
-                    </p>
-                  )}
-                </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="price" className="text-white font-semibold text-lg">
+                        Price (₱)
+                      </Label>
+                      <Input
+                        id="price"
+                        type="number"
+                        step="0.01"
+                        {...register("price", { valueAsNumber: true })}
+                        className="bg-white/10 border-white/30 text-white placeholder-gray-400 h-12 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        placeholder="0.00"
+                      />
+                      {errors.price && (
+                        <p className="text-red-400 text-sm flex items-center gap-2">
+                          <span className="w-2 h-2 bg-red-400 rounded-full"></span>
+                          {errors.price.message}
+                        </p>
+                      )}
+                    </div>
 
-                <div>
-                  <Label htmlFor="category" className="text-white">Category</Label>
-                  <Input
-                    id="category"
-                    {...register("category")}
-                    className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-                  />
-                  {errors.category && (
-                    <p className="text-sm text-red-400 mt-1">
-                      {errors.category.message}
-                    </p>
-                  )}
-                </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="stock" className="text-white font-semibold text-lg">
+                        Stock Quantity
+                      </Label>
+                      <Input
+                        id="stock"
+                        type="number"
+                        {...register("stock", { valueAsNumber: true })}
+                        className="bg-white/10 border-white/30 text-white placeholder-gray-400 h-12 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        placeholder="0"
+                      />
+                      {errors.stock && (
+                        <p className="text-red-400 text-sm flex items-center gap-2">
+                          <span className="w-2 h-2 bg-red-400 rounded-full"></span>
+                          {errors.stock.message}
+                        </p>
+                      )}
+                    </div>
 
-                <div>
-                  <Label htmlFor="imageUrl" className="text-white">Image URL (Optional)</Label>
-                  <Input
-                    id="imageUrl"
-                    {...register("imageUrl")}
-                    placeholder="https://example.com/image.jpg"
-                    className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-                  />
-                  {errors.imageUrl && (
-                    <p className="text-sm text-red-400 mt-1">
-                      {errors.imageUrl.message}
-                    </p>
-                  )}
-                </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="category" className="text-white font-semibold text-lg">
+                        Category
+                      </Label>
+                      <Input
+                        id="category"
+                        {...register("category")}
+                        className="bg-white/10 border-white/30 text-white placeholder-gray-400 h-12 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        placeholder="e.g., Fried Chicken, Beverages"
+                      />
+                      {errors.category && (
+                        <p className="text-red-400 text-sm flex items-center gap-2">
+                          <span className="w-2 h-2 bg-red-400 rounded-full"></span>
+                          {errors.category.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
 
-                <div>
-                  <Label htmlFor="description" className="text-white">Description (Optional)</Label>
-                  <Input
-                    id="description"
-                    {...register("description")}
-                    placeholder="Product description"
-                    className="mt-1 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-                  />
-                  {errors.description && (
-                    <p className="text-sm text-red-400 mt-1">
-                      {errors.description.message}
-                    </p>
-                  )}
-                </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="description" className="text-white font-semibold text-lg">
+                      Description (Optional)
+                    </Label>
+                    <Input
+                      id="description"
+                      {...register("description")}
+                      className="bg-white/10 border-white/30 text-white placeholder-gray-400 h-12 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      placeholder="Describe your delicious product..."
+                    />
+                  </div>
 
-                <div className="flex space-x-2">
-                  <Button 
-                    type="submit" 
-                    disabled={isLoading}
-                    className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
-                  >
-                    {isLoading
-                      ? "Saving..."
-                      : editingProduct
-                        ? "Update Product"
-                        : "Add Product"}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleDialogClose}
-                    className="border-white/20 text-white hover:bg-white/10"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
-        </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="imageUrl" className="text-white font-semibold text-lg">
+                      Image URL (Optional)
+                    </Label>
+                    <Input
+                      id="imageUrl"
+                      {...register("imageUrl")}
+                      className="bg-white/10 border-white/30 text-white placeholder-gray-400 h-12 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      placeholder="https://example.com/image.jpg"
+                    />
+                  </div>
 
-        <Card className="bg-white/10 backdrop-blur-md border-white/20">
-          <CardHeader>
-            <CardTitle className="text-white">Product Inventory</CardTitle>
-            <CardDescription className="text-gray-300">Manage your product catalog</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow className="border-white/20">
-                  <TableHead className="text-gray-300">Name</TableHead>
-                  <TableHead className="text-gray-300">Category</TableHead>
-                  <TableHead className="text-gray-300">Price</TableHead>
-                  <TableHead className="text-gray-300">Stock</TableHead>
-                  <TableHead className="text-gray-300">Status</TableHead>
-                  <TableHead className="text-gray-300">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {products.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={6}
-                      className="text-center py-8 text-gray-400"
+                  <div className="flex gap-4 pt-6">
+                    <Button
+                      type="button"
+                      onClick={handleCloseDialog}
+                      variant="outline"
+                      className="flex-1 h-12 rounded-xl border-white/30 text-white hover:bg-white/10"
                     >
-                      No products found. Add your first product to get started.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  products.map((product) => (
-                    <TableRow key={product.id} className="border-white/20">
-                      <TableCell className="font-medium text-white">
-                        {product.name}
-                      </TableCell>
-                      <TableCell className="text-gray-300">{product.category}</TableCell>
-                      <TableCell className="text-white">₱{product.price.toFixed(2)}</TableCell>
-                      <TableCell className="text-gray-300">{product.stock}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            product.stock > 0 ? "default" : "destructive"
-                          }
-                          className={product.stock > 0 ? "bg-green-600" : "bg-red-600"}
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="flex-1 charnoks-gradient hover:opacity-90 text-white font-bold h-12 rounded-xl transition-all duration-300"
+                    >
+                      {editingProduct ? "Update Product" : "Add Product"}
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          {/* Products Grid/Table */}
+          <Card className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-slide-in-left rounded-2xl overflow-hidden">
+            <CardHeader className="bg-black/20 border-b border-white/20">
+              <CardTitle className="text-white text-2xl font-bold flex items-center gap-3">
+                <TrendingUp className="h-6 w-6 text-green-400" />
+                Product Inventory
+              </CardTitle>
+              <CardDescription className="text-gray-300 text-lg">
+                Manage your restaurant's menu items and stock levels
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              {products.length === 0 ? (
+                <div className="text-center py-16">
+                  <Package className="h-24 w-24 text-gray-500 mx-auto mb-6 opacity-50" />
+                  <h3 className="text-2xl font-bold text-white mb-4">No Products Yet</h3>
+                  <p className="text-gray-300 text-lg">
+                    Start building your menu by adding your first product
+                  </p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-white/20 hover:bg-white/5">
+                        <TableHead className="text-white font-bold text-lg">Name</TableHead>
+                        <TableHead className="text-white font-bold text-lg">Category</TableHead>
+                        <TableHead className="text-white font-bold text-lg">Price</TableHead>
+                        <TableHead className="text-white font-bold text-lg">Stock</TableHead>
+                        <TableHead className="text-white font-bold text-lg">Status</TableHead>
+                        <TableHead className="text-white font-bold text-lg">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {products.map((product) => (
+                        <TableRow
+                          key={product.id}
+                          className="border-white/10 hover:bg-white/5 transition-colors duration-200"
                         >
-                          {product.stock > 0 ? "In Stock" : "Out of Stock"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEdit(product)}
-                            className="border-white/20 text-white hover:bg-white/10"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDelete(product.id)}
-                            className="border-white/20 text-white hover:bg-white/10"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+                          <TableCell className="font-semibold text-white text-lg">
+                            {product.name}
+                          </TableCell>
+                          <TableCell className="text-gray-300 text-lg">
+                            {product.category}
+                          </TableCell>
+                          <TableCell className="font-bold text-green-400 text-lg">
+                            ₱{product.price.toFixed(2)}
+                          </TableCell>
+                          <TableCell className="text-white text-lg">
+                            {product.stock}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              className={`text-sm font-bold ${
+                                product.stock > 10
+                                  ? "bg-green-600 text-white"
+                                  : product.stock > 0
+                                  ? "bg-yellow-600 text-white"
+                                  : "bg-red-600 text-white"
+                              }`}
+                            >
+                              {product.stock > 10
+                                ? "In Stock"
+                                : product.stock > 0
+                                ? "Low Stock"
+                                : "Out of Stock"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex space-x-2">
+                              <Button
+                                onClick={() => handleEdit(product)}
+                                size="sm"
+                                className="bg-blue-600 hover:bg-blue-700 text-white"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                onClick={() => handleDelete(product.id)}
+                                size="sm"
+                                variant="destructive"
+                                className="bg-red-600 hover:bg-red-700"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </ResponsiveLayout>
+    </UniversalLayout>
   );
 };

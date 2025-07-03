@@ -52,14 +52,7 @@ export const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-red-500/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-orange-500/20 to-transparent rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/4 left-1/4 w-1/2 h-1/2 bg-gradient-to-r from-yellow-500/10 to-transparent rounded-full blur-2xl animate-pulse delay-500"></div>
-      </div>
-      
+    <div className="min-h-screen w-full galaxy-animated cosmic-overlay flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8 relative z-10">
         {/* Charnoks Logo Section */}
         <div className="text-center animate-bounce-in">

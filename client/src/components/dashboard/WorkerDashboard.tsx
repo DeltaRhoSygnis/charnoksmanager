@@ -169,7 +169,7 @@ export const WorkerDashboard = () => {
   };
 
   const MobileLayout = () => (
-    <div className="min-h-screen bg-gradient-to-br from-red-600 via-orange-500 to-yellow-400 animate-gradient-x relative">
+    <div className="min-h-screen w-full galaxy-animated cosmic-overlay relative">
       {/* Mobile Header */}
       <div className="bg-black/30 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
         <div className="px-4 py-4">

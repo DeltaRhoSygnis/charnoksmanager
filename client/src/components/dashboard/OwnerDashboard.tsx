@@ -282,9 +282,9 @@ export const OwnerDashboard = () => {
   };
 
   const MobileLayout = () => (
-    <div className="min-h-screen bg-gradient-to-br from-red-600 via-orange-500 to-yellow-400 animate-gradient-x">
+    <div className="min-h-screen w-full galaxy-animated cosmic-overlay">
       {/* Mobile Header */}
-      <div className="bg-black/30 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
+      <div className="bg-black/40 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 animate-slide-in-left">
@@ -459,19 +459,7 @@ export const OwnerDashboard = () => {
   );
 
   const DesktopLayout = () => (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 text-blue-300 opacity-10 animate-pulse">
-          <Stars size={32} />
-        </div>
-        <div className="absolute top-40 right-20 text-purple-300 opacity-15 animate-bounce">
-          <Sparkles size={24} />
-        </div>
-        <div className="absolute bottom-20 left-1/4 text-blue-400 opacity-10 animate-pulse">
-          <Stars size={28} />
-        </div>
-      </div>
+    <div className="min-h-screen w-full galaxy-animated cosmic-overlay">
 
       {/* Dashboard Header */}
       <div className="bg-white/10 backdrop-blur-xl border-b border-white/20 shadow-xl relative z-10">
