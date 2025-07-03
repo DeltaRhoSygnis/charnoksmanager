@@ -125,8 +125,13 @@ export const Analytics = () => {
       setTotalSales(totalSalesAmount);
       setTotalTransactions(totalTransactionsCount);
       setAverageOrder(avgOrder);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching analytics data:", error);
+      if (error.code === "permission-denied") {
+        console.warn(
+          "Firestore access denied. This might be due to database security rules.",
+        );
+      }
     }
   };
 
