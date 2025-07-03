@@ -14,7 +14,7 @@ import {
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
-import { AuthUser } from "@/types/auth";
+import { AuthUser } = "@/types/auth";
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -40,46 +40,67 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (firebaseUser) {
           console.log("Firebase user authenticated:", firebaseUser.uid);
 
+          // Initialize user with default owner role first
+          let userRole: 'owner' | 'worker' = 'owner';
+
           try {
-            // Try to get user data from Firestore with timeout
-            const userDoc = await Promise.race([
-              getDoc(doc(db, "users", firebaseUser.uid)),
-              new Promise((_, reject) =>
-                setTimeout(() => reject(new Error("Firestore timeout")), 5000),
-              ),
-            ]);
+            // Try to get user data from Firestore with extended timeout
+            const userDocPromise = getDoc(doc(db, "users", firebaseUser.uid));
+            const timeoutPromise = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error("Firestore timeout")), 8000)
+            );
+
+            const userDoc = await Promise.race([userDocPromise, timeoutPromise]);
             const userData = userDoc.data();
 
             console.log("User data from Firestore:", userData);
 
-            setUser({
-              uid: firebaseUser.uid,
-              email: firebaseUser.email || "",
-              role: userData?.role || "owner",
-            });
-            setError(null);
+            if (userData?.role) {
+              userRole = userData.role;
+              console.log("User role from Firestore:", userRole);
+            } else {
+              console.log("No role found in Firestore, checking localStorage backup");
+              
+              // Check if we have a backup role in localStorage
+              const backupRole = localStorage.getItem(`user_role_${firebaseUser.uid}`);
+              if (backupRole === 'worker' || backupRole === 'owner') {
+                userRole = backupRole as 'owner' | 'worker';
+                console.log("Using backup role from localStorage:", userRole);
+              }
+            }
           } catch (firestoreError: any) {
             console.error("Firestore error:", firestoreError);
-            // Set user with default role when Firestore is unavailable
-            setUser({
-              uid: firebaseUser.uid,
-              email: firebaseUser.email || "",
-              role: "owner",
-            });
+            
+            // Try to get role from localStorage as backup
+            const backupRole = localStorage.getItem(`user_role_${firebaseUser.uid}`);
+            if (backupRole === 'worker' || backupRole === 'owner') {
+              userRole = backupRole as 'owner' | 'worker';
+              console.log("Using backup role from localStorage due to Firestore error:", userRole);
+            } else {
+              console.warn("No backup role found, defaulting to owner");
+            }
 
             // Show helpful error message for network issues
             if (firestoreError.code === "permission-denied") {
               console.warn("Firestore access denied. Using offline mode.");
             } else if (
               firestoreError.message?.includes("network") ||
-              firestoreError.message?.includes("fetch")
+              firestoreError.message?.includes("fetch") ||
+              firestoreError.message?.includes("timeout")
             ) {
               console.warn("Network connectivity issue. Using offline mode.");
-            } else {
-              console.warn("Database access limited, using default settings");
             }
-            setError(null); // Don't show error to user, just log it
           }
+
+          // Store role in localStorage as backup
+          localStorage.setItem(`user_role_${firebaseUser.uid}`, userRole);
+
+          setUser({
+            uid: firebaseUser.uid,
+            email: firebaseUser.email || "",
+            role: userRole,
+          });
+          setError(null);
         } else {
           console.log("No Firebase user");
           setUser(null);
@@ -106,9 +127,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (email: string, password: string) => {
     try {
       setError(null);
+      setLoading(true);
       await signInWithEmailAndPassword(auth, email, password);
+      // Don't set loading to false here - let onAuthStateChanged handle it
     } catch (error: any) {
       console.error("Login error:", error);
+      setLoading(false);
       if (error.code === "auth/network-request-failed") {
         setError(
           "Network connection error. Please check your internet connection.",
@@ -143,9 +167,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setTimeout(() => reject(new Error("Firestore timeout")), 5000),
           ),
         ]);
+        
+        // Store role in localStorage as backup
+        localStorage.setItem(`user_role_${result.user.uid}`, 'owner');
       } catch (firestoreError: any) {
         console.error("Failed to save user data to Firestore:", firestoreError);
-        // Continue anyway - user is still registered
+        // Store role in localStorage as backup even if Firestore fails
+        localStorage.setItem(`user_role_${result.user.uid}`, 'owner');
+        
         if (firestoreError.code === "permission-denied") {
           console.warn(
             "Firestore write permission denied. User registered successfully but data not saved to database.",
@@ -210,8 +239,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           "Failed to save worker data to Firestore:",
           firestoreError,
         );
-        // Continue anyway - worker account is still created
       }
+
+      // Store worker role in localStorage as backup
+      localStorage.setItem(`user_role_${result.user.uid}`, 'worker');
 
       // Clean up temporary app
       await tempApp.delete();
@@ -225,6 +256,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = async () => {
     try {
       setError(null);
+      // Clear localStorage backup when logging out
+      if (user?.uid) {
+        localStorage.removeItem(`user_role_${user.uid}`);
+      }
       await signOut(auth);
     } catch (error: any) {
       console.error("Logout error:", error);
