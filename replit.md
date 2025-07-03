@@ -162,7 +162,38 @@ Changelog:
 - July 03, 2025. Fixed modal scrolling issues in product management forms
 - July 03, 2025. Enhanced error handling and offline fallback mechanisms
 
+## Deployment Guide
+
+### Vercel Deployment
+The system is configured for Vercel deployment with the following setup:
+
+1. **Framework Selection**: Choose "Other" or "Static Site" when deploying to Vercel
+2. **Build Configuration**: 
+   - Build Command: `npm run build:client`
+   - Output Directory: `client/dist`
+   - Install Command: `npm install`
+
+3. **Environment Variables Required**:
+   - `DATABASE_URL`: Your PostgreSQL database connection string
+   - `NODE_ENV`: Set to `production`
+
+4. **Files Created for Deployment**:
+   - `vercel.json`: Vercel configuration for routing and builds
+   - `build-vercel.js`: Custom build script for preparation
+
+5. **Deployment Steps**:
+   - Connect your repository to Vercel
+   - Set environment variables in Vercel dashboard
+   - Deploy (automatic builds will run)
+
+### Alternative: Next.js Deployment
+If you prefer Next.js framework:
+- Use the created `app/` directory structure
+- Change framework to Next.js in Vercel
+- Update scripts to use Next.js build system
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
 UI Design: Modern restaurant theme with Charnoks branding, animations, and professional appearance.
+Deployment: Vercel with current Express/React structure preferred.
