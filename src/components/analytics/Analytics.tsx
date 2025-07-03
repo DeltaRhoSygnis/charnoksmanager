@@ -1,11 +1,34 @@
-import { useState, useEffect } from 'react';
-import { collection, query, orderBy, getDocs, where } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
-import { CalendarDays, TrendingUp, DollarSign } from 'lucide-react';
-import { Sale } from '@/types/sales';
+import { useState, useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { collection, query, orderBy, getDocs, where } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+} from "recharts";
+import { CalendarDays, TrendingUp, DollarSign } from "lucide-react";
+import { Sale } from "@/types/sales";
 
 interface SaleData {
   date: string;
@@ -14,43 +37,53 @@ interface SaleData {
 }
 
 export const Analytics = () => {
+  const { user } = useAuth();
   const [salesData, setSalesData] = useState<SaleData[]>([]);
-  const [period, setPeriod] = useState('7'); // days
+  const [period, setPeriod] = useState("7"); // days
   const [totalSales, setTotalSales] = useState(0);
   const [totalTransactions, setTotalTransactions] = useState(0);
   const [averageOrder, setAverageOrder] = useState(0);
 
   useEffect(() => {
-    fetchAnalyticsData();
-  }, [period]);
+    if (user && user.uid) {
+      fetchAnalyticsData();
+    }
+  }, [period, user]);
 
   const fetchAnalyticsData = async () => {
+    if (!user || !user.uid) {
+      console.log("User not authenticated, skipping analytics data fetch");
+      return;
+    }
+
     try {
       const days = parseInt(period);
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - days);
 
       const salesQuery = query(
-        collection(db, 'sales'),
-        where('timestamp', '>=', startDate),
-        orderBy('timestamp', 'desc')
+        collection(db, "sales"),
+        where("timestamp", ">=", startDate),
+        orderBy("timestamp", "desc"),
       );
 
       const snapshot = await getDocs(salesQuery);
-      const sales: Sale[] = snapshot.docs.map(doc => {
+      const sales: Sale[] = snapshot.docs.map((doc) => {
         const data = doc.data();
         return {
           id: doc.id,
           items: data.items || [],
           total: data.total || 0,
-          timestamp: data.timestamp?.toDate() || new Date()
+          timestamp: data.timestamp?.toDate() || new Date(),
         };
       });
 
       // Group sales by date
-      const salesByDate: { [key: string]: { sales: number; transactions: number } } = {};
-      
-      sales.forEach(sale => {
+      const salesByDate: {
+        [key: string]: { sales: number; transactions: number };
+      } = {};
+
+      sales.forEach((sale) => {
         const dateKey = sale.timestamp.toDateString();
         if (!salesByDate[dateKey]) {
           salesByDate[dateKey] = { sales: 0, transactions: 0 };
@@ -62,25 +95,38 @@ export const Analytics = () => {
       // Convert to array format for charts
       const chartData = Object.entries(salesByDate)
         .map(([date, data]) => ({
-          date: new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+          date: new Date(date).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          }),
           sales: data.sales,
-          transactions: data.transactions
+          transactions: data.transactions,
         }))
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        .sort(
+          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+        );
 
       setSalesData(chartData);
 
       // Calculate totals
-      const totalSalesAmount = chartData.reduce((sum, day) => sum + day.sales, 0);
-      const totalTransactionsCount = chartData.reduce((sum, day) => sum + day.transactions, 0);
-      const avgOrder = totalTransactionsCount > 0 ? totalSalesAmount / totalTransactionsCount : 0;
+      const totalSalesAmount = chartData.reduce(
+        (sum, day) => sum + day.sales,
+        0,
+      );
+      const totalTransactionsCount = chartData.reduce(
+        (sum, day) => sum + day.transactions,
+        0,
+      );
+      const avgOrder =
+        totalTransactionsCount > 0
+          ? totalSalesAmount / totalTransactionsCount
+          : 0;
 
       setTotalSales(totalSalesAmount);
       setTotalTransactions(totalTransactionsCount);
       setAverageOrder(avgOrder);
-
     } catch (error) {
-      console.error('Error fetching analytics data:', error);
+      console.error("Error fetching analytics data:", error);
     }
   };
 
@@ -118,27 +164,29 @@ export const Analytics = () => {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Transactions</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Transactions
+              </CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalTransactions}</div>
-              <p className="text-xs text-muted-foreground">
-                Total orders
-              </p>
+              <p className="text-xs text-muted-foreground">Total orders</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Average Order</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Average Order
+              </CardTitle>
               <CalendarDays className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">₱{averageOrder.toFixed(2)}</div>
-              <p className="text-xs text-muted-foreground">
-                Per transaction
-              </p>
+              <div className="text-2xl font-bold">
+                ₱{averageOrder.toFixed(2)}
+              </div>
+              <p className="text-xs text-muted-foreground">Per transaction</p>
             </CardContent>
           </Card>
         </div>
@@ -156,7 +204,7 @@ export const Analytics = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
                   <YAxis />
-                  <Tooltip formatter={(value) => [`₱${value}`, 'Sales']} />
+                  <Tooltip formatter={(value) => [`₱${value}`, "Sales"]} />
                   <Bar dataKey="sales" fill="#3b82f6" />
                 </BarChart>
               </ResponsiveContainer>
@@ -174,8 +222,15 @@ export const Analytics = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
                   <YAxis />
-                  <Tooltip formatter={(value) => [`${value}`, 'Transactions']} />
-                  <Line type="monotone" dataKey="transactions" stroke="#10b981" strokeWidth={2} />
+                  <Tooltip
+                    formatter={(value) => [`${value}`, "Transactions"]}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="transactions"
+                    stroke="#10b981"
+                    strokeWidth={2}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
