@@ -1,3 +1,4 @@
+
 import {
   useState,
   useEffect,
@@ -14,7 +15,7 @@ import {
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
-import { AuthUser } = "@/types/auth";
+import { AuthUser } from "@/types/auth";
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -46,11 +47,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           try {
             // Try to get user data from Firestore with extended timeout
             const userDocPromise = getDoc(doc(db, "users", firebaseUser.uid));
-            const timeoutPromise = new Promise((_, reject) =>
+            const timeoutPromise = new Promise<never>((_, reject) =>
               setTimeout(() => reject(new Error("Firestore timeout")), 8000)
             );
 
-            const userDoc = await Promise.race([userDocPromise, timeoutPromise]);
+            const userDoc = await Promise.race([userDocPromise, timeoutPromise]) as any;
             const userData = userDoc.data();
 
             console.log("User data from Firestore:", userData);
@@ -163,7 +164,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             role: "owner",
             createdAt: new Date(),
           }),
-          new Promise((_, reject) =>
+          new Promise<never>((_, reject) =>
             setTimeout(() => reject(new Error("Firestore timeout")), 5000),
           ),
         ]);
