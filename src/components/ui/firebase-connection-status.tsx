@@ -45,8 +45,13 @@ export const FirebaseConnectionStatus = () => {
   };
 
   // Only show if in demo mode or offline
-  if (OfflineState.getOnlineStatus() && OfflineState.hasFirebaseAccess()) {
-    return null;
+  try {
+    if (OfflineState.getOnlineStatus() && OfflineState.hasFirebaseAccess()) {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error checking offline state:", error);
+    // Show connection status when there's an error
   }
 
   return (
