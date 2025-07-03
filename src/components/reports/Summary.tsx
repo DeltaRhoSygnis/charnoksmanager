@@ -1,14 +1,42 @@
-import { useState, useEffect } from 'react';
-import { collection, query, orderBy, getDocs, where } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Download, Calendar, TrendingUp, TrendingDown } from 'lucide-react';
-import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subWeeks, subMonths } from 'date-fns';
-import { Sale } from '@/types/sales';
+import { useState, useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { collection, query, orderBy, getDocs, where } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Download, Calendar, TrendingUp, TrendingDown } from "lucide-react";
+import {
+  format,
+  startOfWeek,
+  endOfWeek,
+  startOfMonth,
+  endOfMonth,
+  subWeeks,
+  subMonths,
+} from "date-fns";
+import { Sale } from "@/types/sales";
 
 interface SummaryData {
   period: string;
@@ -19,51 +47,62 @@ interface SummaryData {
 }
 
 export const Summary = () => {
+  const { user } = useAuth();
   const [summaryData, setSummaryData] = useState<SummaryData[]>([]);
-  const [period, setPeriod] = useState('weekly');
+  const [period, setPeriod] = useState("weekly");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    fetchSummaryData();
-  }, [period]);
+    if (user && user.uid) {
+      fetchSummaryData();
+    }
+  }, [period, user]);
 
   const fetchSummaryData = async () => {
+    if (!user || !user.uid) {
+      console.log("User not authenticated, skipping summary data fetch");
+      return;
+    }
+
     setIsLoading(true);
     try {
       const summaries: SummaryData[] = [];
-      const periods = period === 'weekly' ? 4 : 6; // 4 weeks or 6 months
+      const periods = period === "weekly" ? 4 : 6; // 4 weeks or 6 months
 
       for (let i = 0; i < periods; i++) {
         const { start, end, label } = getPeriodRange(i, period);
-        
+
         const salesQuery = query(
-          collection(db, 'sales'),
-          where('timestamp', '>=', start),
-          where('timestamp', '<=', end),
-          orderBy('timestamp', 'desc')
+          collection(db, "sales"),
+          where("timestamp", ">=", start),
+          where("timestamp", "<=", end),
+          orderBy("timestamp", "desc"),
         );
 
         const snapshot = await getDocs(salesQuery);
-        const sales: Sale[] = snapshot.docs.map(doc => {
+        const sales: Sale[] = snapshot.docs.map((doc) => {
           const data = doc.data();
           return {
             id: doc.id,
             items: data.items || [],
             total: data.total || 0,
-            timestamp: data.timestamp?.toDate() || new Date()
+            timestamp: data.timestamp?.toDate() || new Date(),
           };
         });
 
         const totalSales = sales.reduce((sum, sale) => sum + sale.total, 0);
         const totalTransactions = sales.length;
-        const averageOrder = totalTransactions > 0 ? totalSales / totalTransactions : 0;
+        const averageOrder =
+          totalTransactions > 0 ? totalSales / totalTransactions : 0;
 
         // Calculate top products
-        const productSales: { [key: string]: { quantity: number; revenue: number } } = {};
-        
-        sales.forEach(sale => {
+        const productSales: {
+          [key: string]: { quantity: number; revenue: number };
+        } = {};
+
+        sales.forEach((sale) => {
           if (sale.items && Array.isArray(sale.items)) {
-            sale.items.forEach(item => {
+            sale.items.forEach((item) => {
               if (!productSales[item.name]) {
                 productSales[item.name] = { quantity: 0, revenue: 0 };
               }
@@ -83,27 +122,27 @@ export const Summary = () => {
           sales: totalSales,
           transactions: totalTransactions,
           averageOrder,
-          topProducts
+          topProducts,
         });
       }
 
       setSummaryData(summaries);
     } catch (error) {
-      console.error('Error fetching summary data:', error);
+      console.error("Error fetching summary data:", error);
     }
     setIsLoading(false);
   };
 
   const getPeriodRange = (index: number, periodType: string) => {
     const now = new Date();
-    
-    if (periodType === 'weekly') {
+
+    if (periodType === "weekly") {
       const weekStart = startOfWeek(subWeeks(now, index));
       const weekEnd = endOfWeek(subWeeks(now, index));
       return {
         start: weekStart,
         end: weekEnd,
-        label: `Week of ${format(weekStart, 'MMM dd')}`
+        label: `Week of ${format(weekStart, "MMM dd")}`,
       };
     } else {
       const monthStart = startOfMonth(subMonths(now, index));
@@ -111,30 +150,30 @@ export const Summary = () => {
       return {
         start: monthStart,
         end: monthEnd,
-        label: format(monthStart, 'MMMM yyyy')
+        label: format(monthStart, "MMMM yyyy"),
       };
     }
   };
 
   const exportToCSV = () => {
-    const csvData = summaryData.map(data => ({
+    const csvData = summaryData.map((data) => ({
       Period: data.period,
       Sales: data.sales,
       Transactions: data.transactions,
-      'Average Order': data.averageOrder,
-      'Top Product': data.topProducts[0]?.name || 'N/A'
+      "Average Order": data.averageOrder,
+      "Top Product": data.topProducts[0]?.name || "N/A",
     }));
 
     const csvContent = [
-      Object.keys(csvData[0]).join(','),
-      ...csvData.map(row => Object.values(row).join(','))
-    ].join('\n');
+      Object.keys(csvData[0]).join(","),
+      ...csvData.map((row) => Object.values(row).join(",")),
+    ].join("\n");
 
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `sales-summary-${period}-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+    a.download = `sales-summary-${period}-${format(new Date(), "yyyy-MM-dd")}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -177,7 +216,8 @@ export const Summary = () => {
                         {data.period}
                       </CardTitle>
                       <CardDescription>
-                        {data.transactions} transactions • ₱{data.averageOrder.toFixed(2)} avg order
+                        {data.transactions} transactions • ₱
+                        {data.averageOrder.toFixed(2)} avg order
                       </CardDescription>
                     </div>
                     <div className="text-right">
@@ -192,7 +232,9 @@ export const Summary = () => {
                             ) : (
                               <TrendingDown className="h-4 w-4 text-red-500 mr-1" />
                             )}
-                            {data.sales > summaryData[index + 1].sales ? 'Increased' : 'Decreased'}
+                            {data.sales > summaryData[index + 1].sales
+                              ? "Increased"
+                              : "Decreased"}
                           </>
                         )}
                       </div>
@@ -202,33 +244,50 @@ export const Summary = () => {
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <h4 className="font-semibold mb-2">Performance Metrics</h4>
+                      <h4 className="font-semibold mb-2">
+                        Performance Metrics
+                      </h4>
                       <div className="space-y-2">
                         <div className="flex justify-between">
                           <span className="text-gray-600">Total Sales:</span>
-                          <span className="font-medium">₱{data.sales.toFixed(2)}</span>
+                          <span className="font-medium">
+                            ₱{data.sales.toFixed(2)}
+                          </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Transactions:</span>
-                          <span className="font-medium">{data.transactions}</span>
+                          <span className="font-medium">
+                            {data.transactions}
+                          </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Average Order:</span>
-                          <span className="font-medium">₱{data.averageOrder.toFixed(2)}</span>
+                          <span className="font-medium">
+                            ₱{data.averageOrder.toFixed(2)}
+                          </span>
                         </div>
                       </div>
                     </div>
-                    
+
                     <div>
                       <h4 className="font-semibold mb-2">Top Products</h4>
                       <div className="space-y-2">
                         {data.topProducts.length > 0 ? (
                           data.topProducts.map((product, idx) => (
-                            <div key={idx} className="flex justify-between items-center">
-                              <span className="text-gray-600">{product.name}</span>
+                            <div
+                              key={idx}
+                              className="flex justify-between items-center"
+                            >
+                              <span className="text-gray-600">
+                                {product.name}
+                              </span>
                               <div className="flex items-center space-x-2">
-                                <Badge variant="secondary">{product.quantity}</Badge>
-                                <span className="text-sm">₱{product.revenue.toFixed(2)}</span>
+                                <Badge variant="secondary">
+                                  {product.quantity}
+                                </Badge>
+                                <span className="text-sm">
+                                  ₱{product.revenue.toFixed(2)}
+                                </span>
                               </div>
                             </div>
                           ))
