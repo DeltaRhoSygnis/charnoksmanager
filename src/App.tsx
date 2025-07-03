@@ -21,14 +21,22 @@ import "./App.css";
 
 function App() {
   useEffect(() => {
-    // Test Firebase connectivity on app startup
-    FirebaseTest.initialize().then((hasAccess) => {
-      if (hasAccess) {
-        console.log("🎉 Firebase connected successfully!");
-      } else {
-        console.log("💾 Running in demo mode");
-      }
-    });
+    // Simple Firebase connectivity test on app startup
+    try {
+      console.log("🚀 Starting Charnoks POS...");
+
+      // Start with demo mode enabled for safety
+      LocalStorageDB.enableDemoMode();
+
+      // Test Firebase in background without blocking UI
+      FirebaseTest.initialize().catch((error) => {
+        console.log(
+          "💾 Running in demo mode due to Firebase connectivity issues",
+        );
+      });
+    } catch (error) {
+      console.error("Error during app initialization:", error);
+    }
   }, []);
 
   return (
