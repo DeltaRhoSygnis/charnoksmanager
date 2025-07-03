@@ -12,7 +12,7 @@ import { db } from "@/lib/firebase";
 import { OfflineState } from "@/lib/offlineState";
 import { LocalStorageDB } from "@/lib/localStorageDB";
 import { Button } from "@/components/ui/button";
-import { DemoModeIndicator } from "@/components/ui/demo-mode-indicator";
+import { FirebaseTestButton } from "@/components/ui/firebase-test-button";
 import { TransactionHistory } from "@/components/reports/TransactionHistory";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -281,7 +281,7 @@ export const OwnerDashboard = () => {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <DemoModeIndicator />
+          <FirebaseTestButton />
 
           <Tabs defaultValue="overview" className="space-y-6">
             <TabsList className="grid w-full grid-cols-2">
