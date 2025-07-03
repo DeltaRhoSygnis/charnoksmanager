@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -34,7 +35,6 @@ import {
   Sparkles,
   Stars,
 } from "lucide-react";
-import { format } from "date-fns";
 import { Sale } from "@/types/sales";
 import { CreateWorkerAccount } from "@/components/worker/CreateWorkerAccount";
 
@@ -268,6 +268,16 @@ export const OwnerDashboard = () => {
     }
   };
 
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
+  };
+
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-hidden">
@@ -485,10 +495,7 @@ export const OwnerDashboard = () => {
                                     `${transaction.items.length} item(s)`) ||
                                   "Transaction"}{" "}
                                 •{" "}
-                                {format(
-                                  transaction.timestamp,
-                                  "MMM dd, yyyy HH:mm",
-                                )}
+                                {formatDate(transaction.timestamp)}
                               </p>
                             </div>
                           </div>

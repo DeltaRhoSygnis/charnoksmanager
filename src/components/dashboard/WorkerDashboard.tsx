@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -19,7 +20,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Receipt, DollarSign, Package, Stars, Sparkles } from "lucide-react";
-import { format } from "date-fns";
 import { Link } from "react-router-dom";
 
 interface WorkerTransaction {
@@ -155,6 +155,16 @@ export const WorkerDashboard = () => {
         );
       }
     }
+  };
+
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
   };
 
   return (
@@ -324,7 +334,7 @@ export const WorkerDashboard = () => {
                               `${transaction.items.length} item(s)`) ||
                             "Transaction"}{" "}
                           •{" "}
-                          {format(transaction.timestamp, "MMM dd, yyyy HH:mm")}
+                          {formatDate(transaction.timestamp)}
                         </p>
                       </div>
                     </div>

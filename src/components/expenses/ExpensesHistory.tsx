@@ -5,7 +5,6 @@ import { db } from '@/lib/firebase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { format } from 'date-fns';
 import { Receipt, TrendingDown } from 'lucide-react';
 
 interface Expense {
@@ -49,6 +48,16 @@ export const ExpensesHistory = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
   };
 
   if (loading) {
@@ -102,7 +111,7 @@ export const ExpensesHistory = () => {
                   {expenses.map((expense) => (
                     <TableRow key={expense.id}>
                       <TableCell>
-                        {format(expense.timestamp, 'MMM dd, yyyy HH:mm')}
+                        {formatDate(expense.timestamp)}
                       </TableCell>
                       <TableCell>{expense.description}</TableCell>
                       <TableCell>

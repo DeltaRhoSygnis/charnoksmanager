@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -53,7 +54,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { format, startOfDay, endOfDay, isWithinInterval } from "date-fns";
 
 export const TransactionHistory = () => {
   const { user } = useAuth();
@@ -214,8 +214,10 @@ export const TransactionHistory = () => {
 
       switch (dateFilter) {
         case "today":
-          startDate = startOfDay(now);
-          endDate = endOfDay(now);
+          startDate = new Date(now);
+          startDate.setHours(0, 0, 0, 0);
+          endDate = new Date(now);
+          endDate.setHours(23, 59, 59, 999);
           break;
         case "week":
           startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -231,10 +233,7 @@ export const TransactionHistory = () => {
       }
 
       filtered = filtered.filter((transaction) =>
-        isWithinInterval(transaction.timestamp, {
-          start: startDate,
-          end: endDate,
-        }),
+        isWithinDateRange(transaction.timestamp, startDate, endDate),
       );
     }
 
@@ -247,6 +246,10 @@ export const TransactionHistory = () => {
 
     setFilteredTransactions(filtered);
     setCurrentPage(1); // Reset to first page when filters change
+  };
+
+  const isWithinDateRange = (date: Date, start: Date, end: Date) => {
+    return date >= start && date <= end;
   };
 
   const calculateStats = () => {
@@ -268,6 +271,40 @@ export const TransactionHistory = () => {
     });
   };
 
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(date);
+  };
+
+  const formatTime = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }).format(date);
+  };
+
+  const formatDateTime = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric'
+    }).format(date);
+  };
+
+  const formatFullDateTime = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
+  };
+
   const exportTransactions = () => {
     const csvContent = [
       // Header
@@ -285,8 +322,8 @@ export const TransactionHistory = () => {
       // Data
       ...filteredTransactions.map((transaction) =>
         [
-          format(transaction.timestamp, "yyyy-MM-dd"),
-          format(transaction.timestamp, "HH:mm:ss"),
+          formatDate(transaction.timestamp),
+          formatTime(transaction.timestamp),
           transaction.workerEmail,
           transaction.items
             .map((item) => `${item.quantity}x ${item.productName}`)
@@ -304,7 +341,7 @@ export const TransactionHistory = () => {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `transactions_${format(new Date(), "yyyy-MM-dd")}.csv`;
+    a.download = `transactions_${formatDate(new Date())}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
 
@@ -490,10 +527,10 @@ export const TransactionHistory = () => {
                     <TableCell>
                       <div className="text-sm">
                         <div className="font-medium">
-                          {format(transaction.timestamp, "MMM dd, yyyy")}
+                          {formatDateTime(transaction.timestamp)}
                         </div>
                         <div className="text-gray-500">
-                          {format(transaction.timestamp, "HH:mm:ss")}
+                          {formatTime(transaction.timestamp)}
                         </div>
                       </div>
                     </TableCell>

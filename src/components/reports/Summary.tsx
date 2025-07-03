@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { collection, query, orderBy, getDocs, where } from "firebase/firestore";
@@ -27,15 +28,6 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Download, Calendar, TrendingUp, TrendingDown } from "lucide-react";
-import {
-  format,
-  startOfWeek,
-  endOfWeek,
-  startOfMonth,
-  endOfMonth,
-  subWeeks,
-  subMonths,
-} from "date-fns";
 import { Sale } from "@/types/sales";
 
 interface SummaryData {
@@ -142,22 +134,55 @@ export const Summary = () => {
     const now = new Date();
 
     if (periodType === "weekly") {
-      const weekStart = startOfWeek(subWeeks(now, index));
-      const weekEnd = endOfWeek(subWeeks(now, index));
+      // Calculate week range manually
+      const daysToSubtract = index * 7;
+      const weekStart = new Date(now);
+      weekStart.setDate(now.getDate() - daysToSubtract - now.getDay());
+      weekStart.setHours(0, 0, 0, 0);
+      
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6);
+      weekEnd.setHours(23, 59, 59, 999);
+
       return {
         start: weekStart,
         end: weekEnd,
-        label: `Week of ${format(weekStart, "MMM dd")}`,
+        label: `Week of ${formatDateRange(weekStart)}`,
       };
     } else {
-      const monthStart = startOfMonth(subMonths(now, index));
-      const monthEnd = endOfMonth(subMonths(now, index));
+      // Calculate month range manually
+      const monthStart = new Date(now.getFullYear(), now.getMonth() - index, 1);
+      const monthEnd = new Date(now.getFullYear(), now.getMonth() - index + 1, 0);
+      monthEnd.setHours(23, 59, 59, 999);
+
       return {
         start: monthStart,
         end: monthEnd,
-        label: format(monthStart, "MMMM yyyy"),
+        label: formatMonthYear(monthStart),
       };
     }
+  };
+
+  const formatDateRange = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: '2-digit'
+    }).format(date);
+  };
+
+  const formatMonthYear = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'long',
+      year: 'numeric'
+    }).format(date);
+  };
+
+  const formatCurrentDate = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(date);
   };
 
   const exportToCSV = () => {
@@ -178,7 +203,7 @@ export const Summary = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `sales-summary-${period}-${format(new Date(), "yyyy-MM-dd")}.csv`;
+    a.download = `sales-summary-${period}-${formatCurrentDate(new Date())}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };

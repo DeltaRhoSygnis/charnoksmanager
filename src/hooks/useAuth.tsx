@@ -245,8 +245,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Store worker role in localStorage as backup
       localStorage.setItem(`user_role_${result.user.uid}`, 'worker');
 
-      // Clean up temporary app
-      await tempApp.delete();
+      // Clean up temporary app by signing out
+      await signOut(tempAuth);
     } catch (error: any) {
       console.error("Worker creation error:", error);
       setError(error.message || "Failed to create worker account");
