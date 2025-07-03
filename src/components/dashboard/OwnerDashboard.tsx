@@ -70,6 +70,23 @@ export const OwnerDashboard = () => {
       return;
     }
 
+    // Check Firebase access first to prevent fetch errors
+    if (!OfflineState.hasFirebaseAccess()) {
+      console.log("Using local storage transactions (Firebase disabled)");
+      const localTransactions = LocalStorageDB.getTransactions()
+        .slice(0, 10)
+        .map((t) => ({
+          id: t.id,
+          type: "sale" as const,
+          amount: t.totalAmount,
+          workerEmail: t.workerEmail,
+          items: t.items,
+          timestamp: t.timestamp,
+        }));
+      setTransactions(localTransactions);
+      return;
+    }
+
     try {
       if (OfflineState.hasFirebaseAccess()) {
         // Fetch recent sales
@@ -153,6 +170,19 @@ export const OwnerDashboard = () => {
   const calculateStats = async () => {
     if (!user || !user.uid) {
       console.log("User not authenticated, skipping stats calculation");
+      return;
+    }
+
+    // Check Firebase access first to prevent fetch errors
+    if (!OfflineState.hasFirebaseAccess()) {
+      console.log("Using local storage stats (Firebase disabled)");
+      const localStats = LocalStorageDB.calculateStats();
+      setStats({
+        totalSales: localStats.totalSales,
+        totalExpenses: localStats.totalExpenses,
+        totalWorkers: localStats.totalWorkers,
+        todaysRevenue: localStats.todaysRevenue,
+      });
       return;
     }
 
