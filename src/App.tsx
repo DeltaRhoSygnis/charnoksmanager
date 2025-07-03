@@ -21,19 +21,20 @@ import "./App.css";
 
 function App() {
   useEffect(() => {
-    // Simple Firebase connectivity test on app startup
+    // Initialize app in demo mode to avoid Firebase fetch errors
     try {
-      console.log("🚀 Starting Charnoks POS...");
+      console.log("🚀 Starting Charnoks POS in Demo Mode...");
 
-      // Start with demo mode enabled for safety
+      // Force demo mode for now to prevent Firebase fetch errors
       LocalStorageDB.enableDemoMode();
 
-      // Test Firebase in background without blocking UI
-      FirebaseTest.initialize().catch((error) => {
-        console.log(
-          "💾 Running in demo mode due to Firebase connectivity issues",
-        );
+      // Disable Firebase access to prevent automatic calls
+      import("@/lib/offlineState").then(({ OfflineState }) => {
+        OfflineState.setFirebaseAccess(false);
+        OfflineState.setOnlineStatus(false);
       });
+
+      console.log("💾 Running in demo mode with sample data");
     } catch (error) {
       console.error("Error during app initialization:", error);
     }
