@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,6 +21,7 @@ export const SalesHistory = () => {
   const [sales, setSales] = useState<Sale[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalRevenue, setTotalRevenue] = useState(0);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     fetchSales();
@@ -68,7 +70,63 @@ export const SalesHistory = () => {
     );
   }
 
-  return (
+  const MobileLayout = () => (
+    <div className="min-h-screen bg-gray-50 p-4 pb-20">
+      <div className="mb-4">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Sales History</h1>
+        <Badge variant="secondary" className="text-sm px-3 py-1">
+          <TrendingUp className="h-4 w-4 mr-1" />
+          Total: ₱{totalRevenue.toFixed(2)}
+        </Badge>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center text-lg">
+            <ShoppingCart className="h-5 w-5 mr-2" />
+            All Sales
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {sales.length === 0 ? (
+            <div className="text-center py-8">
+              <ShoppingCart className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-500">No sales recorded yet</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {sales.map((sale) => (
+                <div key={sale.id} className="border rounded-lg p-4 bg-white">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <p className="font-semibold text-green-600 text-lg">
+                        ₱{sale.total.toFixed(2)}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {formatDate(sale.timestamp)}
+                      </p>
+                    </div>
+                    <Badge variant="outline" className="text-xs">
+                      {sale.workerEmail}
+                    </Badge>
+                  </div>
+                  <div className="space-y-1">
+                    {sale.items.map((item, index) => (
+                      <div key={index} className="text-sm text-gray-600">
+                        {item.quantity}x {item.name} - ₱{item.total.toFixed(2)}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  const DesktopLayout = () => (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
@@ -137,4 +195,6 @@ export const SalesHistory = () => {
       </div>
     </div>
   );
+
+  return isMobile ? <MobileLayout /> : <DesktopLayout />;
 };

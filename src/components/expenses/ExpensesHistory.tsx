@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,6 +21,7 @@ export const ExpensesHistory = () => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalExpenses, setTotalExpenses] = useState(0);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     fetchExpenses();
@@ -68,7 +70,64 @@ export const ExpensesHistory = () => {
     );
   }
 
-  return (
+  const MobileLayout = () => (
+    <div className="min-h-screen bg-gray-50 p-4 pb-20">
+      <div className="mb-4">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Expenses History</h1>
+        <Badge variant="secondary" className="text-sm px-3 py-1">
+          <TrendingDown className="h-4 w-4 mr-1" />
+          Total: ₱{totalExpenses.toFixed(2)}
+        </Badge>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center text-lg">
+            <Receipt className="h-5 w-5 mr-2" />
+            All Expenses
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {expenses.length === 0 ? (
+            <div className="text-center py-8">
+              <Receipt className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-500">No expenses recorded yet</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {expenses.map((expense) => (
+                <div key={expense.id} className="border rounded-lg p-4 bg-white">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <p className="font-semibold text-red-600 text-lg">
+                        ₱{expense.amount.toFixed(2)}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {formatDate(expense.timestamp)}
+                      </p>
+                    </div>
+                    <Badge variant="outline" className="text-xs">
+                      {expense.category}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-gray-700 mb-2">{expense.description}</p>
+                  {expense.workerEmail ? (
+                    <Badge variant="secondary" className="text-xs">
+                      {expense.workerEmail}
+                    </Badge>
+                  ) : (
+                    <span className="text-xs text-gray-500">Owner</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  const DesktopLayout = () => (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
@@ -137,4 +196,6 @@ export const ExpensesHistory = () => {
       </div>
     </div>
   );
+
+  return isMobile ? <MobileLayout /> : <DesktopLayout />;
 };

@@ -1,7 +1,10 @@
+
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { MobileNavigation } from "./MobileNavigation";
 import {
   Home,
   Package,
@@ -16,6 +19,7 @@ import {
 export const Navigation = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const isMobile = useIsMobile();
 
   const ownerNavItems = [
     { path: "/dashboard", label: "Dashboard", icon: Home },
@@ -35,6 +39,10 @@ export const Navigation = () => {
 
   const navItems = user?.role === "owner" ? ownerNavItems : workerNavItems;
   const isActive = (path: string) => location.pathname === path;
+
+  if (isMobile) {
+    return <MobileNavigation />;
+  }
 
   return (
     <nav className="bg-white/90 backdrop-blur-md shadow-lg border-b border-orange-100">

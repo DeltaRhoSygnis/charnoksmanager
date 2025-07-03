@@ -1,6 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   collection,
   query,
@@ -33,6 +33,7 @@ interface WorkerTransaction {
 
 export const WorkerDashboard = () => {
   const { user, logout } = useAuth();
+  const isMobile = useIsMobile();
   const [transactions, setTransactions] = useState<WorkerTransaction[]>([]);
   const [stats, setStats] = useState({
     todaySales: 0,
@@ -167,7 +168,133 @@ export const WorkerDashboard = () => {
     }).format(date);
   };
 
-  return (
+  const MobileLayout = () => (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative">
+      {/* Mobile Header */}
+      <div className="bg-white/10 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
+        <div className="px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <img 
+                src="/lovable-uploads/389a9fc0-9ada-493a-a167-71ea82a7aabb.png" 
+                alt="Charnoks" 
+                className="h-8 w-8 object-contain"
+              />
+              <div>
+                <h2 className="text-lg font-bold text-white">Charnoks POS</h2>
+                <p className="text-xs text-blue-200">Worker Station</p>
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={logout}
+              className="text-white hover:bg-white/10"
+            >
+              Logout
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div className="p-4 space-y-4">
+        {/* Mobile Quick Actions */}
+        <div className="grid grid-cols-2 gap-3">
+          <Link to="/sales">
+            <Card className="bg-gradient-to-br from-emerald-500 to-green-600 text-white border-0 h-24">
+              <CardContent className="p-4 flex items-center justify-center">
+                <div className="text-center">
+                  <ShoppingCart className="h-8 w-8 mx-auto mb-1" />
+                  <p className="text-sm font-medium">Record Sale</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/expenses">
+            <Card className="bg-gradient-to-br from-orange-500 to-red-500 text-white border-0 h-24">
+              <CardContent className="p-4 flex items-center justify-center">
+                <div className="text-center">
+                  <Receipt className="h-8 w-8 mx-auto mb-1" />
+                  <p className="text-sm font-medium">Record Expense</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+
+        {/* Mobile Stats */}
+        <div className="grid grid-cols-1 gap-3">
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20 text-white">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-blue-200">Today's Sales</p>
+                  <p className="text-2xl font-bold text-green-400">₱{stats.todaySales.toLocaleString()}</p>
+                </div>
+                <DollarSign className="h-8 w-8 text-green-400" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20 text-white">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-blue-200">Today's Expenses</p>
+                  <p className="text-2xl font-bold text-red-400">₱{stats.todayExpenses.toLocaleString()}</p>
+                </div>
+                <Receipt className="h-8 w-8 text-red-400" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Mobile Recent Transactions */}
+        <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg text-white flex items-center">
+              <Receipt className="h-5 w-5 mr-2 text-blue-400" />
+              Recent Activity
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {transactions.length === 0 ? (
+              <div className="text-center py-8">
+                <Package className="h-12 w-12 text-blue-300 mx-auto mb-2 opacity-50" />
+                <p className="text-blue-200">No transactions yet</p>
+              </div>
+            ) : (
+              transactions.slice(0, 5).map((transaction) => (
+                <div
+                  key={transaction.id}
+                  className="flex items-center justify-between p-3 bg-white/5 rounded-lg"
+                >
+                  <div className="flex-1">
+                    <p className="font-medium text-white text-sm">
+                      {transaction.type === "sale" ? "Sale" : "Expense"}
+                    </p>
+                    <p className="text-xs text-blue-200">
+                      {formatDate(transaction.timestamp)}
+                    </p>
+                  </div>
+                  <p
+                    className={`font-bold ${
+                      transaction.type === "sale" ? "text-green-400" : "text-red-400"
+                    }`}
+                  >
+                    {transaction.type === "sale" ? "+" : "-"}₱{transaction.amount.toLocaleString()}
+                  </p>
+                </div>
+              ))
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+
+  const DesktopLayout = () => (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -371,4 +498,6 @@ export const WorkerDashboard = () => {
       </div>
     </div>
   );
+
+  return isMobile ? <MobileLayout /> : <DesktopLayout />;
 };
