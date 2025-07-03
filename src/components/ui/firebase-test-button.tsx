@@ -96,7 +96,7 @@ export const FirebaseTestButton = () => {
             disabled={isTesting}
             className="ml-4 border-yellow-300 text-yellow-800 hover:bg-yellow-100"
           >
-            {isIsTesting ? (
+            {isTesting ? (
               <>
                 <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
                 Testing...
