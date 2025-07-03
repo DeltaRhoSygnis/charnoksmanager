@@ -12,6 +12,8 @@ import { db } from "@/lib/firebase";
 import { OfflineState } from "@/lib/offlineState";
 import { Button } from "@/components/ui/button";
 import { OfflineIndicator } from "@/components/ui/offline-indicator";
+import { TransactionHistory } from "@/components/reports/TransactionHistory";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
   CardContent,
