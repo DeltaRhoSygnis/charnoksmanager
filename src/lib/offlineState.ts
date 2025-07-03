@@ -4,7 +4,7 @@ import { LocalStorageDB } from "./localStorageDB";
 export class OfflineState {
   private static isOnline = true;
   private static listeners: ((isOnline: boolean) => void)[] = [];
-  private static hasFirebaseAccess = true;
+  private static firebaseAccessible = true;
 
   static setOnlineStatus(online: boolean) {
     this.isOnline = online;
@@ -16,7 +16,7 @@ export class OfflineState {
   }
 
   static setFirebaseAccess(hasAccess: boolean) {
-    this.hasFirebaseAccess = hasAccess;
+    this.firebaseAccessible = hasAccess;
     if (!hasAccess) {
       this.setOnlineStatus(false);
       // Enable demo mode when Firebase is not accessible
@@ -25,7 +25,7 @@ export class OfflineState {
   }
 
   static hasFirebaseAccess() {
-    return this.hasFirebaseAccess;
+    return this.firebaseAccessible;
   }
 
   static addListener(listener: (isOnline: boolean) => void) {
