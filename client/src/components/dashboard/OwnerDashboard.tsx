@@ -38,6 +38,7 @@ import {
 } from "lucide-react";
 import { Sale } from "@/types/sales";
 import { CreateWorkerAccount } from "@/components/worker/CreateWorkerAccount";
+import charnofsLogo from "@assets/IMG_20250703_110727_1751555868705.png";
 
 interface Transaction {
   id: string;
@@ -141,22 +142,8 @@ export const OwnerDashboard = () => {
 
         setTransactions(allTransactions);
       } else {
-        // Use local storage transactions
-        const localTransactions = LocalStorageDB.getTransactions()
-          .slice(0, 10)
-          .map((t) => ({
-            id: t.id,
-            type: "sale" as const,
-            amount: t.totalAmount,
-            workerEmail: t.workerEmail,
-            items: t.items.map(item => ({
-              name: item.productName,
-              quantity: item.quantity,
-              price: item.price
-            })),
-            timestamp: t.timestamp,
-          }));
-        setTransactions(localTransactions);
+        // Firebase not available - no transactions to show
+        setTransactions([]);
       }
     } catch (error: any) {
       console.error("Error fetching transactions:", error);
@@ -244,26 +231,24 @@ export const OwnerDashboard = () => {
           todaysRevenue,
         });
       } else {
-        // Use local storage stats
-        const localStats = LocalStorageDB.calculateStats();
+        // Firebase not available - show zero stats
         setStats({
-          totalSales: localStats.totalSales,
-          totalExpenses: localStats.totalExpenses,
-          totalWorkers: localStats.totalWorkers,
-          todaysRevenue: localStats.todaysRevenue,
+          totalSales: 0,
+          totalExpenses: 0,
+          totalWorkers: 0,
+          todaysRevenue: 0,
         });
       }
     } catch (error: any) {
       console.error("Error calculating stats:", error);
 
       if (OfflineState.isNetworkError(error)) {
-        // Fallback to local storage stats
-        const localStats = LocalStorageDB.calculateStats();
+        // Firebase error - show zero stats
         setStats({
-          totalSales: localStats.totalSales,
-          totalExpenses: localStats.totalExpenses,
-          totalWorkers: localStats.totalWorkers,
-          todaysRevenue: localStats.todaysRevenue,
+          totalSales: 0,
+          totalExpenses: 0,
+          totalWorkers: 0,
+          todaysRevenue: 0,
         });
       } else {
         console.error("Unexpected error:", error);
@@ -290,8 +275,8 @@ export const OwnerDashboard = () => {
             <div className="flex items-center space-x-3 animate-slide-in-left">
               <div className="w-12 h-12 bg-black/20 rounded-2xl p-2 border border-white/20">
                 <img 
-                  src="/src/assets/389a9fc0-9ada-493a-a167-71ea82a7aabb_1751553002348.png" 
-                  alt="Charnoks" 
+                  src={charnofsLogo} 
+                  alt="Charnoks Special Fried Chicken" 
                   className="w-full h-full object-contain"
                 />
               </div>

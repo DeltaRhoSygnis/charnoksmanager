@@ -32,7 +32,6 @@ export const Navigation = () => {
 
   const workerNavItems = [
     { path: "/dashboard", label: "Dashboard", icon: Home },
-    { path: "/products", label: "Products", icon: Package },
     { path: "/sales", label: "Sales", icon: ShoppingCart },
     { path: "/expenses", label: "Expenses", icon: Receipt },
   ];

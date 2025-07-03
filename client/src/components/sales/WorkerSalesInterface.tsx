@@ -14,7 +14,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "@/hooks/use-toast";
 import { QuickSaleModal } from "./QuickSaleModal";
 import { VoiceInputModal } from "./VoiceInputModal";
-import { DemoModeIndicator } from "@/components/ui/demo-mode-indicator";
 import {
   Search,
   Mic,
@@ -54,44 +53,22 @@ export const WorkerSalesInterface = () => {
       return;
     }
 
-    // Check Firebase access first to prevent fetch errors
-    if (!OfflineState.hasFirebaseAccess()) {
-      console.log("Using local storage products (Firebase disabled)");
-      const localProducts = LocalStorageDB.getProducts();
-      const activeProducts = localProducts.filter((p) => p.isActive);
-      setProducts(activeProducts);
-      setIsLoading(false);
-      return;
-    }
-
-    // Try Firebase if access is enabled
     try {
-      if (OfflineState.hasFirebaseAccess()) {
-        const snapshot = await getDocs(collection(db, "products"));
-        const productsData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-          createdAt: doc.data().createdAt?.toDate() || new Date(),
-          updatedAt: doc.data().updatedAt?.toDate() || new Date(),
-          isActive: doc.data().isActive !== false, // Default to true if not specified
-        })) as Product[];
+      const snapshot = await getDocs(collection(db, "products"));
+      const productsData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate() || new Date(),
+        updatedAt: doc.data().updatedAt?.toDate() || new Date(),
+        isActive: doc.data().isActive !== false, // Default to true if not specified
+      })) as Product[];
 
-        const activeProducts = productsData.filter((p) => p.isActive);
-        setProducts(activeProducts);
-      } else {
-        // Use local storage data
-        const localProducts = LocalStorageDB.getProducts();
-        const activeProducts = localProducts.filter((p) => p.isActive);
-        setProducts(activeProducts);
-      }
+      const activeProducts = productsData.filter((p) => p.isActive);
+      setProducts(activeProducts);
     } catch (error: any) {
       console.error("Error fetching products:", error);
-      if (OfflineState.isNetworkError(error)) {
-        // Fallback to local storage
-        const localProducts = LocalStorageDB.getProducts();
-        const activeProducts = localProducts.filter((p) => p.isActive);
-        setProducts(activeProducts);
-      }
+      // Show empty products list on error
+      setProducts([]);
     } finally {
       setIsLoading(false);
     }
@@ -162,7 +139,6 @@ export const WorkerSalesInterface = () => {
 
   return (
     <div className="space-y-6">
-      <DemoModeIndicator />
 
       {/* Header with Search and Actions */}
       <div className="space-y-4">

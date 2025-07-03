@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Receipt, DollarSign, Package, Stars, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
+import charnofsLogo from "@assets/IMG_20250703_110727_1751555868705.png";
 
 interface WorkerTransaction {
   id: string;
@@ -177,8 +178,8 @@ export const WorkerDashboard = () => {
             <div className="flex items-center space-x-3 animate-slide-in-left">
               <div className="w-12 h-12 bg-black/20 rounded-2xl p-2 border border-white/20">
                 <img 
-                  src="/src/assets/389a9fc0-9ada-493a-a167-71ea82a7aabb_1751553002348.png" 
-                  alt="Charnoks" 
+                  src={charnofsLogo} 
+                  alt="Charnoks Special Fried Chicken" 
                   className="w-full h-full object-contain"
                 />
               </div>

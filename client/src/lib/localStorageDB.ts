@@ -318,7 +318,4 @@ export class LocalStorageDB {
   }
 }
 
-// Auto-enable demo mode if not already set
-if (typeof window !== "undefined" && !LocalStorageDB.isDemoMode()) {
-  LocalStorageDB.enableDemoMode();
-}
+// Note: Demo mode removed - app now uses Firebase directly

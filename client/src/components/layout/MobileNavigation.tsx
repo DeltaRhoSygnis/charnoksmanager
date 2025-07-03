@@ -26,7 +26,6 @@ export const MobileNavigation = () => {
 
   const workerNavItems = [
     { path: "/dashboard", label: "Home", icon: Home },
-    { path: "/products", label: "Products", icon: Package },
     { path: "/sales", label: "Sales", icon: ShoppingCart },
     { path: "/expenses", label: "Expenses", icon: Receipt },
     { path: "/settings", label: "Settings", icon: Settings },

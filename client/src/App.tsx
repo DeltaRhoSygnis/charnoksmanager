@@ -23,22 +23,15 @@ import "./App.css";
 
 function App() {
   useEffect(() => {
-    // Initialize app in demo mode to avoid Firebase fetch errors
+    // Initialize Firebase connection testing
     try {
-      console.log("🚀 Starting Charnoks POS in Demo Mode...");
-
-      // Force demo mode for now to prevent Firebase fetch errors
-      import("@/lib/localStorageDB").then(({ LocalStorageDB }) => {
-        LocalStorageDB.enableDemoMode();
+      console.log("🚀 Starting Charnoks POS...");
+      
+      // Test Firebase access on app start
+      import("@/lib/firebaseTest").then(({ FirebaseTest }) => {
+        FirebaseTest.initialize();
       });
-
-      // Disable Firebase access to prevent automatic calls
-      import("@/lib/offlineState").then(({ OfflineState }) => {
-        OfflineState.setFirebaseAccess(false);
-        OfflineState.setOnlineStatus(false);
-      });
-
-      console.log("💾 Running in demo mode with sample data");
+      
     } catch (error) {
       console.error("Error during app initialization:", error);
     }
