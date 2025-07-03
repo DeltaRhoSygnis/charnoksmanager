@@ -11,6 +11,7 @@ import {
 import { db } from "@/lib/firebase";
 import { OfflineState } from "@/lib/offlineState";
 import { Button } from "@/components/ui/button";
+import { OfflineIndicator } from "@/components/ui/offline-indicator";
 import {
   Card,
   CardContent,
@@ -214,6 +215,7 @@ export const OwnerDashboard = () => {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <OfflineIndicator />
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <Card className="bg-gradient-to-br from-emerald-500 to-green-600 text-white border-0 shadow-xl hover:shadow-2xl transition-shadow">
