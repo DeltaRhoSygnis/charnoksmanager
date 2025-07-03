@@ -14,7 +14,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "@/hooks/use-toast";
 import { QuickSaleModal } from "./QuickSaleModal";
 import { VoiceInputModal } from "./VoiceInputModal";
-import { OfflineIndicator } from "@/components/ui/offline-indicator";
+import { DemoModeIndicator } from "@/components/ui/demo-mode-indicator";
 import {
   Search,
   Mic,
@@ -162,7 +162,7 @@ export const WorkerSalesInterface = () => {
 
   return (
     <div className="space-y-6">
-      <OfflineIndicator />
+      <DemoModeIndicator />
 
       {/* Header with Search and Actions */}
       <div className="space-y-4">
