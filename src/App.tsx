@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -6,6 +7,7 @@ import {
 } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { FirebaseTest } from "@/lib/firebaseTest";
 import { Login } from "@/components/auth/Login";
 import { Register } from "@/components/auth/Register";
 import { Dashboard } from "@/components/dashboard/Dashboard";
@@ -18,6 +20,17 @@ import { Toaster } from "@/components/ui/toaster";
 import "./App.css";
 
 function App() {
+  useEffect(() => {
+    // Test Firebase connectivity on app startup
+    FirebaseTest.initialize().then((hasAccess) => {
+      if (hasAccess) {
+        console.log("🎉 Firebase connected successfully!");
+      } else {
+        console.log("💾 Running in demo mode");
+      }
+    });
+  }, []);
+
   return (
     <AuthProvider>
       <Router>
