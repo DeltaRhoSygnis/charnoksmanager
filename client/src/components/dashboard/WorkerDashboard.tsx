@@ -54,12 +54,11 @@ export const WorkerDashboard = () => {
     }
 
     try {
-      // Fetch worker's sales
+      // Fetch worker's sales - using simple query without composite indexes
       const salesQuery = query(
         collection(db, "sales"),
         where("workerEmail", "==", user.email),
-        orderBy("timestamp", "desc"),
-        limit(10),
+        limit(20),
       );
       const salesSnapshot = await getDocs(salesQuery);
       const sales = salesSnapshot.docs.map((doc) => {
@@ -67,18 +66,17 @@ export const WorkerDashboard = () => {
         return {
           id: doc.id,
           type: "sale" as const,
-          amount: data.total,
+          amount: data.total || data.totalAmount || 0,
           items: data.items,
           timestamp: data.timestamp?.toDate() || new Date(),
         };
       });
 
-      // Fetch worker's expenses
+      // Fetch worker's expenses - using simple query without composite indexes
       const expensesQuery = query(
         collection(db, "expenses"),
         where("workerEmail", "==", user.email),
-        orderBy("timestamp", "desc"),
-        limit(10),
+        limit(20),
       );
       const expensesSnapshot = await getDocs(expensesQuery);
       const expenses = expensesSnapshot.docs.map((doc) => {
@@ -86,12 +84,13 @@ export const WorkerDashboard = () => {
         return {
           id: doc.id,
           type: "expense" as const,
-          amount: data.amount,
+          amount: data.amount || 0,
           description: data.description,
           timestamp: data.timestamp?.toDate() || new Date(),
         };
       });
 
+      // Sort and limit on client side to avoid needing composite indexes
       const allTransactions = [...sales, ...expenses]
         .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
         .slice(0, 10);
@@ -117,45 +116,57 @@ export const WorkerDashboard = () => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      // Calculate today's sales
+      // Calculate today's sales using simpler query
       const salesQuery = query(
         collection(db, "sales"),
         where("workerEmail", "==", user.email),
-        where("timestamp", ">=", today),
       );
       const salesSnapshot = await getDocs(salesQuery);
-      const todaySales = salesSnapshot.docs.reduce(
-        (sum, doc) => sum + (doc.data().total || 0),
-        0,
-      );
+      
+      let todaySales = 0;
+      let todayTransactionCount = 0;
+      
+      salesSnapshot.docs.forEach(doc => {
+        const data = doc.data();
+        const timestamp = data.timestamp?.toDate() || new Date();
+        if (timestamp >= today) {
+          todaySales += data.total || data.totalAmount || 0;
+          todayTransactionCount++;
+        }
+      });
 
-      // Calculate today's expenses
+      // Calculate today's expenses using simpler query
       const expensesQuery = query(
         collection(db, "expenses"),
         where("workerEmail", "==", user.email),
-        where("timestamp", ">=", today),
       );
       const expensesSnapshot = await getDocs(expensesQuery);
-      const todayExpenses = expensesSnapshot.docs.reduce(
-        (sum, doc) => sum + (doc.data().amount || 0),
-        0,
-      );
-
-      // Total transactions count
-      const totalTransactions = salesSnapshot.size + expensesSnapshot.size;
+      
+      let todayExpenses = 0;
+      let todayExpenseCount = 0;
+      
+      expensesSnapshot.docs.forEach(doc => {
+        const data = doc.data();
+        const timestamp = data.timestamp?.toDate() || new Date();
+        if (timestamp >= today) {
+          todayExpenses += data.amount || 0;
+          todayExpenseCount++;
+        }
+      });
 
       setStats({
         todaySales,
         todayExpenses,
-        totalTransactions,
+        totalTransactions: todayTransactionCount + todayExpenseCount,
       });
     } catch (error: any) {
       console.error("Error calculating worker stats:", error);
-      if (error.code === "permission-denied") {
-        console.warn(
-          "Firestore access denied. This might be due to database security rules.",
-        );
-      }
+      // Set default stats on error
+      setStats({
+        todaySales: 0,
+        todayExpenses: 0,
+        totalTransactions: 0,
+      });
     }
   };
 

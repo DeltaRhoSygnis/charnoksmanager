@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { collection, addDoc, getDocs, query, orderBy, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/hooks/useAuth';
+import { LocalStorageDB } from '@/lib/localStorageDB';
+import { OfflineState } from '@/lib/offlineState';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -81,26 +83,23 @@ export const RecordExpense = () => {
   }, [user]);
 
   const fetchExpenses = async () => {
+    if (!user) return;
+    
     try {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       
+      // Use simpler query to avoid index requirements
       let expensesQuery;
       
       if (user?.role === 'owner') {
-        // Owner sees all expenses
-        expensesQuery = query(
-          collection(db, 'expenses'),
-          where('timestamp', '>=', today),
-          orderBy('timestamp', 'desc')
-        );
+        // Owner sees all expenses (simple query)
+        expensesQuery = query(collection(db, 'expenses'));
       } else {
-        // Worker sees only their expenses
+        // Worker sees only their expenses (simple query)
         expensesQuery = query(
           collection(db, 'expenses'),
-          where('workerEmail', '==', user?.email),
-          where('timestamp', '>=', today),
-          orderBy('timestamp', 'desc')
+          where('workerEmail', '==', user?.email)
         );
       }
       
@@ -118,21 +117,33 @@ export const RecordExpense = () => {
         };
       }) as Expense[];
       
-      setExpenses(expensesData);
+      // Filter for today's expenses on client side
+      const todayExpenses = expensesData.filter(expense => {
+        return expense.timestamp >= today;
+      });
       
-      const total = expensesData.reduce((sum, expense) => sum + expense.amount, 0);
+      // Sort by timestamp descending
+      todayExpenses.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+      
+      setExpenses(todayExpenses);
+      
+      const total = todayExpenses.reduce((sum, expense) => sum + expense.amount, 0);
       setTotalExpenses(total);
     } catch (error) {
       console.error('Error fetching expenses:', error);
+      setExpenses([]);
+      setTotalExpenses(0);
       toast({
         title: "Error",
-        description: "Failed to fetch expenses",
+        description: "Failed to fetch expenses. Using offline mode.",
         variant: "destructive",
       });
     }
   };
 
   const onSubmit = async (data: ExpenseFormData) => {
+    if (!user) return;
+    
     setIsLoading(true);
     try {
       const expenseData = {
@@ -142,12 +153,33 @@ export const RecordExpense = () => {
         workerId: user?.uid,
       };
 
-      await addDoc(collection(db, 'expenses'), expenseData);
-      
-      toast({
-        title: "Success",
-        description: "Expense recorded successfully",
-      });
+      if (OfflineState.hasFirebaseAccess()) {
+        await addDoc(collection(db, 'expenses'), expenseData);
+        toast({
+          title: "Success",
+          description: "Expense recorded successfully",
+        });
+      } else {
+        // Fallback to local storage
+        LocalStorageDB.addTransaction({
+          id: Date.now().toString(),
+          items: [],
+          totalAmount: data.amount,
+          amountPaid: data.amount,
+          change: 0,
+          paymentMethod: "cash",
+          workerId: user.uid,
+          workerEmail: user.email,
+          timestamp: new Date(),
+          isVoiceTransaction: false,
+          status: "completed",
+        } as any);
+        
+        toast({
+          title: "Success (Offline)",
+          description: "Expense recorded locally",
+        });
+      }
 
       reset();
       fetchExpenses();
@@ -155,7 +187,7 @@ export const RecordExpense = () => {
       console.error('Error recording expense:', error);
       toast({
         title: "Error",
-        description: "Failed to record expense",
+        description: "Failed to record expense. Please try again.",
         variant: "destructive",
       });
     }

@@ -19,6 +19,12 @@ export class LocalStorageDB {
     return localStorage.getItem(this.KEYS.DEMO_MODE) === "true";
   }
 
+  // Disable demo mode and clear demo data
+  static disableDemoMode() {
+    localStorage.removeItem(this.KEYS.DEMO_MODE);
+    this.clearDemoData();
+  }
+
   // Initialize with sample data for demo
   private static initializeDemoData() {
     // Sample products

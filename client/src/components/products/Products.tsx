@@ -187,7 +187,7 @@ export const Products = () => {
                   Add New Product
                 </Button>
               </DialogTrigger>
-              <DialogContent className="bg-black/80 backdrop-blur-xl border-white/20 rounded-2xl max-w-2xl">
+              <DialogContent className="bg-black/80 backdrop-blur-xl border-white/20 rounded-2xl max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader className="space-y-4">
                   <DialogTitle className="text-white text-2xl font-bold flex items-center gap-3">
                     <Star className="h-6 w-6 text-yellow-400" />

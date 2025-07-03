@@ -58,24 +58,24 @@ export const Login = () => {
         <div className="text-center animate-bounce-in">
           <div className="flex justify-center mb-6">
             <div className="relative">
-              <div className="w-40 h-40 bg-black/20 rounded-3xl p-3 shadow-2xl border border-white/20 backdrop-blur-sm">
+              <div className="w-48 h-48 rounded-3xl p-4 shadow-2xl">
                 <img 
                   src={charnoksLogo} 
                   alt="Charnoks - Special Fried Chicken" 
-                  className="w-full h-full object-contain animate-pulse-glow"
+                  className="w-full h-full object-contain animate-pulse-glow drop-shadow-2xl"
                 />
               </div>
-              <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-orange-500/20 rounded-3xl blur-lg"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-red-500/30 to-orange-500/30 rounded-3xl blur-xl"></div>
             </div>
           </div>
           <h1 className="text-6xl font-bold charnoks-text mb-2 animate-slide-in-left">
             Charnoks
           </h1>
-          <h2 className="text-2xl font-semibold text-white mb-2 animate-slide-in-right">
+          <h2 className="text-2xl font-bold text-white drop-shadow-lg mb-2 animate-slide-in-right">
             Point of Sale System
           </h2>
-          <p className="text-gray-200 font-medium flex items-center justify-center gap-2">
-            <ChefHat className="h-5 w-5" />
+          <p className="text-white font-bold drop-shadow-md flex items-center justify-center gap-2">
+            <ChefHat className="h-5 w-5 text-orange-300" />
             Special Fried Chicken & More
           </p>
         </div>
@@ -85,11 +85,11 @@ export const Login = () => {
           <div className="absolute inset-x-0 top-0 h-1 charnoks-gradient"></div>
           
           <CardHeader className="text-center pb-6">
-            <CardTitle className="text-white text-3xl font-bold flex items-center justify-center gap-2">
+            <CardTitle className="text-white text-3xl font-bold flex items-center justify-center gap-2 drop-shadow-lg">
               <Stars className="h-6 w-6 text-yellow-400" />
               Welcome Back
             </CardTitle>
-            <CardDescription className="text-gray-300 text-lg">
+            <CardDescription className="text-white font-semibold text-lg drop-shadow-md">
               Sign in to manage your Charnoks restaurant
             </CardDescription>
           </CardHeader>

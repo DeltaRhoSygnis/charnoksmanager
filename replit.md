@@ -155,6 +155,12 @@ Sari POS is a complete Point of Sale solution designed for small businesses and 
 Changelog:
 - July 03, 2025. Initial setup and migration from Lovable to Replit
 - July 03, 2025. Complete UI redesign with Charnoks branding and modern animations
+- July 03, 2025. Enhanced worker sales interface with product grid display and voice input
+- July 03, 2025. Fixed Firebase composite index issues by simplifying queries
+- July 03, 2025. Enhanced product management with image upload via Firebase Storage
+- July 03, 2025. Improved UI visibility and contrast in login and dashboard screens
+- July 03, 2025. Fixed modal scrolling issues in product management forms
+- July 03, 2025. Enhanced error handling and offline fallback mechanisms
 
 ## User Preferences
 

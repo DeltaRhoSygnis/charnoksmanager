@@ -19,7 +19,10 @@ export class OfflineState {
     this.firebaseAccessible = hasAccess;
     if (!hasAccess) {
       this.setOnlineStatus(false);
-      // Note: Demo mode removed - app should work with Firebase only
+      LocalStorageDB.enableDemoMode();
+    } else {
+      this.setOnlineStatus(true);
+      LocalStorageDB.disableDemoMode();
     }
   }
 
