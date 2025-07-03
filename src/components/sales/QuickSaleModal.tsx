@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { LocalStorageDB } from "@/lib/localStorageDB";
+import { OfflineState } from "@/lib/offlineState";
 import { Product, CartItem, Transaction } from "@/types/product";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -101,7 +103,21 @@ export const QuickSaleModal = ({
         status: "completed",
       };
 
-      await addDoc(collection(db, "sales"), transactionData);
+      // Try Firebase first, fallback to local storage
+      try {
+        if (OfflineState.hasFirebaseAccess()) {
+          await addDoc(collection(db, "sales"), transactionData);
+        } else {
+          LocalStorageDB.addTransaction(transactionData);
+        }
+      } catch (firebaseError: any) {
+        if (OfflineState.isNetworkError(firebaseError)) {
+          // Fallback to local storage
+          LocalStorageDB.addTransaction(transactionData);
+        } else {
+          throw firebaseError;
+        }
+      }
 
       toast({
         title: "Sale Recorded!",
