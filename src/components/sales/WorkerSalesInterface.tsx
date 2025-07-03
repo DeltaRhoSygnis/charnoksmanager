@@ -54,7 +54,17 @@ export const WorkerSalesInterface = () => {
       return;
     }
 
-    // Try Firebase first, fallback to local storage
+    // Check Firebase access first to prevent fetch errors
+    if (!OfflineState.hasFirebaseAccess()) {
+      console.log("Using local storage products (Firebase disabled)");
+      const localProducts = LocalStorageDB.getProducts();
+      const activeProducts = localProducts.filter((p) => p.isActive);
+      setProducts(activeProducts);
+      setIsLoading(false);
+      return;
+    }
+
+    // Try Firebase if access is enabled
     try {
       if (OfflineState.hasFirebaseAccess()) {
         const snapshot = await getDocs(collection(db, "products"));
