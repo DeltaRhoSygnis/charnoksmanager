@@ -54,13 +54,8 @@ export const FirebaseTestButton = () => {
       toast({
         title: "Firebase Connected!",
         description:
-          "Your database is now active. Refreshing the page to load real data...",
+          "Your database is now active! You can now use all features with real data.",
       });
-
-      // Refresh page to reload with Firebase data
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
     } catch (error: any) {
       console.error("❌ Firebase test failed:", error);
       setErrorMessage(error.message || "Unknown error");
