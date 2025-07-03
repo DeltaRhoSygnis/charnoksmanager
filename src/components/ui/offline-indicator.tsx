@@ -1,24 +1,40 @@
 import { useState, useEffect } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { WifiOff, Database, Play } from "lucide-react";
+import { WifiOff, Database, Play, CheckCircle } from "lucide-react";
 import { OfflineState } from "@/lib/offlineState";
 import { LocalStorageDB } from "@/lib/localStorageDB";
 
 export const OfflineIndicator = () => {
   const [isOnline, setIsOnline] = useState(OfflineState.getOnlineStatus());
   const [isDemoMode, setIsDemoMode] = useState(LocalStorageDB.isDemoMode());
+  const [hasFirebaseAccess, setHasFirebaseAccess] = useState(
+    OfflineState.hasFirebaseAccess(),
+  );
 
   useEffect(() => {
-    const unsubscribe = OfflineState.addListener(setIsOnline);
-    setIsDemoMode(LocalStorageDB.isDemoMode());
+    const unsubscribe = OfflineState.addListener((online) => {
+      setIsOnline(online);
+      setHasFirebaseAccess(OfflineState.hasFirebaseAccess());
+      setIsDemoMode(LocalStorageDB.isDemoMode());
+    });
     return unsubscribe;
   }, []);
 
-  if (isOnline && !isDemoMode) {
-    return null;
+  // Show success message when Firebase is connected
+  if (isOnline && hasFirebaseAccess && !isDemoMode) {
+    return (
+      <Alert className="mb-4 border-green-200 bg-green-50 text-green-800">
+        <CheckCircle className="h-4 w-4" />
+        <AlertDescription>
+          <strong>Connected:</strong> Firebase database is active. Your data
+          will be saved and synced across devices.
+        </AlertDescription>
+      </Alert>
+    );
   }
 
-  if (isDemoMode || !OfflineState.hasFirebaseAccess()) {
+  // Show demo mode when Firebase is not accessible
+  if (isDemoMode || !hasFirebaseAccess) {
     return (
       <Alert className="mb-4 border-blue-200 bg-blue-50 text-blue-800">
         <Play className="h-4 w-4" />
@@ -31,6 +47,7 @@ export const OfflineIndicator = () => {
     );
   }
 
+  // Show offline mode for network issues
   return (
     <Alert className="mb-4 border-orange-200 bg-orange-50 text-orange-800">
       <WifiOff className="h-4 w-4" />
