@@ -1,18 +1,21 @@
-
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from '@/hooks/useAuth';
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
-import { Navigation } from '@/components/layout/Navigation';
-import { Login } from '@/components/auth/Login';
-import { Register } from '@/components/auth/Register';
-import { Dashboard } from '@/components/dashboard/Dashboard';
-import { Products } from '@/components/products/Products';
-import { Sales } from '@/pages/Sales';
-import { Expenses } from '@/pages/Expenses';
-import { Analytics } from '@/components/analytics/Analytics';
-import { Summary } from '@/components/reports/Summary';
-import { Toaster } from '@/components/ui/toaster';
-import './App.css';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { AuthProvider } from "@/hooks/useAuth";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { Login } from "@/components/auth/Login";
+import { Register } from "@/components/auth/Register";
+import { Dashboard } from "@/components/dashboard/Dashboard";
+import { Products } from "@/components/products/Products";
+import { Sales } from "@/pages/Sales";
+import { Expenses } from "@/pages/Expenses";
+import { Analytics } from "@/components/analytics/Analytics";
+import { Summary } from "@/components/reports/Summary";
+import { Toaster } from "@/components/ui/toaster";
+import "./App.css";
 
 function App() {
   return (
@@ -26,7 +29,6 @@ function App() {
               path="/dashboard"
               element={
                 <ProtectedRoute>
-                  <Navigation />
                   <Dashboard />
                 </ProtectedRoute>
               }
@@ -35,7 +37,6 @@ function App() {
               path="/products"
               element={
                 <ProtectedRoute>
-                  <Navigation />
                   <Products />
                 </ProtectedRoute>
               }
@@ -44,7 +45,6 @@ function App() {
               path="/sales"
               element={
                 <ProtectedRoute>
-                  <Navigation />
                   <Sales />
                 </ProtectedRoute>
               }
@@ -53,7 +53,6 @@ function App() {
               path="/expenses"
               element={
                 <ProtectedRoute>
-                  <Navigation />
                   <Expenses />
                 </ProtectedRoute>
               }
@@ -62,7 +61,6 @@ function App() {
               path="/analytics"
               element={
                 <ProtectedRoute>
-                  <Navigation />
                   <Analytics />
                 </ProtectedRoute>
               }
@@ -71,7 +69,6 @@ function App() {
               path="/reports"
               element={
                 <ProtectedRoute>
-                  <Navigation />
                   <Summary />
                 </ProtectedRoute>
               }
