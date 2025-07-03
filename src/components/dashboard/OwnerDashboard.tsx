@@ -9,6 +9,7 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { OfflineState } from "@/lib/offlineState";
 import { Button } from "@/components/ui/button";
 import {
   Card,
