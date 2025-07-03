@@ -127,8 +127,13 @@ export const Summary = () => {
       }
 
       setSummaryData(summaries);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching summary data:", error);
+      if (error.code === "permission-denied") {
+        console.warn(
+          "Firestore access denied. This might be due to database security rules.",
+        );
+      }
     }
     setIsLoading(false);
   };
