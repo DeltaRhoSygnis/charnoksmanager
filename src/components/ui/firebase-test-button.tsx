@@ -93,7 +93,7 @@ export const FirebaseTestButton = () => {
             variant="outline"
             size="sm"
             onClick={testFirebaseConnection}
-            disabled={isIsTesting}
+            disabled={isTesting}
             className="ml-4 border-yellow-300 text-yellow-800 hover:bg-yellow-100"
           >
             {isIsTesting ? (
