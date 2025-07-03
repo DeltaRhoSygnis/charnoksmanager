@@ -10,6 +10,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { OfflineState } from "@/lib/offlineState";
+import { LocalStorageDB } from "@/lib/localStorageDB";
 import { Button } from "@/components/ui/button";
 import { OfflineIndicator } from "@/components/ui/offline-indicator";
 import { TransactionHistory } from "@/components/reports/TransactionHistory";
@@ -69,56 +70,79 @@ export const OwnerDashboard = () => {
     }
 
     try {
-      // Fetch recent sales
-      const salesQuery = query(
-        collection(db, "sales"),
-        orderBy("timestamp", "desc"),
-        limit(10),
-      );
-      const salesSnapshot = await getDocs(salesQuery);
-      const sales = salesSnapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          type: "sale" as const,
-          amount: data.total,
-          workerEmail: data.workerEmail,
-          items: data.items,
-          timestamp: data.timestamp?.toDate() || new Date(),
-        };
-      });
+      if (OfflineState.hasFirebaseAccess()) {
+        // Fetch recent sales
+        const salesQuery = query(
+          collection(db, "sales"),
+          orderBy("timestamp", "desc"),
+          limit(10),
+        );
+        const salesSnapshot = await getDocs(salesQuery);
+        const sales = salesSnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            type: "sale" as const,
+            amount: data.total,
+            workerEmail: data.workerEmail,
+            items: data.items,
+            timestamp: data.timestamp?.toDate() || new Date(),
+          };
+        });
 
-      // Fetch recent expenses
-      const expensesQuery = query(
-        collection(db, "expenses"),
-        orderBy("timestamp", "desc"),
-        limit(10),
-      );
-      const expensesSnapshot = await getDocs(expensesQuery);
-      const expenses = expensesSnapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          type: "expense" as const,
-          amount: data.amount,
-          description: data.description,
-          timestamp: data.timestamp?.toDate() || new Date(),
-        };
-      });
+        // Fetch recent expenses
+        const expensesQuery = query(
+          collection(db, "expenses"),
+          orderBy("timestamp", "desc"),
+          limit(10),
+        );
+        const expensesSnapshot = await getDocs(expensesQuery);
+        const expenses = expensesSnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            type: "expense" as const,
+            amount: data.amount,
+            description: data.description,
+            timestamp: data.timestamp?.toDate() || new Date(),
+          };
+        });
 
-      const allTransactions = [...sales, ...expenses]
-        .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-        .slice(0, 10);
+        const allTransactions = [...sales, ...expenses]
+          .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+          .slice(0, 10);
 
-      setTransactions(allTransactions);
+        setTransactions(allTransactions);
+      } else {
+        // Use local storage transactions
+        const localTransactions = LocalStorageDB.getTransactions()
+          .slice(0, 10)
+          .map((t) => ({
+            id: t.id,
+            type: "sale" as const,
+            amount: t.totalAmount,
+            workerEmail: t.workerEmail,
+            items: t.items,
+            timestamp: t.timestamp,
+          }));
+        setTransactions(localTransactions);
+      }
     } catch (error: any) {
       console.error("Error fetching transactions:", error);
 
       if (OfflineState.isNetworkError(error)) {
-        console.warn("Network or permission error. Operating in offline mode.");
-        OfflineState.setOnlineStatus(false);
-        // Use empty array for offline mode
-        setTransactions([]);
+        // Fallback to local storage
+        const localTransactions = LocalStorageDB.getTransactions()
+          .slice(0, 10)
+          .map((t) => ({
+            id: t.id,
+            type: "sale" as const,
+            amount: t.totalAmount,
+            workerEmail: t.workerEmail,
+            items: t.items,
+            timestamp: t.timestamp,
+          }));
+        setTransactions(localTransactions);
       } else {
         console.error("Unexpected error:", error);
       }
@@ -132,56 +156,66 @@ export const OwnerDashboard = () => {
     }
 
     try {
-      // Calculate total sales
-      const salesSnapshot = await getDocs(collection(db, "sales"));
-      const totalSales = salesSnapshot.docs.reduce(
-        (sum, doc) => sum + (doc.data().total || 0),
-        0,
-      );
+      if (OfflineState.hasFirebaseAccess()) {
+        // Calculate total sales
+        const salesSnapshot = await getDocs(collection(db, "sales"));
+        const totalSales = salesSnapshot.docs.reduce(
+          (sum, doc) => sum + (doc.data().total || 0),
+          0,
+        );
 
-      // Calculate total expenses
-      const expensesSnapshot = await getDocs(collection(db, "expenses"));
-      const totalExpenses = expensesSnapshot.docs.reduce(
-        (sum, doc) => sum + (doc.data().amount || 0),
-        0,
-      );
+        // Calculate total expenses
+        const expensesSnapshot = await getDocs(collection(db, "expenses"));
+        const totalExpenses = expensesSnapshot.docs.reduce(
+          (sum, doc) => sum + (doc.data().amount || 0),
+          0,
+        );
 
-      // Calculate workers count
-      const workersQuery = query(
-        collection(db, "users"),
-        where("role", "==", "worker"),
-      );
-      const workersSnapshot = await getDocs(workersQuery);
-      const totalWorkers = workersSnapshot.size;
+        // Calculate workers count
+        const workersQuery = query(
+          collection(db, "users"),
+          where("role", "==", "worker"),
+        );
+        const workersSnapshot = await getDocs(workersQuery);
+        const totalWorkers = workersSnapshot.size;
 
-      // Calculate today's revenue
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const todaysRevenue = salesSnapshot.docs
-        .filter((doc) => {
-          const saleDate = doc.data().timestamp?.toDate() || new Date();
-          return saleDate >= today;
-        })
-        .reduce((sum, doc) => sum + (doc.data().total || 0), 0);
+        // Calculate today's revenue
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const todaysRevenue = salesSnapshot.docs
+          .filter((doc) => {
+            const saleDate = doc.data().timestamp?.toDate() || new Date();
+            return saleDate >= today;
+          })
+          .reduce((sum, doc) => sum + (doc.data().total || 0), 0);
 
-      setStats({
-        totalSales,
-        totalExpenses,
-        totalWorkers,
-        todaysRevenue,
-      });
+        setStats({
+          totalSales,
+          totalExpenses,
+          totalWorkers,
+          todaysRevenue,
+        });
+      } else {
+        // Use local storage stats
+        const localStats = LocalStorageDB.calculateStats();
+        setStats({
+          totalSales: localStats.totalSales,
+          totalExpenses: localStats.totalExpenses,
+          totalWorkers: localStats.totalWorkers,
+          todaysRevenue: localStats.todaysRevenue,
+        });
+      }
     } catch (error: any) {
       console.error("Error calculating stats:", error);
 
       if (OfflineState.isNetworkError(error)) {
-        console.warn("Network or permission error. Operating in offline mode.");
-        OfflineState.setOnlineStatus(false);
-        // Set default stats for offline mode
+        // Fallback to local storage stats
+        const localStats = LocalStorageDB.calculateStats();
         setStats({
-          totalSales: 0,
-          totalExpenses: 0,
-          totalWorkers: 0,
-          todaysRevenue: 0,
+          totalSales: localStats.totalSales,
+          totalExpenses: localStats.totalExpenses,
+          totalWorkers: localStats.totalWorkers,
+          todaysRevenue: localStats.todaysRevenue,
         });
       } else {
         console.error("Unexpected error:", error);
