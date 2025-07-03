@@ -25,11 +25,11 @@ Sari POS is a complete Point of Sale solution designed for small businesses and 
 - **Development**: Hot reloading with Vite middleware integration
 
 ### Database Design
-- **Primary Database**: PostgreSQL via Supabase
+- **Primary Database**: PostgreSQL via Neon Database
 - **ORM**: Drizzle ORM with TypeScript schema definitions
 - **Schema Location**: `shared/schema.ts` for shared types
 - **Migration Strategy**: Drizzle Kit for database migrations
-- **Connection**: Direct PostgreSQL connection using transaction pooler
+- **Connection**: Direct PostgreSQL connection using pooler
 - **Tables**: users, products, sales, expenses with proper relations
 
 ## Key Components

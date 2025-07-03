@@ -5,12 +5,10 @@ import * as schema from "@shared/schema";
 
 neonConfig.webSocketConstructor = ws;
 
-// Supabase database URL using environment variables
-const SUPABASE_DB_URL = process.env.SUPABASE_DATABASE_PASSWORD 
-  ? `postgresql://postgres.zkuhrvsqslnwvtbgzcii:${process.env.SUPABASE_DATABASE_PASSWORD}@aws-0-us-east-1.pooler.supabase.com:6543/postgres`
-  : null;
+// Neon database URL (provided by user)
+const NEON_DB_URL = "postgresql://neondb_owner:npg_wJJqbmMfuQnx@ep-gentle-leaf-a8jo9m3q-pooler.eastus2.azure.neon.tech/neondb?sslmode=require&channel_binding=require";
 
-const DATABASE_URL = SUPABASE_DB_URL || process.env.DATABASE_URL;
+const DATABASE_URL = NEON_DB_URL || process.env.DATABASE_URL;
 
 if (!DATABASE_URL) {
   throw new Error(
