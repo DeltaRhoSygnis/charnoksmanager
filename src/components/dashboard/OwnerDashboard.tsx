@@ -175,53 +175,29 @@ export const OwnerDashboard = () => {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-orange-100">
-        {/* Header */}
-        <header className="bg-white/90 backdrop-blur-md shadow-lg border-b border-orange-100">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-20">
-              <div className="flex items-center space-x-6">
-                <div className="flex items-center space-x-4">
-                  <img
-                    src="/lovable-uploads/389a9fc0-9ada-493a-a167-71ea82a7aabb.png"
-                    alt="Charnoks"
-                    className="h-12 w-12 object-contain"
-                  />
-                  <div>
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-                      Charnoks POS
-                    </h1>
-                    <p className="text-sm text-gray-600 font-medium">
-                      Owner Dashboard
-                    </p>
-                  </div>
-                </div>
+        {/* Dashboard Header with Actions */}
+        <div className="bg-white/80 backdrop-blur-sm border-b border-orange-100 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Owner Dashboard
+                </h2>
+                <p className="text-sm text-gray-600">
+                  Manage your business operations
+                </p>
               </div>
-              <div className="flex items-center space-x-4">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowCreateWorker(true)}
-                  className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 hover:from-orange-600 hover:to-red-600 shadow-lg"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Worker
-                </Button>
-                <div className="flex items-center space-x-2 px-4 py-2 bg-white/70 rounded-xl shadow-sm">
-                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm text-gray-700 font-medium">
-                    {user?.email}
-                  </span>
-                </div>
-                <Button
-                  variant="outline"
-                  onClick={logout}
-                  className="bg-white/70 hover:bg-white shadow-sm"
-                >
-                  Logout
-                </Button>
-              </div>
+              <Button
+                variant="outline"
+                onClick={() => setShowCreateWorker(true)}
+                className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 hover:from-orange-600 hover:to-red-600 shadow-lg"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Worker
+              </Button>
             </div>
           </div>
-        </header>
+        </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Stats Grid */}
