@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { OfflineState } from "@/lib/offlineState";
+import { LocalStorageDB } from "@/lib/localStorageDB";
 import { Transaction } from "@/types/product";
 import {
   Card,
@@ -96,28 +97,35 @@ export const TransactionHistory = () => {
     }
 
     try {
-      const salesQuery = query(
-        collection(db, "sales"),
-        orderBy("timestamp", "desc"),
-        limit(500), // Fetch recent 500 transactions
-      );
+      if (OfflineState.hasFirebaseAccess()) {
+        const salesQuery = query(
+          collection(db, "sales"),
+          orderBy("timestamp", "desc"),
+          limit(500), // Fetch recent 500 transactions
+        );
 
-      const snapshot = await getDocs(salesQuery);
-      const transactionsData = snapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          ...data,
-          timestamp: data.timestamp?.toDate() || new Date(),
-        } as Transaction;
-      });
+        const snapshot = await getDocs(salesQuery);
+        const transactionsData = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            timestamp: data.timestamp?.toDate() || new Date(),
+          } as Transaction;
+        });
 
-      setTransactions(transactionsData);
+        setTransactions(transactionsData);
+      } else {
+        // Use local storage transactions
+        const localTransactions = LocalStorageDB.getTransactions();
+        setTransactions(localTransactions);
+      }
     } catch (error: any) {
       console.error("Error fetching transactions:", error);
       if (OfflineState.isNetworkError(error)) {
-        OfflineState.setOnlineStatus(false);
-        setTransactions([]); // Empty array for offline mode
+        // Fallback to local storage
+        const localTransactions = LocalStorageDB.getTransactions();
+        setTransactions(localTransactions);
       }
     } finally {
       setIsLoading(false);
@@ -126,18 +134,33 @@ export const TransactionHistory = () => {
 
   const fetchWorkers = async () => {
     try {
-      const usersQuery = query(
-        collection(db, "users"),
-        where("role", "==", "worker"),
-      );
-      const snapshot = await getDocs(usersQuery);
-      const workersData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        email: doc.data().email || "",
-      }));
-      setWorkers(workersData);
-    } catch (error) {
+      if (OfflineState.hasFirebaseAccess()) {
+        const usersQuery = query(
+          collection(db, "users"),
+          where("role", "==", "worker"),
+        );
+        const snapshot = await getDocs(usersQuery);
+        const workersData = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          email: doc.data().email || "",
+        }));
+        setWorkers(workersData);
+      } else {
+        // Use local storage users
+        const localUsers = LocalStorageDB.getUsers()
+          .filter((u) => u.role === "worker")
+          .map((u) => ({ id: u.id, email: u.email }));
+        setWorkers(localUsers);
+      }
+    } catch (error: any) {
       console.error("Error fetching workers:", error);
+      if (OfflineState.isNetworkError(error)) {
+        // Fallback to local storage
+        const localUsers = LocalStorageDB.getUsers()
+          .filter((u) => u.role === "worker")
+          .map((u) => ({ id: u.id, email: u.email }));
+        setWorkers(localUsers);
+      }
     }
   };
 
