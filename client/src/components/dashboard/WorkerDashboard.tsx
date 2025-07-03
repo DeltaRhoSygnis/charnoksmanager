@@ -169,27 +169,29 @@ export const WorkerDashboard = () => {
   };
 
   const MobileLayout = () => (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative">
+    <div className="min-h-screen bg-gradient-to-br from-red-600 via-orange-500 to-yellow-400 animate-gradient-x relative">
       {/* Mobile Header */}
-      <div className="bg-white/10 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
+      <div className="bg-black/30 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <img 
-                src="/lovable-uploads/389a9fc0-9ada-493a-a167-71ea82a7aabb.png" 
-                alt="Charnoks" 
-                className="h-8 w-8 object-contain"
-              />
+            <div className="flex items-center space-x-3 animate-slide-in-left">
+              <div className="w-12 h-12 bg-black/20 rounded-2xl p-2 border border-white/20">
+                <img 
+                  src="/src/assets/389a9fc0-9ada-493a-a167-71ea82a7aabb_1751553002348.png" 
+                  alt="Charnoks" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
               <div>
-                <h2 className="text-lg font-bold text-white">Charnoks POS</h2>
-                <p className="text-xs text-blue-200">Worker Station</p>
+                <h2 className="text-xl font-bold charnoks-text">Charnoks</h2>
+                <p className="text-sm text-white font-medium">Worker Station</p>
               </div>
             </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={logout}
-              className="text-white hover:bg-white/10"
+              className="text-white hover:bg-white/20 border border-white/30 animate-slide-in-right"
             >
               Logout
             </Button>
@@ -199,24 +201,24 @@ export const WorkerDashboard = () => {
 
       <div className="p-4 space-y-4">
         {/* Mobile Quick Actions */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4 animate-bounce-in">
           <Link to="/sales">
-            <Card className="bg-gradient-to-br from-emerald-500 to-green-600 text-white border-0 h-24">
+            <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white h-28 hover:scale-105 transition-transform duration-300 animate-pulse-glow">
               <CardContent className="p-4 flex items-center justify-center">
                 <div className="text-center">
-                  <ShoppingCart className="h-8 w-8 mx-auto mb-1" />
-                  <p className="text-sm font-medium">Record Sale</p>
+                  <ShoppingCart className="h-10 w-10 mx-auto mb-2 text-green-400" />
+                  <p className="text-sm font-bold">Record Sale</p>
                 </div>
               </CardContent>
             </Card>
           </Link>
 
           <Link to="/expenses">
-            <Card className="bg-gradient-to-br from-orange-500 to-red-500 text-white border-0 h-24">
+            <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white h-28 hover:scale-105 transition-transform duration-300 animate-pulse-glow">
               <CardContent className="p-4 flex items-center justify-center">
                 <div className="text-center">
-                  <Receipt className="h-8 w-8 mx-auto mb-1" />
-                  <p className="text-sm font-medium">Record Expense</p>
+                  <Receipt className="h-10 w-10 mx-auto mb-2 text-orange-400" />
+                  <p className="text-sm font-bold">Record Expense</p>
                 </div>
               </CardContent>
             </Card>
@@ -224,37 +226,37 @@ export const WorkerDashboard = () => {
         </div>
 
         {/* Mobile Stats */}
-        <div className="grid grid-cols-1 gap-3">
-          <Card className="bg-white/10 backdrop-blur-xl border-white/20 text-white">
+        <div className="grid grid-cols-1 gap-4 animate-slide-in-right">
+          <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-blue-200">Today's Sales</p>
-                  <p className="text-2xl font-bold text-green-400">₱{stats.todaySales.toLocaleString()}</p>
+                  <p className="text-sm text-gray-300 font-medium">Today's Sales</p>
+                  <p className="text-3xl font-bold text-green-400">₱{stats.todaySales.toLocaleString()}</p>
                 </div>
-                <DollarSign className="h-8 w-8 text-green-400" />
+                <DollarSign className="h-10 w-10 text-green-400" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/10 backdrop-blur-xl border-white/20 text-white">
+          <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-blue-200">Today's Expenses</p>
-                  <p className="text-2xl font-bold text-red-400">₱{stats.todayExpenses.toLocaleString()}</p>
+                  <p className="text-sm text-gray-300 font-medium">Today's Expenses</p>
+                  <p className="text-3xl font-bold text-red-400">₱{stats.todayExpenses.toLocaleString()}</p>
                 </div>
-                <Receipt className="h-8 w-8 text-red-400" />
+                <Receipt className="h-10 w-10 text-red-400" />
               </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Mobile Recent Transactions */}
-        <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+        <Card className="bg-black/40 backdrop-blur-lg border-white/20 animate-slide-in-left">
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg text-white flex items-center">
-              <Receipt className="h-5 w-5 mr-2 text-blue-400" />
+            <CardTitle className="text-xl text-white flex items-center font-bold">
+              <Stars className="h-6 w-6 mr-2 text-yellow-400" />
               Recent Activity
             </CardTitle>
           </CardHeader>

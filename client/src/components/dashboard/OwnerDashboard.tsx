@@ -282,31 +282,33 @@ export const OwnerDashboard = () => {
   };
 
   const MobileLayout = () => (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
+    <div className="min-h-screen bg-gradient-to-br from-red-600 via-orange-500 to-yellow-400 animate-gradient-x">
       {/* Mobile Header */}
-      <div className="bg-white/10 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
+      <div className="bg-black/30 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <img 
-                src="/lovable-uploads/389a9fc0-9ada-493a-a167-71ea82a7aabb.png" 
-                alt="Charnoks" 
-                className="h-8 w-8 object-contain"
-              />
+            <div className="flex items-center space-x-3 animate-slide-in-left">
+              <div className="w-12 h-12 bg-black/20 rounded-2xl p-2 border border-white/20">
+                <img 
+                  src="/src/assets/389a9fc0-9ada-493a-a167-71ea82a7aabb_1751553002348.png" 
+                  alt="Charnoks" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
               <div>
-                <h1 className="text-lg font-bold bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-transparent">
-                  Charnoks POS
+                <h1 className="text-xl font-bold charnoks-text">
+                  Charnoks
                 </h1>
-                <p className="text-xs text-blue-200">Owner Dashboard</p>
+                <p className="text-sm text-white font-medium">Owner Dashboard</p>
               </div>
             </div>
             <Button
               variant="outline"
               size="sm"
               onClick={() => setShowCreateWorker(true)}
-              className="bg-blue-600 text-white border-0 text-xs px-2 py-1"
+              className="charnoks-gradient text-white border-0 font-bold animate-pulse-glow"
             >
-              <Plus className="h-3 w-3 mr-1" />
+              <Plus className="h-4 w-4 mr-1" />
               Add Worker
             </Button>
           </div>
@@ -317,30 +319,30 @@ export const OwnerDashboard = () => {
         <FirebaseTestButton />
 
         {/* Mobile Quick Actions */}
-        <div className="grid grid-cols-3 gap-2">
-          <Card className="bg-gradient-to-br from-emerald-500 to-green-600 text-white border-0 h-20">
+        <div className="grid grid-cols-3 gap-3 animate-bounce-in">
+          <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white h-24 hover:scale-105 transition-transform duration-300">
             <CardContent className="p-3 flex items-center justify-center">
               <div className="text-center">
-                <ShoppingCart className="h-6 w-6 mx-auto mb-1" />
-                <p className="text-xs font-medium">Record Sale</p>
+                <ShoppingCart className="h-7 w-7 mx-auto mb-2 text-green-400" />
+                <p className="text-xs font-bold">Record Sale</p>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-orange-500 to-red-500 text-white border-0 h-20">
+          <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white h-24 hover:scale-105 transition-transform duration-300">
             <CardContent className="p-3 flex items-center justify-center">
               <div className="text-center">
-                <Receipt className="h-6 w-6 mx-auto mb-1" />
-                <p className="text-xs font-medium">Record Expense</p>
+                <Receipt className="h-7 w-7 mx-auto mb-2 text-orange-400" />
+                <p className="text-xs font-bold">Record Expense</p>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-purple-500 to-indigo-600 text-white border-0 h-20">
+          <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white h-24 hover:scale-105 transition-transform duration-300">
             <CardContent className="p-3 flex items-center justify-center">
               <div className="text-center">
-                <TrendingUp className="h-6 w-6 mx-auto mb-1" />
-                <p className="text-xs font-medium">View Summary</p>
+                <TrendingUp className="h-7 w-7 mx-auto mb-2 text-blue-400" />
+                <p className="text-xs font-bold">View Summary</p>
               </div>
             </CardContent>
           </Card>
