@@ -109,10 +109,14 @@ export const OwnerDashboard = () => {
       setTransactions(allTransactions);
     } catch (error: any) {
       console.error("Error fetching transactions:", error);
-      if (error.code === "permission-denied") {
-        console.warn(
-          "Firestore access denied. This might be due to database security rules.",
-        );
+
+      if (OfflineState.isNetworkError(error)) {
+        console.warn("Network or permission error. Operating in offline mode.");
+        OfflineState.setOnlineStatus(false);
+        // Use empty array for offline mode
+        setTransactions([]);
+      } else {
+        console.error("Unexpected error:", error);
       }
     }
   };
@@ -164,10 +168,19 @@ export const OwnerDashboard = () => {
       });
     } catch (error: any) {
       console.error("Error calculating stats:", error);
-      if (error.code === "permission-denied") {
-        console.warn(
-          "Firestore access denied. This might be due to database security rules.",
-        );
+
+      if (OfflineState.isNetworkError(error)) {
+        console.warn("Network or permission error. Operating in offline mode.");
+        OfflineState.setOnlineStatus(false);
+        // Set default stats for offline mode
+        setStats({
+          totalSales: 0,
+          totalExpenses: 0,
+          totalWorkers: 0,
+          todaysRevenue: 0,
+        });
+      } else {
+        console.error("Unexpected error:", error);
       }
     }
   };
