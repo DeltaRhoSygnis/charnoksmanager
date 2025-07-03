@@ -96,6 +96,15 @@ export const TransactionHistory = () => {
       return;
     }
 
+    // Check Firebase access first to prevent fetch errors
+    if (!OfflineState.hasFirebaseAccess()) {
+      console.log("Using local storage transactions (Firebase disabled)");
+      const localTransactions = LocalStorageDB.getTransactions();
+      setTransactions(localTransactions);
+      setIsLoading(false);
+      return;
+    }
+
     try {
       if (OfflineState.hasFirebaseAccess()) {
         const salesQuery = query(
@@ -133,6 +142,16 @@ export const TransactionHistory = () => {
   };
 
   const fetchWorkers = async () => {
+    // Check Firebase access first to prevent fetch errors
+    if (!OfflineState.hasFirebaseAccess()) {
+      console.log("Using local storage workers (Firebase disabled)");
+      const localUsers = LocalStorageDB.getUsers()
+        .filter((u) => u.role === "worker")
+        .map((u) => ({ id: u.id, email: u.email }));
+      setWorkers(localUsers);
+      return;
+    }
+
     try {
       if (OfflineState.hasFirebaseAccess()) {
         const usersQuery = query(
