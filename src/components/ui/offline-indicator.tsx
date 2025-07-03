@@ -5,19 +5,33 @@ import { OfflineState } from "@/lib/offlineState";
 import { LocalStorageDB } from "@/lib/localStorageDB";
 
 export const OfflineIndicator = () => {
-  const [isOnline, setIsOnline] = useState(OfflineState.getOnlineStatus());
-  const [isDemoMode, setIsDemoMode] = useState(LocalStorageDB.isDemoMode());
-  const [hasFirebaseAccess, setHasFirebaseAccess] = useState(
-    OfflineState.hasFirebaseAccess(),
-  );
+  const [isOnline, setIsOnline] = useState(true);
+  const [isDemoMode, setIsDemoMode] = useState(false);
+  const [hasFirebaseAccess, setHasFirebaseAccess] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = OfflineState.addListener((online) => {
-      setIsOnline(online);
-      setHasFirebaseAccess(OfflineState.hasFirebaseAccess());
+    try {
+      setIsOnline(OfflineState.getOnlineStatus());
       setIsDemoMode(LocalStorageDB.isDemoMode());
-    });
-    return unsubscribe;
+      setHasFirebaseAccess(OfflineState.hasFirebaseAccess());
+
+      const unsubscribe = OfflineState.addListener((online) => {
+        try {
+          setIsOnline(online);
+          setHasFirebaseAccess(OfflineState.hasFirebaseAccess());
+          setIsDemoMode(LocalStorageDB.isDemoMode());
+        } catch (error) {
+          console.error("Error updating offline state:", error);
+        }
+      });
+      return unsubscribe;
+    } catch (error) {
+      console.error("Error initializing offline indicator:", error);
+      // Default to safe state
+      setIsOnline(false);
+      setIsDemoMode(true);
+      setHasFirebaseAccess(false);
+    }
   }, []);
 
   // Show success message when Firebase is connected
