@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import {
   BrowserRouter as Router,
@@ -26,7 +27,9 @@ function App() {
       console.log("🚀 Starting Charnoks POS in Demo Mode...");
 
       // Force demo mode for now to prevent Firebase fetch errors
-      LocalStorageDB.enableDemoMode();
+      import("@/lib/localStorageDB").then(({ LocalStorageDB }) => {
+        LocalStorageDB.enableDemoMode();
+      });
 
       // Disable Firebase access to prevent automatic calls
       import("@/lib/offlineState").then(({ OfflineState }) => {
@@ -43,7 +46,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
