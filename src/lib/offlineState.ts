@@ -1,7 +1,10 @@
-// Simple offline state management for when Firebase is unavailable
+import { LocalStorageDB } from "./localStorageDB";
+
+// Offline state management with local storage fallback
 export class OfflineState {
   private static isOnline = true;
   private static listeners: ((isOnline: boolean) => void)[] = [];
+  private static hasFirebaseAccess = true;
 
   static setOnlineStatus(online: boolean) {
     this.isOnline = online;
@@ -10,6 +13,19 @@ export class OfflineState {
 
   static getOnlineStatus() {
     return this.isOnline;
+  }
+
+  static setFirebaseAccess(hasAccess: boolean) {
+    this.hasFirebaseAccess = hasAccess;
+    if (!hasAccess) {
+      this.setOnlineStatus(false);
+      // Enable demo mode when Firebase is not accessible
+      LocalStorageDB.enableDemoMode();
+    }
+  }
+
+  static hasFirebaseAccess() {
+    return this.hasFirebaseAccess;
   }
 
   static addListener(listener: (isOnline: boolean) => void) {
@@ -26,26 +42,40 @@ export class OfflineState {
     const errorMessage = error.message?.toLowerCase() || "";
     const errorCode = error.code?.toLowerCase() || "";
 
-    return (
+    const isNetworkError =
       errorCode.includes("network") ||
       errorCode.includes("permission-denied") ||
+      errorCode.includes("insufficient-permissions") ||
       errorMessage.includes("fetch") ||
       errorMessage.includes("network") ||
       errorMessage.includes("timeout") ||
-      (error instanceof TypeError && errorMessage.includes("fetch"))
-    );
+      errorMessage.includes("permission") ||
+      (error instanceof TypeError && errorMessage.includes("fetch"));
+
+    if (isNetworkError) {
+      this.setFirebaseAccess(false);
+    }
+
+    return isNetworkError;
   }
 
-  // Mock data for offline mode
-  static getMockData(type: "sales" | "expenses" | "products" | "users") {
-    const mockData = {
-      sales: [],
-      expenses: [],
-      products: [{ id: "1", name: "Sample Product", price: 10, stock: 100 }],
-      users: [],
-    };
+  // Get data from local storage when Firebase is unavailable
+  static getLocalData(type: "products" | "transactions" | "users") {
+    switch (type) {
+      case "products":
+        return LocalStorageDB.getProducts();
+      case "transactions":
+        return LocalStorageDB.getTransactions();
+      case "users":
+        return LocalStorageDB.getUsers();
+      default:
+        return [];
+    }
+  }
 
-    return mockData[type] || [];
+  // Get demo stats
+  static getDemoStats() {
+    return LocalStorageDB.calculateStats();
   }
 }
 
