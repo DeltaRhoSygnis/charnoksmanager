@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { OfflineState } from "@/lib/offlineState";
+import { LocalStorageDB } from "@/lib/localStorageDB";
 import { Product, CartItem } from "@/types/product";
 import { voiceRecognition } from "@/lib/voiceRecognition";
 import { Button } from "@/components/ui/button";
@@ -53,59 +54,33 @@ export const WorkerSalesInterface = () => {
       return;
     }
 
+    // Try Firebase first, fallback to local storage
     try {
-      const snapshot = await getDocs(collection(db, "products"));
-      const productsData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data().createdAt?.toDate() || new Date(),
-        updatedAt: doc.data().updatedAt?.toDate() || new Date(),
-        isActive: doc.data().isActive !== false, // Default to true if not specified
-      })) as Product[];
+      if (OfflineState.hasFirebaseAccess()) {
+        const snapshot = await getDocs(collection(db, "products"));
+        const productsData = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+          createdAt: doc.data().createdAt?.toDate() || new Date(),
+          updatedAt: doc.data().updatedAt?.toDate() || new Date(),
+          isActive: doc.data().isActive !== false, // Default to true if not specified
+        })) as Product[];
 
-      const activeProducts = productsData.filter((p) => p.isActive);
-      setProducts(activeProducts);
+        const activeProducts = productsData.filter((p) => p.isActive);
+        setProducts(activeProducts);
+      } else {
+        // Use local storage data
+        const localProducts = LocalStorageDB.getProducts();
+        const activeProducts = localProducts.filter((p) => p.isActive);
+        setProducts(activeProducts);
+      }
     } catch (error: any) {
       console.error("Error fetching products:", error);
       if (OfflineState.isNetworkError(error)) {
-        OfflineState.setOnlineStatus(false);
-        // Load mock products for offline demo
-        const mockProducts: Product[] = [
-          {
-            id: "1",
-            name: "Coca Cola",
-            price: 15,
-            stock: 100,
-            category: "Beverages",
-            imageUrl: "/api/placeholder/150/150",
-            isActive: true,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-          {
-            id: "2",
-            name: "Piattos",
-            price: 25,
-            stock: 50,
-            category: "Snacks",
-            imageUrl: "/api/placeholder/150/150",
-            isActive: true,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-          {
-            id: "3",
-            name: "Bottled Water",
-            price: 10,
-            stock: 200,
-            category: "Beverages",
-            imageUrl: "/api/placeholder/150/150",
-            isActive: true,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-        ];
-        setProducts(mockProducts);
+        // Fallback to local storage
+        const localProducts = LocalStorageDB.getProducts();
+        const activeProducts = localProducts.filter((p) => p.isActive);
+        setProducts(activeProducts);
       }
     } finally {
       setIsLoading(false);
