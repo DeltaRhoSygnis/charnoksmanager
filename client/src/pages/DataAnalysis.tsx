@@ -22,7 +22,15 @@ import {
   Area,
   AreaChart,
   ComposedChart,
-  Legend
+  Legend,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+  Treemap,
+  ScatterChart,
+  Scatter
 } from "recharts";
 import { 
   TrendingUp, 
@@ -34,7 +42,14 @@ import {
   Calendar,
   Filter,
   Download,
-  RefreshCw
+  RefreshCw,
+  ArrowLeft,
+  Target,
+  Activity,
+  Zap,
+  GitCompare,
+  User,
+  Settings
 } from "lucide-react";
 import { LocalStorageDB } from "@/lib/localStorageDB";
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subDays, subWeeks, subMonths } from "date-fns";
@@ -57,25 +72,27 @@ interface WorkerAnalysis {
   averageTransactionValue: number;
 }
 
-type ChartType = 'bar' | 'line' | 'pie' | 'area' | 'composed';
+type ChartType = 'bar' | 'line' | 'pie' | 'area' | 'composed' | 'radar' | 'treemap' | 'scatter';
 type DurationFilter = 'today' | 'week' | 'month' | '3months' | '6months' | 'year' | 'all';
-type AnalysisType = 'all' | 'compare' | 'individual';
+type AnalysisMode = 'overview' | 'all-workers' | 'compare-workers' | 'individual-worker';
 
 export const DataAnalysis = () => {
   const { user } = useAuth();
-  const [analysisType, setAnalysisType] = useState<AnalysisType>('all');
+  const [analysisMode, setAnalysisMode] = useState<AnalysisMode>('overview');
   const [chartType, setChartType] = useState<ChartType>('bar');
   const [duration, setDuration] = useState<DurationFilter>('month');
   const [selectedWorkers, setSelectedWorkers] = useState<string[]>([]);
+  const [selectedWorker, setSelectedWorker] = useState<string>('');
   const [analysisData, setAnalysisData] = useState<AnalysisData[]>([]);
   const [workerAnalysis, setWorkerAnalysis] = useState<WorkerAnalysis[]>([]);
+  const [comparisonData, setComparisonData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const COLORS = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#dda0dd', '#98d8c8'];
+  const COLORS = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#dda0dd', '#98d8c8', '#ff9f43', '#55a3ff', '#26d0ce'];
 
   useEffect(() => {
     loadAnalysisData();
-  }, [duration, analysisType, selectedWorkers]);
+  }, [duration, analysisMode, selectedWorkers, selectedWorker]);
 
   const loadAnalysisData = async () => {
     try {
@@ -99,20 +116,22 @@ export const DataAnalysis = () => {
             sales: 0,
             expenses: 0,
             profit: 0,
-            transactions: 0
+            transactions: 0,
           });
         }
         
-        const data = dataMap.get(dateKey)!;
-        data.transactions++;
+        const dayData = dataMap.get(dateKey)!;
+        dayData.transactions++;
         
         if (transaction.type === 'sale') {
-          data.sales += transaction.totalAmount;
+          const amount = transaction.totalAmount || transaction.amount || 0;
+          dayData.sales += amount;
         } else if (transaction.type === 'expense') {
-          data.expenses += transaction.amount;
+          const amount = transaction.amount || 0;
+          dayData.expenses += amount;
         }
         
-        data.profit = data.sales - data.expenses;
+        dayData.profit = dayData.sales - dayData.expenses;
         
         // Worker analysis
         const workerId = transaction.workerId || 'unknown';
@@ -126,7 +145,7 @@ export const DataAnalysis = () => {
             totalExpenses: 0,
             netProfit: 0,
             transactionCount: 0,
-            averageTransactionValue: 0
+            averageTransactionValue: 0,
           });
         }
         
@@ -134,17 +153,31 @@ export const DataAnalysis = () => {
         worker.transactionCount++;
         
         if (transaction.type === 'sale') {
-          worker.totalSales += transaction.totalAmount;
+          const amount = transaction.totalAmount || transaction.amount || 0;
+          worker.totalSales += amount;
         } else if (transaction.type === 'expense') {
-          worker.totalExpenses += transaction.amount;
+          const amount = transaction.amount || 0;
+          worker.totalExpenses += amount;
         }
         
         worker.netProfit = worker.totalSales - worker.totalExpenses;
-        worker.averageTransactionValue = worker.totalSales / worker.transactionCount;
+        worker.averageTransactionValue = worker.totalSales / Math.max(1, worker.transactionCount);
       });
       
-      setAnalysisData(Array.from(dataMap.values()).sort((a, b) => a.date.localeCompare(b.date)));
-      setWorkerAnalysis(Array.from(workerMap.values()));
+      const analysisArray = Array.from(dataMap.values()).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      const workerArray = Array.from(workerMap.values()).sort((a, b) => b.totalSales - a.totalSales);
+      
+      setAnalysisData(analysisArray);
+      setWorkerAnalysis(workerArray);
+      
+      // Generate comparison data for selected workers
+      if (selectedWorkers.length > 0) {
+        const comparison = selectedWorkers.map(workerId => {
+          const worker = workerArray.find(w => w.workerId === workerId);
+          return worker || { workerId, workerEmail: 'Unknown', totalSales: 0, totalExpenses: 0, netProfit: 0, transactionCount: 0, averageTransactionValue: 0 };
+        });
+        setComparisonData(comparison);
+      }
       
     } catch (error) {
       console.error("Error loading analysis data:", error);
@@ -180,158 +213,95 @@ export const DataAnalysis = () => {
         return transactions;
     }
     
-    return transactions.filter(txn => new Date(txn.timestamp) >= startDate);
+    return transactions.filter(t => new Date(t.timestamp) >= startDate);
   };
 
   const getDateKey = (date: Date) => {
-    switch (duration) {
-      case 'today':
-        return format(date, 'HH:mm');
-      case 'week':
-        return format(date, 'EEE');
-      case 'month':
-        return format(date, 'MMM dd');
-      case '3months':
-      case '6months':
-        return format(date, 'MMM yyyy');
-      case 'year':
-        return format(date, 'MMM yyyy');
-      default:
-        return format(date, 'MMM yyyy');
+    if (duration === 'today') {
+      return format(date, 'HH:00');
+    } else if (duration === 'week') {
+      return format(date, 'EEE');
+    } else if (duration === 'month') {
+      return format(date, 'MMM dd');
+    } else {
+      return format(date, 'MMM yyyy');
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-PH', {
-      style: 'currency',
-      currency: 'PHP'
-    }).format(amount);
-  };
+  const formatCurrency = (amount: number) => `₱${amount.toFixed(2)}`;
 
-  const renderChart = () => {
-    if (loading) {
-      return (
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
-        </div>
-      );
-    }
-
-    if (analysisData.length === 0) {
-      return (
-        <div className="flex items-center justify-center h-64 text-gray-400">
-          No data available for the selected period
-        </div>
-      );
-    }
-
-    const chartProps = {
-      data: analysisData,
+  const renderChart = (data: any[], type: ChartType = chartType) => {
+    const commonProps = {
+      width: '100%',
+      height: 400,
+      data,
       margin: { top: 20, right: 30, left: 20, bottom: 5 }
     };
 
-    switch (chartType) {
+    switch (type) {
       case 'bar':
         return (
-          <ResponsiveContainer width="100%" height={400}>
-            <BarChart {...chartProps}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis dataKey="date" stroke="#9CA3AF" />
-              <YAxis stroke="#9CA3AF" />
+          <ResponsiveContainer {...commonProps}>
+            <BarChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
+              <XAxis dataKey="date" stroke="#ffffff80" />
+              <YAxis stroke="#ffffff80" />
               <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#1F2937', 
-                  border: '1px solid #374151',
-                  borderRadius: '8px'
-                }}
-                formatter={(value: number) => [formatCurrency(value), '']}
+                contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #ffffff30', borderRadius: '8px' }}
+                labelStyle={{ color: '#ffffff' }}
               />
               <Legend />
-              <Bar dataKey="sales" fill="#10B981" name="Sales" />
-              <Bar dataKey="expenses" fill="#EF4444" name="Expenses" />
-              <Bar dataKey="profit" fill="#F59E0B" name="Profit" />
+              <Bar dataKey="sales" fill="#4ade80" name="Sales" />
+              <Bar dataKey="expenses" fill="#f87171" name="Expenses" />
+              <Bar dataKey="profit" fill="#60a5fa" name="Profit" />
             </BarChart>
           </ResponsiveContainer>
         );
       
       case 'line':
         return (
-          <ResponsiveContainer width="100%" height={400}>
-            <LineChart {...chartProps}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis dataKey="date" stroke="#9CA3AF" />
-              <YAxis stroke="#9CA3AF" />
+          <ResponsiveContainer {...commonProps}>
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
+              <XAxis dataKey="date" stroke="#ffffff80" />
+              <YAxis stroke="#ffffff80" />
               <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#1F2937', 
-                  border: '1px solid #374151',
-                  borderRadius: '8px'
-                }}
-                formatter={(value: number) => [formatCurrency(value), '']}
+                contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #ffffff30', borderRadius: '8px' }}
+                labelStyle={{ color: '#ffffff' }}
               />
               <Legend />
-              <Line type="monotone" dataKey="sales" stroke="#10B981" strokeWidth={2} name="Sales" />
-              <Line type="monotone" dataKey="expenses" stroke="#EF4444" strokeWidth={2} name="Expenses" />
-              <Line type="monotone" dataKey="profit" stroke="#F59E0B" strokeWidth={2} name="Profit" />
+              <Line type="monotone" dataKey="sales" stroke="#4ade80" strokeWidth={3} name="Sales" />
+              <Line type="monotone" dataKey="expenses" stroke="#f87171" strokeWidth={3} name="Expenses" />
+              <Line type="monotone" dataKey="profit" stroke="#60a5fa" strokeWidth={3} name="Profit" />
             </LineChart>
           </ResponsiveContainer>
         );
       
       case 'area':
         return (
-          <ResponsiveContainer width="100%" height={400}>
-            <AreaChart {...chartProps}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis dataKey="date" stroke="#9CA3AF" />
-              <YAxis stroke="#9CA3AF" />
+          <ResponsiveContainer {...commonProps}>
+            <AreaChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
+              <XAxis dataKey="date" stroke="#ffffff80" />
+              <YAxis stroke="#ffffff80" />
               <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#1F2937', 
-                  border: '1px solid #374151',
-                  borderRadius: '8px'
-                }}
-                formatter={(value: number) => [formatCurrency(value), '']}
+                contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #ffffff30', borderRadius: '8px' }}
+                labelStyle={{ color: '#ffffff' }}
               />
               <Legend />
-              <Area type="monotone" dataKey="sales" stackId="1" stroke="#10B981" fill="#10B981" fillOpacity={0.6} name="Sales" />
-              <Area type="monotone" dataKey="expenses" stackId="1" stroke="#EF4444" fill="#EF4444" fillOpacity={0.6} name="Expenses" />
+              <Area type="monotone" dataKey="sales" stackId="1" stroke="#4ade80" fill="#4ade80" fillOpacity={0.6} name="Sales" />
+              <Area type="monotone" dataKey="expenses" stackId="2" stroke="#f87171" fill="#f87171" fillOpacity={0.6} name="Expenses" />
             </AreaChart>
           </ResponsiveContainer>
         );
-      
-      case 'composed':
-        return (
-          <ResponsiveContainer width="100%" height={400}>
-            <ComposedChart {...chartProps}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis dataKey="date" stroke="#9CA3AF" />
-              <YAxis stroke="#9CA3AF" />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#1F2937', 
-                  border: '1px solid #374151',
-                  borderRadius: '8px'
-                }}
-                formatter={(value: number) => [formatCurrency(value), '']}
-              />
-              <Legend />
-              <Bar dataKey="sales" fill="#10B981" name="Sales" />
-              <Bar dataKey="expenses" fill="#EF4444" name="Expenses" />
-              <Line type="monotone" dataKey="profit" stroke="#F59E0B" strokeWidth={3} name="Profit" />
-            </ComposedChart>
-          </ResponsiveContainer>
-        );
-      
+
       case 'pie':
-        const totalSales = analysisData.reduce((sum, item) => sum + item.sales, 0);
-        const totalExpenses = analysisData.reduce((sum, item) => sum + item.expenses, 0);
         const pieData = [
-          { name: 'Sales', value: totalSales },
-          { name: 'Expenses', value: totalExpenses }
+          { name: 'Sales', value: data.reduce((sum, item) => sum + item.sales, 0), fill: '#4ade80' },
+          { name: 'Expenses', value: data.reduce((sum, item) => sum + item.expenses, 0), fill: '#f87171' }
         ];
-        
         return (
-          <ResponsiveContainer width="100%" height={400}>
+          <ResponsiveContainer {...commonProps}>
             <PieChart>
               <Pie
                 data={pieData}
@@ -339,70 +309,377 @@ export const DataAnalysis = () => {
                 cy="50%"
                 labelLine={false}
                 label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                outerRadius={120}
+                outerRadius={150}
                 fill="#8884d8"
                 dataKey="value"
               >
                 {pieData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell key={`cell-${index}`} fill={entry.fill} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value: number) => [formatCurrency(value), '']} />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #ffffff30', borderRadius: '8px' }}
+                formatter={(value: number) => formatCurrency(value)}
+              />
             </PieChart>
           </ResponsiveContainer>
         );
-      
+
+      case 'composed':
+        return (
+          <ResponsiveContainer {...commonProps}>
+            <ComposedChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
+              <XAxis dataKey="date" stroke="#ffffff80" />
+              <YAxis stroke="#ffffff80" />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #ffffff30', borderRadius: '8px' }}
+                labelStyle={{ color: '#ffffff' }}
+              />
+              <Legend />
+              <Bar dataKey="transactions" fill="#a78bfa" name="Transactions" />
+              <Line type="monotone" dataKey="sales" stroke="#4ade80" strokeWidth={3} name="Sales" />
+              <Line type="monotone" dataKey="expenses" stroke="#f87171" strokeWidth={3} name="Expenses" />
+            </ComposedChart>
+          </ResponsiveContainer>
+        );
+
+      case 'radar':
+        return (
+          <ResponsiveContainer {...commonProps}>
+            <RadarChart data={data.slice(0, 6)}>
+              <PolarGrid stroke="#ffffff20" />
+              <PolarAngleAxis dataKey="date" className="text-white" />
+              <PolarRadiusAxis stroke="#ffffff80" />
+              <Radar name="Sales" dataKey="sales" stroke="#4ade80" fill="#4ade80" fillOpacity={0.6} />
+              <Radar name="Expenses" dataKey="expenses" stroke="#f87171" fill="#f87171" fillOpacity={0.6} />
+              <Legend />
+            </RadarChart>
+          </ResponsiveContainer>
+        );
+
       default:
-        return null;
+        return renderChart(data, 'bar');
     }
   };
 
-  const renderWorkerComparison = () => {
-    if (selectedWorkers.length === 0) {
-      return (
-        <div className="text-center py-8 text-gray-400">
-          Select workers to compare their performance
-        </div>
-      );
-    }
-
-    const comparisonData = workerAnalysis.filter(worker => 
-      selectedWorkers.includes(worker.workerId)
-    );
-
-    return (
-      <ResponsiveContainer width="100%" height={400}>
-        <BarChart
-          data={comparisonData}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-          <XAxis dataKey="workerEmail" stroke="#9CA3AF" />
-          <YAxis stroke="#9CA3AF" />
-          <Tooltip 
-            contentStyle={{ 
-              backgroundColor: '#1F2937', 
-              border: '1px solid #374151',
-              borderRadius: '8px'
-            }}
-            formatter={(value: number) => [formatCurrency(value), '']}
-          />
-          <Legend />
-          <Bar dataKey="totalSales" fill="#10B981" name="Total Sales" />
-          <Bar dataKey="totalExpenses" fill="#EF4444" name="Total Expenses" />
-          <Bar dataKey="netProfit" fill="#F59E0B" name="Net Profit" />
-        </BarChart>
-      </ResponsiveContainer>
-    );
-  };
-
-  if (user?.role !== 'owner') {
+  if (loading) {
     return (
       <UniversalLayout>
-        <div className="flex items-center justify-center min-h-screen">
-          <Card className="w-full max-w-md mx-4 bg-white/10 backdrop-blur-md border-white/20">
-            <CardContent className="p-6 text-center">
-              <p className="text-white">Access denied. Only owners can view data analysis.</p>
+        <div className="container mx-auto p-6">
+          <div className="text-center py-16">
+            <BarChart3 className="h-24 w-24 text-gray-500 mx-auto mb-6 opacity-50 animate-pulse" />
+            <h3 className="text-2xl font-bold text-white mb-4">Analyzing Data...</h3>
+            <p className="text-gray-300 text-lg">Please wait while we process your analytics</p>
+          </div>
+        </div>
+      </UniversalLayout>
+    );
+  }
+
+  // Analysis Overview - First Page
+  if (analysisMode === 'overview') {
+    return (
+      <UniversalLayout>
+        <div className="container mx-auto p-6 space-y-8">
+          {/* Header */}
+          <div className="text-center space-y-4">
+            <h1 className="text-5xl font-bold text-white mb-2 charnoks-text">
+              Data Analysis Center
+            </h1>
+            <p className="text-gray-300 text-xl">
+              Advanced analytics and insights for your business performance
+            </p>
+          </div>
+
+          {/* Analysis Options */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* All Workers Data Analysis */}
+            <Card 
+              className="bg-black/40 backdrop-blur-xl border-white/20 hover:border-blue-500/50 transition-all duration-300 cursor-pointer group"
+              onClick={() => setAnalysisMode('all-workers')}
+            >
+              <CardHeader className="text-center pb-4">
+                <div className="mx-auto bg-blue-500/20 rounded-full p-6 mb-4 group-hover:bg-blue-500/30 transition-all">
+                  <BarChart3 className="h-12 w-12 text-blue-400" />
+                </div>
+                <CardTitle className="text-white text-2xl mb-2">All Workers Data</CardTitle>
+              </CardHeader>
+              <CardContent className="text-center">
+                <p className="text-gray-300 text-lg mb-6">
+                  Comprehensive analysis of overall business performance with multiple chart types and visualizations
+                </p>
+                <div className="space-y-2 text-sm text-gray-400">
+                  <p>• Sales & Expense Trends</p>
+                  <p>• Multiple Chart Types</p>
+                  <p>• Time-based Analysis</p>
+                  <p>• Performance Metrics</p>
+                </div>
+                <Button className="mt-6 bg-blue-500/20 border-blue-500/30 text-blue-300 hover:bg-blue-500/30 w-full">
+                  <Activity className="h-4 w-4 mr-2" />
+                  Analyze All Data
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Compare Workers Data */}
+            <Card 
+              className="bg-black/40 backdrop-blur-xl border-white/20 hover:border-green-500/50 transition-all duration-300 cursor-pointer group"
+              onClick={() => setAnalysisMode('compare-workers')}
+            >
+              <CardHeader className="text-center pb-4">
+                <div className="mx-auto bg-green-500/20 rounded-full p-6 mb-4 group-hover:bg-green-500/30 transition-all">
+                  <GitCompare className="h-12 w-12 text-green-400" />
+                </div>
+                <CardTitle className="text-white text-2xl mb-2">Compare Workers</CardTitle>
+              </CardHeader>
+              <CardContent className="text-center">
+                <p className="text-gray-300 text-lg mb-6">
+                  Side-by-side comparison of worker performance with customizable duration and metrics
+                </p>
+                <div className="space-y-2 text-sm text-gray-400">
+                  <p>• Worker vs Worker Analysis</p>
+                  <p>• Performance Comparison</p>
+                  <p>• Custom Date Ranges</p>
+                  <p>• Ranking & Metrics</p>
+                </div>
+                <Button className="mt-6 bg-green-500/20 border-green-500/30 text-green-300 hover:bg-green-500/30 w-full">
+                  <GitCompare className="h-4 w-4 mr-2" />
+                  Compare Performance
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Individual Worker Analysis */}
+            <Card 
+              className="bg-black/40 backdrop-blur-xl border-white/20 hover:border-purple-500/50 transition-all duration-300 cursor-pointer group"
+              onClick={() => setAnalysisMode('individual-worker')}
+            >
+              <CardHeader className="text-center pb-4">
+                <div className="mx-auto bg-purple-500/20 rounded-full p-6 mb-4 group-hover:bg-purple-500/30 transition-all">
+                  <User className="h-12 w-12 text-purple-400" />
+                </div>
+                <CardTitle className="text-white text-2xl mb-2">Individual Worker</CardTitle>
+              </CardHeader>
+              <CardContent className="text-center">
+                <p className="text-gray-300 text-lg mb-6">
+                  Deep dive into specific worker performance with detailed metrics and trends
+                </p>
+                <div className="space-y-2 text-sm text-gray-400">
+                  <p>• Personal Performance</p>
+                  <p>• Detailed Breakdowns</p>
+                  <p>• Historical Trends</p>
+                  <p>• Goal Tracking</p>
+                </div>
+                <Button className="mt-6 bg-purple-500/20 border-purple-500/30 text-purple-300 hover:bg-purple-500/30 w-full">
+                  <Target className="h-4 w-4 mr-2" />
+                  Analyze Individual
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+              <CardContent className="p-6 text-center">
+                <Users className="h-8 w-8 text-blue-400 mx-auto mb-2" />
+                <p className="text-gray-400 text-sm">Active Workers</p>
+                <p className="text-blue-400 font-bold text-2xl">{workerAnalysis.length}</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+              <CardContent className="p-6 text-center">
+                <TrendingUp className="h-8 w-8 text-green-400 mx-auto mb-2" />
+                <p className="text-gray-400 text-sm">Total Sales</p>
+                <p className="text-green-400 font-bold text-2xl">
+                  {formatCurrency(analysisData.reduce((sum, item) => sum + item.sales, 0))}
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+              <CardContent className="p-6 text-center">
+                <TrendingDown className="h-8 w-8 text-red-400 mx-auto mb-2" />
+                <p className="text-gray-400 text-sm">Total Expenses</p>
+                <p className="text-red-400 font-bold text-2xl">
+                  {formatCurrency(analysisData.reduce((sum, item) => sum + item.expenses, 0))}
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+              <CardContent className="p-6 text-center">
+                <Activity className="h-8 w-8 text-purple-400 mx-auto mb-2" />
+                <p className="text-gray-400 text-sm">Transactions</p>
+                <p className="text-purple-400 font-bold text-2xl">
+                  {analysisData.reduce((sum, item) => sum + item.transactions, 0)}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </UniversalLayout>
+    );
+  }
+
+  // All Workers Data Analysis
+  if (analysisMode === 'all-workers') {
+    return (
+      <UniversalLayout>
+        <div className="container mx-auto p-6 space-y-8">
+          {/* Header */}
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              onClick={() => setAnalysisMode('overview')}
+              className="border-white/30 text-white hover:bg-white/10"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Overview
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-white charnoks-text">
+                All Workers Data Analysis
+              </h1>
+              <p className="text-gray-300">Comprehensive business performance overview</p>
+            </div>
+          </div>
+
+          {/* Controls */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+              <CardContent className="p-6">
+                <Label className="text-white mb-3 block">Chart Type</Label>
+                <Select value={chartType} onValueChange={(value: ChartType) => setChartType(value)}>
+                  <SelectTrigger className="bg-white/10 border-white/30 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="bar">Bar Chart</SelectItem>
+                    <SelectItem value="line">Line Chart</SelectItem>
+                    <SelectItem value="area">Area Chart</SelectItem>
+                    <SelectItem value="pie">Pie Chart</SelectItem>
+                    <SelectItem value="composed">Composed Chart</SelectItem>
+                    <SelectItem value="radar">Radar Chart</SelectItem>
+                  </SelectContent>
+                </Select>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+              <CardContent className="p-6">
+                <Label className="text-white mb-3 block">Duration</Label>
+                <Select value={duration} onValueChange={(value: DurationFilter) => setDuration(value)}>
+                  <SelectTrigger className="bg-white/10 border-white/30 text-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="today">Today</SelectItem>
+                    <SelectItem value="week">This Week</SelectItem>
+                    <SelectItem value="month">This Month</SelectItem>
+                    <SelectItem value="3months">Last 3 Months</SelectItem>
+                    <SelectItem value="6months">Last 6 Months</SelectItem>
+                    <SelectItem value="year">This Year</SelectItem>
+                    <SelectItem value="all">All Time</SelectItem>
+                  </SelectContent>
+                </Select>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+              <CardContent className="p-6">
+                <Label className="text-white mb-3 block">Actions</Label>
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={loadAnalysisData}
+                    size="sm"
+                    className="bg-blue-500/20 border-blue-500/30 text-blue-300 hover:bg-blue-500/30"
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Refresh
+                  </Button>
+                  <Button 
+                    size="sm"
+                    className="bg-green-500/20 border-green-500/30 text-green-300 hover:bg-green-500/30"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Export
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Main Chart */}
+          <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <CardHeader>
+              <CardTitle className="text-white text-2xl flex items-center gap-3">
+                <BarChart3 className="h-6 w-6 text-blue-400" />
+                Business Performance Analysis
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {renderChart(analysisData)}
+            </CardContent>
+          </Card>
+
+          {/* Worker Performance Table */}
+          <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <CardHeader>
+              <CardTitle className="text-white text-2xl flex items-center gap-3">
+                <Users className="h-6 w-6 text-green-400" />
+                Worker Performance Breakdown
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-white/20">
+                      <th className="text-left text-white font-bold p-4">Worker</th>
+                      <th className="text-right text-white font-bold p-4">Sales</th>
+                      <th className="text-right text-white font-bold p-4">Expenses</th>
+                      <th className="text-right text-white font-bold p-4">Net Profit</th>
+                      <th className="text-right text-white font-bold p-4">Transactions</th>
+                      <th className="text-right text-white font-bold p-4">Avg. Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {workerAnalysis.map((worker, index) => (
+                      <tr key={worker.workerId} className="border-b border-white/10 hover:bg-white/5">
+                        <td className="p-4">
+                          <div className="flex items-center gap-3">
+                            <Badge 
+                              variant="outline" 
+                              className={`border-${COLORS[index % COLORS.length]}/30 text-${COLORS[index % COLORS.length]}`}
+                            >
+                              #{index + 1}
+                            </Badge>
+                            <span className="text-white">{worker.workerEmail}</span>
+                          </div>
+                        </td>
+                        <td className="text-right text-green-400 font-bold p-4">
+                          {formatCurrency(worker.totalSales)}
+                        </td>
+                        <td className="text-right text-red-400 font-bold p-4">
+                          {formatCurrency(worker.totalExpenses)}
+                        </td>
+                        <td className={`text-right font-bold p-4 ${worker.netProfit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          {formatCurrency(worker.netProfit)}
+                        </td>
+                        <td className="text-right text-blue-400 font-bold p-4">
+                          {worker.transactionCount}
+                        </td>
+                        <td className="text-right text-purple-400 font-bold p-4">
+                          {formatCurrency(worker.averageTransactionValue)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -410,201 +687,203 @@ export const DataAnalysis = () => {
     );
   }
 
-  return (
-    <UniversalLayout>
-      <div className="container mx-auto px-4 py-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-white charnoks-text">
-            Data Analysis
-          </h1>
-          <Button
-            onClick={loadAnalysisData}
-            variant="outline"
-            className="border-white/30 text-white hover:bg-white/10"
-          >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh Data
-          </Button>
-        </div>
-
-        {/* Analysis Type Selection */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card 
-            className={`cursor-pointer transition-all duration-300 ${
-              analysisType === 'all' 
-                ? 'bg-orange-500/20 border-orange-500' 
-                : 'bg-white/10 border-white/20 hover:bg-white/20'
-            }`}
-            onClick={() => setAnalysisType('all')}
-          >
-            <CardContent className="p-6 text-center">
-              <BarChart3 className="h-8 w-8 mx-auto mb-3 text-orange-500" />
-              <h3 className="text-white font-semibold mb-2">All Workers Data</h3>
-              <p className="text-gray-300 text-sm">
-                Complete analysis of all workers' performance
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card 
-            className={`cursor-pointer transition-all duration-300 ${
-              analysisType === 'compare' 
-                ? 'bg-orange-500/20 border-orange-500' 
-                : 'bg-white/10 border-white/20 hover:bg-white/20'
-            }`}
-            onClick={() => setAnalysisType('compare')}
-          >
-            <CardContent className="p-6 text-center">
-              <Users className="h-8 w-8 mx-auto mb-3 text-orange-500" />
-              <h3 className="text-white font-semibold mb-2">Compare Workers</h3>
-              <p className="text-gray-300 text-sm">
-                Side-by-side comparison of worker performance
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card 
-            className={`cursor-pointer transition-all duration-300 ${
-              analysisType === 'individual' 
-                ? 'bg-orange-500/20 border-orange-500' 
-                : 'bg-white/10 border-white/20 hover:bg-white/20'
-            }`}
-            onClick={() => setAnalysisType('individual')}
-          >
-            <CardContent className="p-6 text-center">
-              <TrendingUp className="h-8 w-8 mx-auto mb-3 text-orange-500" />
-              <h3 className="text-white font-semibold mb-2">Individual Analysis</h3>
-              <p className="text-gray-300 text-sm">
-                Detailed analysis of specific worker data
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Controls */}
-        <div className="flex flex-wrap gap-4 items-center">
-          <div className="flex items-center space-x-2">
-            <Calendar className="h-4 w-4 text-gray-400" />
-            <Select value={duration} onValueChange={(value: DurationFilter) => setDuration(value)}>
-              <SelectTrigger className="w-40 bg-white/10 border-white/20 text-white">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="today">Today</SelectItem>
-                <SelectItem value="week">This Week</SelectItem>
-                <SelectItem value="month">This Month</SelectItem>
-                <SelectItem value="3months">3 Months</SelectItem>
-                <SelectItem value="6months">6 Months</SelectItem>
-                <SelectItem value="year">This Year</SelectItem>
-                <SelectItem value="all">All Time</SelectItem>
-              </SelectContent>
-            </Select>
+  // Compare Workers Mode
+  if (analysisMode === 'compare-workers') {
+    return (
+      <UniversalLayout>
+        <div className="container mx-auto p-6 space-y-8">
+          {/* Header */}
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              onClick={() => setAnalysisMode('overview')}
+              className="border-white/30 text-white hover:bg-white/10"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Overview
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-white charnoks-text">
+                Compare Workers Performance
+              </h1>
+              <p className="text-gray-300">Side-by-side worker performance comparison</p>
+            </div>
           </div>
 
-          <div className="flex items-center space-x-2">
-            <Filter className="h-4 w-4 text-gray-400" />
-            <Select value={chartType} onValueChange={(value: ChartType) => setChartType(value)}>
-              <SelectTrigger className="w-40 bg-white/10 border-white/20 text-white">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="bar">Bar Chart</SelectItem>
-                <SelectItem value="line">Line Chart</SelectItem>
-                <SelectItem value="area">Area Chart</SelectItem>
-                <SelectItem value="composed">Combined Chart</SelectItem>
-                <SelectItem value="pie">Pie Chart</SelectItem>
-              </SelectContent>
-            </Select>
+          {/* Worker Selection */}
+          <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <CardHeader>
+              <CardTitle className="text-white text-xl">Select Workers to Compare</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {workerAnalysis.map((worker) => (
+                  <Card
+                    key={worker.workerId}
+                    className={`cursor-pointer transition-all duration-300 ${
+                      selectedWorkers.includes(worker.workerId)
+                        ? 'bg-blue-500/20 border-blue-500/50'
+                        : 'bg-white/5 border-white/20 hover:bg-white/10'
+                    }`}
+                    onClick={() => {
+                      if (selectedWorkers.includes(worker.workerId)) {
+                        setSelectedWorkers(selectedWorkers.filter(id => id !== worker.workerId));
+                      } else if (selectedWorkers.length < 5) {
+                        setSelectedWorkers([...selectedWorkers, worker.workerId]);
+                      }
+                    }}
+                  >
+                    <CardContent className="p-4 text-center">
+                      <p className="text-white font-medium">{worker.workerEmail}</p>
+                      <p className="text-gray-400 text-sm">{formatCurrency(worker.totalSales)} sales</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              {selectedWorkers.length > 5 && (
+                <p className="text-yellow-400 text-sm mt-4">Maximum 5 workers can be compared at once</p>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Comparison Results */}
+          {selectedWorkers.length > 1 && (
+            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+              <CardHeader>
+                <CardTitle className="text-white text-2xl flex items-center gap-3">
+                  <GitCompare className="h-6 w-6 text-green-400" />
+                  Performance Comparison
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {renderChart(comparisonData.map((worker, index) => ({
+                  name: worker.workerEmail.split('@')[0],
+                  sales: worker.totalSales,
+                  expenses: worker.totalExpenses,
+                  profit: worker.netProfit,
+                  transactions: worker.transactionCount
+                })))}
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </UniversalLayout>
+    );
+  }
+
+  // Individual Worker Analysis
+  if (analysisMode === 'individual-worker') {
+    const worker = workerAnalysis.find(w => w.workerId === selectedWorker);
+    
+    return (
+      <UniversalLayout>
+        <div className="container mx-auto p-6 space-y-8">
+          {/* Header */}
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              onClick={() => setAnalysisMode('overview')}
+              className="border-white/30 text-white hover:bg-white/10"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Overview
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-white charnoks-text">
+                Individual Worker Analysis
+              </h1>
+              <p className="text-gray-300">Detailed performance breakdown</p>
+            </div>
           </div>
 
-          {analysisType === 'compare' && (
-            <div className="flex items-center space-x-2">
-              <Users className="h-4 w-4 text-gray-400" />
-              <Select 
-                value={selectedWorkers.join(',')} 
-                onValueChange={(value) => setSelectedWorkers(value.split(',').filter(Boolean))}
-              >
-                <SelectTrigger className="w-48 bg-white/10 border-white/20 text-white">
-                  <SelectValue placeholder="Select workers" />
+          {/* Worker Selection */}
+          <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <CardContent className="p-6">
+              <Label className="text-white mb-3 block">Select Worker</Label>
+              <Select value={selectedWorker} onValueChange={setSelectedWorker}>
+                <SelectTrigger className="bg-white/10 border-white/30 text-white">
+                  <SelectValue placeholder="Choose a worker to analyze" />
                 </SelectTrigger>
                 <SelectContent>
-                  {workerAnalysis.map(worker => (
+                  {workerAnalysis.map((worker) => (
                     <SelectItem key={worker.workerId} value={worker.workerId}>
                       {worker.workerEmail}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-          )}
-        </div>
+            </CardContent>
+          </Card>
 
-        {/* Chart Display */}
-        <Card className="bg-white/10 backdrop-blur-md border-white/20">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center justify-between">
-              <span>
-                {analysisType === 'all' && 'Overall Performance Analysis'}
-                {analysisType === 'compare' && 'Worker Comparison'}
-                {analysisType === 'individual' && 'Individual Worker Analysis'}
-              </span>
-              <Badge variant="outline" className="border-white/30 text-white">
-                {duration.charAt(0).toUpperCase() + duration.slice(1)}
-              </Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {analysisType === 'compare' ? renderWorkerComparison() : renderChart()}
-          </CardContent>
-        </Card>
-
-        {/* Summary Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {analysisData.length > 0 && (
+          {/* Individual Analysis Results */}
+          {worker && (
             <>
-              <Card className="bg-white/10 backdrop-blur-md border-white/20">
-                <CardContent className="p-4 text-center">
-                  <TrendingUp className="h-6 w-6 text-green-400 mx-auto mb-2" />
-                  <p className="text-green-400 text-xl font-bold">
-                    {formatCurrency(analysisData.reduce((sum, item) => sum + item.sales, 0))}
-                  </p>
-                  <p className="text-gray-300 text-sm">Total Sales</p>
-                </CardContent>
-              </Card>
-              
-              <Card className="bg-white/10 backdrop-blur-md border-white/20">
-                <CardContent className="p-4 text-center">
-                  <TrendingDown className="h-6 w-6 text-red-400 mx-auto mb-2" />
-                  <p className="text-red-400 text-xl font-bold">
-                    {formatCurrency(analysisData.reduce((sum, item) => sum + item.expenses, 0))}
-                  </p>
-                  <p className="text-gray-300 text-sm">Total Expenses</p>
-                </CardContent>
-              </Card>
-              
-              <Card className="bg-white/10 backdrop-blur-md border-white/20">
-                <CardContent className="p-4 text-center">
-                  <TrendingUp className="h-6 w-6 text-yellow-400 mx-auto mb-2" />
-                  <p className="text-yellow-400 text-xl font-bold">
-                    {formatCurrency(analysisData.reduce((sum, item) => sum + item.profit, 0))}
-                  </p>
-                  <p className="text-gray-300 text-sm">Net Profit</p>
-                </CardContent>
-              </Card>
-              
-              <Card className="bg-white/10 backdrop-blur-md border-white/20">
-                <CardContent className="p-4 text-center">
-                  <BarChart3 className="h-6 w-6 text-blue-400 mx-auto mb-2" />
-                  <p className="text-blue-400 text-xl font-bold">
-                    {analysisData.reduce((sum, item) => sum + item.transactions, 0)}
-                  </p>
-                  <p className="text-gray-300 text-sm">Total Transactions</p>
+              {/* Worker Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+                  <CardContent className="p-6 text-center">
+                    <DollarSign className="h-8 w-8 text-green-400 mx-auto mb-2" />
+                    <p className="text-gray-400 text-sm">Total Sales</p>
+                    <p className="text-green-400 font-bold text-2xl">
+                      {formatCurrency(worker.totalSales)}
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+                  <CardContent className="p-6 text-center">
+                    <TrendingDown className="h-8 w-8 text-red-400 mx-auto mb-2" />
+                    <p className="text-gray-400 text-sm">Total Expenses</p>
+                    <p className="text-red-400 font-bold text-2xl">
+                      {formatCurrency(worker.totalExpenses)}
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+                  <CardContent className="p-6 text-center">
+                    <Target className="h-8 w-8 text-blue-400 mx-auto mb-2" />
+                    <p className="text-gray-400 text-sm">Net Profit</p>
+                    <p className={`font-bold text-2xl ${worker.netProfit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      {formatCurrency(worker.netProfit)}
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+                  <CardContent className="p-6 text-center">
+                    <Activity className="h-8 w-8 text-purple-400 mx-auto mb-2" />
+                    <p className="text-gray-400 text-sm">Avg. Transaction</p>
+                    <p className="text-purple-400 font-bold text-2xl">
+                      {formatCurrency(worker.averageTransactionValue)}
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Individual Performance Chart */}
+              <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+                <CardHeader>
+                  <CardTitle className="text-white text-2xl flex items-center gap-3">
+                    <User className="h-6 w-6 text-purple-400" />
+                    {worker.workerEmail} Performance Analysis
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {renderChart([
+                    { date: 'Sales', sales: worker.totalSales, expenses: 0, profit: worker.totalSales },
+                    { date: 'Expenses', sales: 0, expenses: worker.totalExpenses, profit: -worker.totalExpenses },
+                    { date: 'Net Profit', sales: 0, expenses: 0, profit: worker.netProfit },
+                    { date: 'Transactions', sales: 0, expenses: 0, profit: worker.transactionCount }
+                  ], 'bar')}
                 </CardContent>
               </Card>
             </>
           )}
         </div>
-      </div>
-    </UniversalLayout>
-  );
+      </UniversalLayout>
+    );
+  }
+
+  return null;
 };

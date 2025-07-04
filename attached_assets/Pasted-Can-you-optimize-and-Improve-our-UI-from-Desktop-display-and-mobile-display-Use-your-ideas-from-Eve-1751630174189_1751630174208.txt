@@ -1,0 +1,17 @@
+Can you optimize and Improve our UI from Desktop display and mobile display? Use your ideas from Every website or app you made to make The UI design in this project perfect.
+
+So we'll talk about errors we need to fix in Ownersdashboard we need to fix the Uploading because we can't upload the product. 
+
+I have some recommendations to make, in Ownersdashboard specifically the Workers button (active worker) ah no we will create a page for transactions or recorded sales and expenses and the structure is like (tap transactions, sees the workers account, tap workers account, see workers Transactions data Total sales Total expense (you'll need to make another page for this) and then sees the Dates of transactions of that workers account, after tapping the selected date proceed to see all the Transactions made in that day (sales or expenses).
+
+Now let's move to more complex about the implementation of Data Analysis (like graphs, chats, and many more graphic organizer of sales) well need to make a new page (This will be on Transactions button) (the transactions in home will be transferred to Transaction button) 
+for this because it's Going to be important, so it will look like this 
+First Page of Analysis: (Tap Analysis, you'll see A button for "All workers Data" Analysis(Graph of Sales and Expenses make sure There are many Graphical organizer That can be use not just  a graph alone), a button for "Compare Workers Data" to another workers data can be set by The Duration (dates, weeks, months), next button is for Analysis of each workers data (specifically to that workers data). That's the first page of analysis.
+
+Second page of Analysis connected to each button in first page 
+In "All workers Data" after tapping you'll see or can set what type of graph or how to analyze the data of over all. Then will proceed to show the Data Analysis (graph or other Graphic organizer), add a button to be able to set the Or Set the Duration like Dates(July 1-2 data) or months and years.
+In "Compares workers data" it's function is mostly the same after tapping the compare workers data will proceed to see who to compare set the duration and then will show the ( Graph or Data Analysis).
+And it's also the same function for  "Analyze Workers Data" after tapping will proceed to Choose whos data to show can set at duration (Days, weeks, months, years) 
+
+
+Is this plan fully implemented?
