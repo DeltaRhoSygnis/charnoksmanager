@@ -1,20 +1,9 @@
-import { useState, useEffect } from "react";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  updateDoc,
-  deleteDoc,
-  doc,
-  query,
-  orderBy,
-} from "firebase/firestore";
-import { db } from "@/lib/firebase";
-import { OfflineState } from "@/lib/offlineState";
-import { LocalStorageDB } from "@/lib/localStorageDB";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { insertProductSchema, type Product } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -46,141 +35,127 @@ import { toast } from "@/hooks/use-toast";
 import { Edit, Trash2, Plus, Package, Star, TrendingUp } from "lucide-react";
 import { UniversalLayout } from "@/components/layout/UniversalLayout";
 import { ImageUpload } from "./ImageUpload";
+import { defaultFetcher, apiRequest } from "@/lib/queryClient";
 
-const productSchema = z.object({
-  name: z.string().min(1, "Product name is required"),
-  price: z.number().min(0, "Price must be positive"),
-  stock: z.number().min(0, "Stock must be positive"),
-  category: z.string().min(1, "Category is required"),
-  imageUrl: z.string().optional(),
-  description: z.string().optional(),
+const productFormSchema = insertProductSchema.extend({
+  price: z.string().transform((val) => val),
+  stock: z.string().transform((val) => parseInt(val, 10)),
 });
 
-type ProductFormData = z.infer<typeof productSchema>;
-
-interface Product extends ProductFormData {
-  id: string;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
+type ProductFormData = z.infer<typeof productFormSchema>;
 
 export const Products = () => {
-  const [products, setProducts] = useState<Product[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
   const form = useForm<ProductFormData>({
-    resolver: zodResolver(productSchema),
+    resolver: zodResolver(productFormSchema),
     defaultValues: {
       name: "",
-      price: 0,
-      stock: 0,
+      price: "",
+      stock: "0",
       category: "",
       imageUrl: "",
       description: "",
+      isActive: true,
     },
   });
 
-  useEffect(() => {
-    loadProducts();
-  }, []);
+  // Fetch products using TanStack Query
+  const { data: products = [], isLoading, error } = useQuery({
+    queryKey: ["/api/products"],
+    queryFn: () => defaultFetcher("/api/products"),
+  });
 
-  const loadProducts = async () => {
-    try {
-      setLoading(true);
-      
-      // Check if Firebase is accessible
-      if (OfflineState.hasFirebaseAccess()) {
-        const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
-        const querySnapshot = await getDocs(q);
-        const productsData = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-          createdAt: doc.data().createdAt?.toDate() || new Date(),
-          updatedAt: doc.data().updatedAt?.toDate() || new Date(),
-        })) as Product[];
-        setProducts(productsData);
-      } else {
-        // Fallback to local storage
-        const localProducts = LocalStorageDB.getProducts();
-        setProducts(localProducts.map(p => ({
-          ...p,
-          createdAt: new Date(p.createdAt),
-          updatedAt: new Date(p.updatedAt),
-        })));
-      }
-    } catch (error) {
-      console.error("Error loading products:", error);
-      toast({
-        title: "Error",
-        description: "Failed to load products. Using local storage.",
-        variant: "destructive",
-      });
-      
-      // Fallback to local storage on error
-      const localProducts = LocalStorageDB.getProducts();
-      setProducts(localProducts.map(p => ({
-        ...p,
-        createdAt: new Date(p.createdAt),
-        updatedAt: new Date(p.updatedAt),
-      })));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const onSubmit = async (data: ProductFormData) => {
-    try {
+  // Create product mutation
+  const createProductMutation = useMutation({
+    mutationFn: async (data: ProductFormData) => {
       const productData = {
         ...data,
-        isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        price: data.price,
+        stock: data.stock,
       };
-
-      if (editingProduct) {
-        // Update existing product
-        if (OfflineState.hasFirebaseAccess()) {
-          await updateDoc(doc(db, "products", editingProduct.id), {
-            ...data,
-            updatedAt: new Date(),
-          });
-        } else {
-          LocalStorageDB.updateProduct(editingProduct.id, {
-            ...data,
-            updatedAt: new Date(),
-          });
-        }
-        
-        toast({
-          title: "Success",
-          description: "Product updated successfully",
-        });
-      } else {
-        // Create new product
-        if (OfflineState.hasFirebaseAccess()) {
-          await addDoc(collection(db, "products"), productData);
-        } else {
-          LocalStorageDB.addProduct(productData);
-        }
-        
-        toast({
-          title: "Success", 
-          description: "Product created successfully",
-        });
-      }
-
-      await loadProducts();
+      return apiRequest("/api/products", {
+        method: "POST",
+        body: JSON.stringify(productData),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      toast({
+        title: "Success",
+        description: "Product created successfully",
+      });
       handleCloseDialog();
-    } catch (error) {
-      console.error("Error saving product:", error);
+    },
+    onError: (error: any) => {
       toast({
         title: "Error",
-        description: "Failed to save product. Please try again.",
+        description: error.message || "Failed to create product",
         variant: "destructive",
       });
+    },
+  });
+
+  // Update product mutation
+  const updateProductMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: Partial<ProductFormData> }) => {
+      const productData = {
+        ...data,
+        price: data.price,
+        stock: data.stock,
+      };
+      return apiRequest(`/api/products/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(productData),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      toast({
+        title: "Success",
+        description: "Product updated successfully",
+      });
+      handleCloseDialog();
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update product",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Delete product mutation
+  const deleteProductMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return apiRequest(`/api/products/${id}`, {
+        method: "DELETE",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+      toast({
+        title: "Success",
+        description: "Product deleted successfully",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete product",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const onSubmit = async (data: ProductFormData) => {
+    if (editingProduct) {
+      updateProductMutation.mutate({ id: editingProduct.id, data });
+    } else {
+      createProductMutation.mutate(data);
     }
   };
 
@@ -189,39 +164,18 @@ export const Products = () => {
     form.reset({
       name: product.name,
       price: product.price,
-      stock: product.stock,
+      stock: product.stock.toString(),
       category: product.category,
       imageUrl: product.imageUrl || "",
       description: product.description || "",
+      isActive: product.isActive,
     });
     setDialogOpen(true);
   };
 
-  const handleDelete = async (product: Product) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) {
-      return;
-    }
-
-    try {
-      if (OfflineState.hasFirebaseAccess()) {
-        await deleteDoc(doc(db, "products", product.id));
-      } else {
-        LocalStorageDB.deleteProduct(product.id);
-      }
-
-      toast({
-        title: "Success",
-        description: "Product deleted successfully",
-      });
-      
-      await loadProducts();
-    } catch (error) {
-      console.error("Error deleting product:", error);
-      toast({
-        title: "Error",
-        description: "Failed to delete product. Please try again.",
-        variant: "destructive",
-      });
+  const handleDelete = async (id: number) => {
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      deleteProductMutation.mutate(id);
     }
   };
 
@@ -230,17 +184,33 @@ export const Products = () => {
     setEditingProduct(null);
     form.reset({
       name: "",
-      price: 0,
-      stock: 0,
+      price: "",
+      stock: "0",
       category: "",
       imageUrl: "",
       description: "",
+      isActive: true,
     });
   };
 
   const handleImageUpload = (imageUrl: string) => {
     form.setValue("imageUrl", imageUrl);
   };
+
+  if (error) {
+    return (
+      <UniversalLayout>
+        <div className="container mx-auto p-6">
+          <Card className="bg-red-500/10 border-red-500/20">
+            <CardContent className="p-6">
+              <h2 className="text-white text-xl mb-2">Error Loading Products</h2>
+              <p className="text-red-300">Failed to load products. Please try again.</p>
+            </CardContent>
+          </Card>
+        </div>
+      </UniversalLayout>
+    );
+  }
 
   return (
     <UniversalLayout>
@@ -307,7 +277,7 @@ export const Products = () => {
                   <div className="space-y-2">
                     <Label className="text-white font-semibold text-lg">Price</Label>
                     <Input
-                      {...form.register("price", { valueAsNumber: true })}
+                      {...form.register("price")}
                       type="number"
                       step="0.01"
                       className="bg-white/10 border-white/30 text-white placeholder:text-gray-400 h-12 rounded-xl"
@@ -321,7 +291,7 @@ export const Products = () => {
                   <div className="space-y-2">
                     <Label className="text-white font-semibold text-lg">Stock Quantity</Label>
                     <Input
-                      {...form.register("stock", { valueAsNumber: true })}
+                      {...form.register("stock")}
                       type="number"
                       className="bg-white/10 border-white/30 text-white placeholder:text-gray-400 h-12 rounded-xl"
                       placeholder="0"
@@ -344,7 +314,7 @@ export const Products = () => {
                 <ImageUpload
                   onImageUpload={handleImageUpload}
                   initialImage={form.watch("imageUrl")}
-                  disabled={false}
+                  disabled={createProductMutation.isPending || updateProductMutation.isPending}
                 />
 
                 <div className="flex gap-4 pt-6">
@@ -358,9 +328,12 @@ export const Products = () => {
                   </Button>
                   <Button
                     type="submit"
+                    disabled={createProductMutation.isPending || updateProductMutation.isPending}
                     className="flex-1 charnoks-gradient hover:opacity-90 text-white font-bold h-12 rounded-xl transition-all duration-300"
                   >
-                    {editingProduct ? "Update Product" : "Add Product"}
+                    {createProductMutation.isPending || updateProductMutation.isPending 
+                      ? "Saving..." 
+                      : editingProduct ? "Update Product" : "Add Product"}
                   </Button>
                 </div>
               </form>
@@ -380,7 +353,7 @@ export const Products = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            {loading ? (
+            {isLoading ? (
               <div className="text-center py-16">
                 <Package className="h-24 w-24 text-gray-500 mx-auto mb-6 opacity-50 animate-pulse" />
                 <h3 className="text-2xl font-bold text-white mb-4">Loading Products...</h3>
@@ -408,7 +381,7 @@ export const Products = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {products.map((product) => (
+                    {products.map((product: Product) => (
                       <TableRow 
                         key={product.id} 
                         className="border-white/20 hover:bg-white/5 transition-colors duration-200"
@@ -422,7 +395,7 @@ export const Products = () => {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-green-400 font-bold text-lg">
-                          ₱{product.price.toFixed(2)}
+                          ₱{parseFloat(product.price).toFixed(2)}
                         </TableCell>
                         <TableCell>
                           <Badge 
@@ -459,7 +432,8 @@ export const Products = () => {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => handleDelete(product)}
+                              onClick={() => handleDelete(product.id)}
+                              disabled={deleteProductMutation.isPending}
                               className="bg-red-500/20 border-red-500/30 text-red-300 hover:bg-red-500/30 text-sm"
                             >
                               <Trash2 className="h-4 w-4" />

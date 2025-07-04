@@ -25,12 +25,12 @@ Sari POS is a complete Point of Sale solution designed for small businesses and 
 - **Development**: Hot reloading with Vite middleware integration
 
 ### Database Design
-- **Primary Database**: PostgreSQL via Neon Database
-- **ORM**: Drizzle ORM with TypeScript schema definitions
-- **Schema Location**: `shared/schema.ts` for shared types
-- **Migration Strategy**: Drizzle Kit for database migrations
-- **Connection**: Direct PostgreSQL connection using pooler
-- **Tables**: users, products, sales, expenses with proper relations
+- **Primary Database**: Firebase Firestore (user's permanent database)
+- **Backup Database**: Supabase (user's secondary option)
+- **Local Fallback**: LocalStorage for offline mode
+- **Collections**: products, transactions, users, expenses
+- **Real-time Updates**: Firebase real-time listeners
+- **Image Storage**: Firebase Storage for product images
 
 ## Key Components
 
@@ -184,7 +184,7 @@ Changelog:
 - July 04, 2025. Mobile layout optimization with compact cards, trading-style dashboard, and professional UI improvements
 - July 04, 2025. UI reorganization: moved Firebase Test and Add Worker buttons to Settings page, removed unnecessary Quick button
 - July 04, 2025. Enhanced bottom navigation with Transactions tab for owners and improved mobile responsiveness
-- July 04, 2025. Successfully migrated from Firebase to PostgreSQL database with Drizzle ORM
+- July 04, 2025. Temporarily tested PostgreSQL database migration, then restored Firebase as primary database per user preference for data permanence
 
 ## Deployment Guide
 
