@@ -1,18 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import {
-  collection,
-  query,
-  orderBy,
-  getDocs,
-  where,
-  limit,
-  startAfter,
-} from "firebase/firestore";
+import { collection, query, orderBy, getDocs, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { OfflineState } from "@/lib/offlineState";
 import { LocalStorageDB } from "@/lib/localStorageDB";
+import { OfflineState } from "@/lib/offlineState";
 import { Transaction } from "@/types/product";
 import {
   Card,
@@ -21,16 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -38,116 +20,159 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { OfflineIndicator } from "@/components/ui/offline-indicator";
 import { toast } from "@/hooks/use-toast";
+import { ResponsiveLayout } from "@/components/dashboard/ResponsiveLayout";
 import {
-  Search,
-  Filter,
   Download,
+  Search,
   Calendar,
   User,
-  ShoppingCart,
+  TrendingUp,
+  TrendingDown,
+  Activity,
   DollarSign,
-  Mic,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
+
+const DATE_RANGES = [
+  { value: "today", label: "Today" },
+  { value: "yesterday", label: "Yesterday" },
+  { value: "this-week", label: "This Week" },
+  { value: "last-week", label: "Last Week" },
+  { value: "this-month", label: "This Month" },
+  { value: "last-month", label: "Last Month" },
+  { value: "all", label: "All Time" },
+];
 
 export const TransactionHistory = () => {
   const { user } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [filteredTransactions, setFilteredTransactions] = useState<
-    Transaction[]
-  >([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
+  const [workers, setWorkers] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [workerFilter, setWorkerFilter] = useState("all");
-  const [dateFilter, setDateFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const [workers, setWorkers] = useState<Array<{ id: string; email: string }>>(
-    [],
-  );
-  const [stats, setStats] = useState({
-    totalTransactions: 0,
-    totalRevenue: 0,
-    averageTransaction: 0,
-    voiceTransactions: 0,
-  });
-
-  const itemsPerPage = 20;
+  const [selectedWorker, setSelectedWorker] = useState("all");
+  const [selectedDateRange, setSelectedDateRange] = useState("today");
 
   useEffect(() => {
     fetchTransactions();
     fetchWorkers();
-  }, []);
+  }, [user, selectedDateRange]);
 
   useEffect(() => {
     filterTransactions();
-    calculateStats();
-  }, [transactions, searchQuery, workerFilter, dateFilter, statusFilter]);
+  }, [transactions, searchQuery, selectedWorker, selectedDateRange]);
 
   const fetchTransactions = async () => {
-    if (!user || !user.uid) {
-      setIsLoading(false);
-      return;
-    }
+    if (!user) return;
 
-    // Check Firebase access first to prevent fetch errors
-    if (!OfflineState.hasFirebaseAccess()) {
-      console.log("Using local storage transactions (Firebase disabled)");
-      const localTransactions = LocalStorageDB.getTransactions();
-      setTransactions(localTransactions);
-      setIsLoading(false);
-      return;
-    }
-
+    setIsLoading(true);
+    
     try {
-      if (OfflineState.hasFirebaseAccess()) {
-        const salesQuery = query(
-          collection(db, "sales"),
-          orderBy("timestamp", "desc"),
-          limit(500), // Fetch recent 500 transactions
-        );
+      if (!OfflineState.hasFirebaseAccess()) {
+        console.log("Using local storage transactions");
+        const localTransactions = LocalStorageDB.getTransactions();
+        const processedTransactions = localTransactions.map((t) => ({
+          ...t,
+          type: t.type || "sale"
+        })) as Transaction[];
+        setTransactions(processedTransactions);
+        
+        const uniqueWorkers = Array.from(new Set(
+          processedTransactions.map((u: any) => u.workerEmail).filter(Boolean)
+        ));
+        setWorkers(uniqueWorkers as string[]);
+        setIsLoading(false);
+        return;
+      }
 
-        const snapshot = await getDocs(salesQuery);
-        const transactionsData = snapshot.docs.map((doc) => {
+      if (OfflineState.hasFirebaseAccess()) {
+        let transactionsQuery;
+        
+        if (user?.role === 'owner') {
+          transactionsQuery = query(
+            collection(db, 'sales'),
+            orderBy('createdAt', 'desc')
+          );
+        } else {
+          transactionsQuery = query(
+            collection(db, 'sales'),
+            where('workerEmail', '==', user?.email),
+            orderBy('createdAt', 'desc')
+          );
+        }
+
+        const snapshot = await getDocs(transactionsQuery);
+        const allTransactions = snapshot.docs.map(doc => {
           const data = doc.data();
           return {
             id: doc.id,
-            ...data,
-            timestamp: data.timestamp?.toDate() || new Date(),
+            type: "sale" as const,
+            items: data.items || [],
+            totalAmount: data.totalAmount || data.amount,
+            amountPaid: data.amountPaid,
+            change: data.change,
+            paymentMethod: data.paymentMethod,
+            workerId: data.workerId,
+            workerEmail: data.workerEmail,
+            timestamp: data.createdAt?.toDate() || data.timestamp?.toDate() || new Date(),
+            isVoiceTransaction: data.isVoiceTransaction || false,
+            voiceInput: data.voiceInput,
+            status: data.status || 'completed'
           } as Transaction;
         });
 
-        setTransactions(transactionsData);
+        setTransactions(allTransactions);
+        
+        const uniqueWorkers = Array.from(new Set(
+          allTransactions.map((u: any) => u.workerEmail).filter(Boolean)
+        ));
+        setWorkers(uniqueWorkers as string[]);
       } else {
-        // Use local storage transactions
         const localTransactions = LocalStorageDB.getTransactions();
-        setTransactions(localTransactions);
+        const processedTransactions = localTransactions.map((t) => ({
+          ...t,
+          type: t.type || "sale"
+        })) as Transaction[];
+        setTransactions(processedTransactions);
+        
+        const uniqueWorkers = Array.from(new Set(
+          processedTransactions.map((u: any) => u.workerEmail).filter(Boolean)
+        ));
+        setWorkers(uniqueWorkers as string[]);
       }
     } catch (error: any) {
-      console.error("Error fetching transactions:", error);
-      if (OfflineState.isNetworkError(error)) {
-        // Fallback to local storage
-        const localTransactions = LocalStorageDB.getTransactions();
-        setTransactions(localTransactions);
-      }
-    } finally {
-      setIsLoading(false);
+      console.error('Error fetching transactions:', error);
+      
+      const localTransactions = LocalStorageDB.getTransactions();
+      const processedTransactions = localTransactions.map((t) => ({
+        ...t,
+        type: t.type || "sale"
+      })) as Transaction[];
+      setTransactions(processedTransactions);
+      
+      const uniqueWorkers = Array.from(new Set(
+        processedTransactions.map((u: any) => u.workerEmail).filter(Boolean)
+      ));
+      setWorkers(uniqueWorkers as string[]);
+      
+      toast({
+        title: "Error",
+        description: "Failed to fetch transactions. Using offline data.",
+        variant: "destructive",
+      });
     }
+    
+    setIsLoading(false);
   };
 
   const fetchWorkers = async () => {
-    // Check Firebase access first to prevent fetch errors
     if (!OfflineState.hasFirebaseAccess()) {
       console.log("Using local storage workers (Firebase disabled)");
       const localUsers = LocalStorageDB.getUsers()
-        .filter((u) => u.role === "worker")
-        .map((u) => ({ id: u.id, email: u.email }));
+        .filter((u: any) => u.role === "worker")
+        .map((u: any) => ({ id: u.id, email: u.email }));
       setWorkers(localUsers);
       return;
     }
@@ -165,19 +190,17 @@ export const TransactionHistory = () => {
         }));
         setWorkers(workersData);
       } else {
-        // Use local storage users
         const localUsers = LocalStorageDB.getUsers()
-          .filter((u) => u.role === "worker")
-          .map((u) => ({ id: u.id, email: u.email }));
+          .filter((u: any) => u.role === "worker")
+          .map((u: any) => ({ id: u.id, email: u.email }));
         setWorkers(localUsers);
       }
     } catch (error: any) {
       console.error("Error fetching workers:", error);
       if (OfflineState.isNetworkError(error)) {
-        // Fallback to local storage
         const localUsers = LocalStorageDB.getUsers()
-          .filter((u) => u.role === "worker")
-          .map((u) => ({ id: u.id, email: u.email }));
+          .filter((u: any) => u.role === "worker")
+          .map((u: any) => ({ id: u.id, email: u.email }));
         setWorkers(localUsers);
       }
     }
@@ -191,99 +214,102 @@ export const TransactionHistory = () => {
       filtered = filtered.filter(
         (transaction) =>
           transaction.workerEmail
-            .toLowerCase()
+            ?.toLowerCase()
             .includes(searchQuery.toLowerCase()) ||
-          transaction.items.some((item) =>
-            item.productName.toLowerCase().includes(searchQuery.toLowerCase()),
+          (transaction.items || []).some((item) =>
+            item.productName?.toLowerCase().includes(searchQuery.toLowerCase()),
           ) ||
           transaction.id.toLowerCase().includes(searchQuery.toLowerCase()),
       );
     }
 
     // Worker filter
-    if (workerFilter !== "all") {
+    if (selectedWorker !== "all") {
       filtered = filtered.filter(
-        (transaction) => transaction.workerEmail === workerFilter,
+        (transaction) => transaction.workerEmail === selectedWorker,
       );
     }
 
-    // Date filter
-    if (dateFilter !== "all") {
-      const now = new Date();
-      let startDate: Date, endDate: Date;
+    // Date range filter
+    const now = new Date();
+    let startDate: Date | null = null;
+    let endDate: Date | null = null;
 
-      switch (dateFilter) {
-        case "today":
-          startDate = new Date(now);
-          startDate.setHours(0, 0, 0, 0);
-          endDate = new Date(now);
-          endDate.setHours(23, 59, 59, 999);
-          break;
-        case "week":
-          startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-          endDate = now;
-          break;
-        case "month":
-          startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-          endDate = now;
-          break;
-        default:
-          startDate = new Date(0);
-          endDate = now;
-      }
-
-      filtered = filtered.filter((transaction) =>
-        isWithinDateRange(transaction.timestamp, startDate, endDate),
-      );
+    switch (selectedDateRange) {
+      case "today":
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+        break;
+      case "yesterday":
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+        endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        break;
+      case "this-week":
+        const startOfWeek = new Date(now);
+        startOfWeek.setDate(now.getDate() - now.getDay());
+        startOfWeek.setHours(0, 0, 0, 0);
+        startDate = startOfWeek;
+        endDate = new Date();
+        break;
+      case "last-week":
+        const lastWeekStart = new Date(now);
+        lastWeekStart.setDate(now.getDate() - now.getDay() - 7);
+        lastWeekStart.setHours(0, 0, 0, 0);
+        const lastWeekEnd = new Date(lastWeekStart);
+        lastWeekEnd.setDate(lastWeekStart.getDate() + 7);
+        startDate = lastWeekStart;
+        endDate = lastWeekEnd;
+        break;
+      case "this-month":
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+        break;
+      case "last-month":
+        startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        endDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        break;
+      case "all":
+      default:
+        // No date filtering
+        break;
     }
 
-    // Status filter
-    if (statusFilter !== "all") {
-      filtered = filtered.filter(
-        (transaction) => transaction.status === statusFilter,
-      );
+    if (startDate && endDate) {
+      filtered = filtered.filter((transaction) => {
+        const transactionDate = new Date(transaction.timestamp);
+        return transactionDate >= startDate! && transactionDate < endDate!;
+      });
     }
 
     setFilteredTransactions(filtered);
-    setCurrentPage(1); // Reset to first page when filters change
   };
 
-  const isWithinDateRange = (date: Date, start: Date, end: Date) => {
-    return date >= start && date <= end;
-  };
+  const calculateSummary = () => {
+    const totalSales = filteredTransactions
+      .filter(t => t.type === 'sale')
+      .reduce((sum, t) => sum + (t.totalAmount || t.amount || 0), 0);
+      
+    const totalExpenses = filteredTransactions
+      .filter(t => t.type === 'expense')
+      .reduce((sum, t) => sum + (t.amount || 0), 0);
+      
+    const netProfit = totalSales - totalExpenses;
+    const totalTransactions = filteredTransactions.length;
 
-  const calculateStats = () => {
-    const total = filteredTransactions.length;
-    const revenue = filteredTransactions.reduce(
-      (sum, t) => sum + t.totalAmount,
-      0,
-    );
-    const average = total > 0 ? revenue / total : 0;
-    const voice = filteredTransactions.filter(
-      (t) => t.isVoiceTransaction,
-    ).length;
-
-    setStats({
-      totalTransactions: total,
-      totalRevenue: revenue,
-      averageTransaction: average,
-      voiceTransactions: voice,
-    });
+    return {
+      totalSales,
+      totalExpenses,
+      netProfit,
+      totalTransactions,
+    };
   };
 
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    }).format(date);
-  };
-
-  const formatTime = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: '2-digit',
       hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
+      minute: '2-digit'
     }).format(date);
   };
 
@@ -308,333 +334,294 @@ export const TransactionHistory = () => {
   const exportTransactions = () => {
     const csvContent = [
       // Header
-      [
-        "Date",
-        "Time",
-        "Worker",
-        "Items",
-        "Total",
-        "Paid",
-        "Change",
-        "Type",
-        "Status",
-      ].join(","),
-      // Data
-      ...filteredTransactions.map((transaction) =>
-        [
-          formatDate(transaction.timestamp),
-          formatTime(transaction.timestamp),
-          transaction.workerEmail,
-          transaction.items
-            .map((item) => `${item.quantity}x ${item.productName}`)
-            .join("; "),
-          transaction.totalAmount.toFixed(2),
-          transaction.amountPaid.toFixed(2),
-          transaction.change.toFixed(2),
-          transaction.isVoiceTransaction ? "Voice" : "Manual",
-          transaction.status,
-        ].join(","),
-      ),
-    ].join("\n");
+      ['ID', 'Date', 'Worker', 'Type', 'Items', 'Total Amount', 'Amount Paid', 'Change', 'Payment Method', 'Status'].join(','),
+      // Data rows
+      ...filteredTransactions.map(transaction => {
+        const row = [
+          transaction.id,
+          formatFullDateTime(transaction.timestamp),
+          transaction.workerEmail || '',
+          transaction.type,
+        ];
+        
+        if (transaction.items && Array.isArray(transaction.items)) {
+          (transaction.items || []).forEach(item => {
+            row.push(`${item.productName} (${item.quantity})`);
+          });
+          row.push((transaction.totalAmount || transaction.amount || 0).toString());
+          row.push((transaction.amountPaid || 0).toString());
+          row.push((transaction.change || 0).toString());
+        } else {
+          row.push('N/A');
+          row.push((transaction.amount || 0).toString());
+          row.push('N/A');
+          row.push('N/A');
+        }
+        
+        row.push(transaction.paymentMethod || 'cash');
+        row.push(transaction.status || 'completed');
+        
+        return row.join(',');
+      })
+    ].join('\n');
 
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
     a.href = url;
-    a.download = `transactions_${formatDate(new Date())}.csv`;
+    a.download = `transactions-${formatDateTime(new Date())}.csv`;
     a.click();
-    window.URL.revokeObjectURL(url);
-
-    toast({
-      title: "Export Complete",
-      description: "Transaction history has been exported to CSV file",
-    });
+    URL.revokeObjectURL(url);
   };
 
-  // Pagination
-  const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentTransactions = filteredTransactions.slice(startIndex, endIndex);
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading transactions...</p>
-        </div>
-      </div>
-    );
-  }
+  const summary = calculateSummary();
 
   return (
-    <div className="space-y-6">
-      <OfflineIndicator />
+    <ResponsiveLayout>
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-white">Transaction History</h1>
+            <p className="text-gray-300 mt-1">
+              {user?.role === 'owner' ? 'All business transactions' : 'Your transaction history'}
+            </p>
+          </div>
+          <Badge variant="secondary" className="bg-white/10 text-white border-white/20">
+            {user?.role?.toUpperCase()}: {user?.email}
+          </Badge>
+        </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total Transactions</p>
-                <p className="text-3xl font-bold">{stats.totalTransactions}</p>
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <Card className="bg-white/10 backdrop-blur-md border-white/20">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-300">Total Sales</p>
+                  <p className="text-2xl font-bold text-green-400">
+                    ₱{summary.totalSales.toFixed(2)}
+                  </p>
+                </div>
+                <TrendingUp className="h-8 w-8 text-green-400" />
               </div>
-              <ShoppingCart className="h-8 w-8 text-blue-500" />
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/10 backdrop-blur-md border-white/20">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-300">Total Expenses</p>
+                  <p className="text-2xl font-bold text-red-400">
+                    ₱{summary.totalExpenses.toFixed(2)}
+                  </p>
+                </div>
+                <TrendingDown className="h-8 w-8 text-red-400" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/10 backdrop-blur-md border-white/20">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-300">Net Profit</p>
+                  <p className={`text-2xl font-bold ${summary.netProfit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    ₱{summary.netProfit.toFixed(2)}
+                  </p>
+                </div>
+                <DollarSign className="h-8 w-8 text-blue-400" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/10 backdrop-blur-md border-white/20">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-300">Transactions</p>
+                  <p className="text-2xl font-bold text-blue-400">
+                    {summary.totalTransactions}
+                  </p>
+                </div>
+                <Activity className="h-8 w-8 text-blue-400" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Filters */}
+        <Card className="bg-white/10 backdrop-blur-md border-white/20 mb-6">
+          <CardHeader>
+            <CardTitle className="text-white">Filters</CardTitle>
+            <CardDescription className="text-gray-300">
+              Filter transactions by search, worker, and date range
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search transactions..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+                />
+              </div>
+
+              {user?.role === 'owner' && (
+                <Select value={selectedWorker} onValueChange={setSelectedWorker}>
+                  <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                    <SelectValue placeholder="All Workers" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Workers</SelectItem>
+                    {workers.map((worker) => (
+                      <SelectItem key={worker.id || worker.email} value={worker.email || worker}>
+                        {worker.email || worker}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+
+              <Select value={selectedDateRange} onValueChange={setSelectedDateRange}>
+                <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                  <SelectValue placeholder="Select date range" />
+                </SelectTrigger>
+                <SelectContent>
+                  {DATE_RANGES.map((range) => (
+                    <SelectItem key={range.value} value={range.value}>
+                      {range.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Button
+                onClick={exportTransactions}
+                disabled={filteredTransactions.length === 0}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Export CSV
+              </Button>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total Revenue</p>
-                <p className="text-3xl font-bold">
-                  ₱{stats.totalRevenue.toFixed(2)}
-                </p>
+        {/* Transactions List */}
+        <Card className="bg-white/10 backdrop-blur-md border-white/20">
+          <CardHeader>
+            <CardTitle className="text-white">
+              Transactions ({filteredTransactions.length})
+            </CardTitle>
+            <CardDescription className="text-gray-300">
+              {selectedDateRange === 'all' ? 'All transactions' : `Transactions for ${DATE_RANGES.find(r => r.value === selectedDateRange)?.label}`}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
               </div>
-              <DollarSign className="h-8 w-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Average Transaction</p>
-                <p className="text-3xl font-bold">
-                  ₱{stats.averageTransaction.toFixed(2)}
-                </p>
+            ) : filteredTransactions.length === 0 ? (
+              <div className="text-center py-8">
+                <Activity className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-400 text-lg">No transactions found</p>
+                <p className="text-gray-500 text-sm">Try adjusting your filters</p>
               </div>
-              <Calendar className="h-8 w-8 text-orange-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Voice Transactions</p>
-                <p className="text-3xl font-bold">{stats.voiceTransactions}</p>
+            ) : (
+              <div className="space-y-4">
+                {filteredTransactions.map((transaction) => (
+                  <div
+                    key={transaction.id}
+                    className="bg-white/5 rounded-lg p-4 border border-white/10 hover:bg-white/10 transition-colors"
+                  >
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Badge
+                            variant={transaction.type === 'sale' ? 'default' : 'destructive'}
+                            className={
+                              transaction.type === 'sale'
+                                ? 'bg-green-600 text-white'
+                                : 'bg-red-600 text-white'
+                            }
+                          >
+                            {transaction.type?.toUpperCase()}
+                          </Badge>
+                          
+                          {transaction.isVoiceTransaction && (
+                            <Badge variant="outline" className="border-purple-400 text-purple-400">
+                              Voice
+                            </Badge>
+                          )}
+                          
+                          <span className="text-sm text-gray-400">
+                            {formatDate(transaction.timestamp)}
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center gap-2 mb-1">
+                          <User className="h-4 w-4 text-gray-400" />
+                          <span className="text-white font-medium">
+                            {transaction.workerEmail}
+                          </span>
+                        </div>
+                        
+                        <div className="text-sm text-gray-400">
+                          {(transaction.items || []).length} item(s)
+                        </div>
+                        
+                        <div className="text-xs text-gray-500 mt-1">
+                          ID: {transaction.id}
+                        </div>
+                      </div>
+                      
+                      {transaction.type === 'sale' ? (
+                        <div className="text-right">
+                          <div className="font-bold text-green-400">
+                            ₱{(transaction.totalAmount || transaction.amount || 0).toFixed(2)}
+                          </div>
+                          <div className="text-xs text-gray-400">
+                            Change: ₱{(transaction.change || 0).toFixed(2)}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-right">
+                          <div className="font-bold text-red-400">
+                            -₱{(transaction.amount || transaction.amountPaid || 0).toFixed(2)}
+                          </div>
+                          <div className="text-xs text-gray-400">
+                            {transaction.description || 'Expense'}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {transaction.items && transaction.items.length > 0 && (
+                      <div className="mt-3 pt-3 border-t border-white/10">
+                        <div className="flex flex-wrap gap-2">
+                          {transaction.items.map((item, index) => (
+                            <span
+                              key={index}
+                              className="inline-flex items-center px-2 py-1 rounded-md bg-white/5 text-xs text-gray-300"
+                            >
+                              {item.quantity}x {item.productName}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
-              <Mic className="h-8 w-8 text-purple-500" />
-            </div>
+            )}
           </CardContent>
         </Card>
       </div>
-
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle>Transaction History</CardTitle>
-              <CardDescription>
-                View and filter all sales transactions
-              </CardDescription>
-            </div>
-            <Button onClick={exportTransactions} variant="outline">
-              <Download className="h-4 w-4 mr-2" />
-              Export CSV
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search transactions..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-
-            <Select value={workerFilter} onValueChange={setWorkerFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filter by worker" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Workers</SelectItem>
-                {workers.map((worker) => (
-                  <SelectItem key={worker.id} value={worker.email}>
-                    {worker.email}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={dateFilter} onValueChange={setDateFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filter by date" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Time</SelectItem>
-                <SelectItem value="today">Today</SelectItem>
-                <SelectItem value="week">Last 7 Days</SelectItem>
-                <SelectItem value="month">Last 30 Days</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="cancelled">Cancelled</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Transactions Table */}
-      <Card>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date & Time</TableHead>
-                <TableHead>Worker</TableHead>
-                <TableHead>Items</TableHead>
-                <TableHead>Total</TableHead>
-                <TableHead>Payment</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {currentTransactions.length === 0 ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={7}
-                    className="text-center py-8 text-gray-500"
-                  >
-                    No transactions found
-                  </TableCell>
-                </TableRow>
-              ) : (
-                currentTransactions.map((transaction) => (
-                  <TableRow key={transaction.id}>
-                    <TableCell>
-                      <div className="text-sm">
-                        <div className="font-medium">
-                          {formatDateTime(transaction.timestamp)}
-                        </div>
-                        <div className="text-gray-500">
-                          {formatTime(transaction.timestamp)}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <User className="h-4 w-4 text-gray-400" />
-                        <span className="text-sm">
-                          {transaction.workerEmail}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm max-w-48">
-                        {transaction.items.map((item, index) => (
-                          <div key={index} className="truncate">
-                            {item.quantity}× {item.productName}
-                          </div>
-                        ))}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <div className="font-medium">
-                          ₱{transaction.totalAmount.toFixed(2)}
-                        </div>
-                        <div className="text-gray-500">
-                          Change: ₱{transaction.change.toFixed(2)}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <div>₱{transaction.amountPaid.toFixed(2)}</div>
-                        <Badge variant="outline" className="text-xs">
-                          {transaction.paymentMethod}
-                        </Badge>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {transaction.isVoiceTransaction ? (
-                        <Badge className="bg-purple-100 text-purple-800">
-                          <Mic className="h-3 w-3 mr-1" />
-                          Voice
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline">Manual</Badge>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          transaction.status === "completed"
-                            ? "default"
-                            : "secondary"
-                        }
-                      >
-                        {transaction.status}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between px-6 py-4 border-t">
-              <div className="text-sm text-gray-700">
-                Showing {startIndex + 1} to{" "}
-                {Math.min(endIndex, filteredTransactions.length)} of{" "}
-                {filteredTransactions.length} transactions
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(1, prev - 1))
-                  }
-                  disabled={currentPage === 1}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  Previous
-                </Button>
-                <span className="text-sm">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-                  }
-                  disabled={currentPage === totalPages}
-                >
-                  Next
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+    </ResponsiveLayout>
   );
 };
