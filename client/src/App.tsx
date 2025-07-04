@@ -32,10 +32,29 @@ function App() {
     try {
       console.log("🚀 Starting Charnoks POS...");
       
+      // Add global error handlers for uncaught promise rejections
+      const handleUnhandledRejection = (event: any) => {
+        console.error("Unhandled promise rejection:", event.reason);
+        // Prevent the error from being logged to console as uncaught
+        event.preventDefault();
+      };
+      
+      window.addEventListener('unhandledrejection', handleUnhandledRejection);
+      
       // Test Firebase access on app start
       import("@/lib/firebaseTest").then(({ FirebaseTest }) => {
-        FirebaseTest.initialize();
+        FirebaseTest.initialize().catch((error) => {
+          console.error("Firebase initialization error:", error);
+          // Silently continue with demo mode
+        });
+      }).catch((error) => {
+        console.error("Error importing FirebaseTest:", error);
       });
+      
+      // Cleanup
+      return () => {
+        window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+      };
       
     } catch (error) {
       console.error("Error during app initialization:", error);
