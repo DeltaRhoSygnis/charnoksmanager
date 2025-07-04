@@ -44,6 +44,9 @@ import {
   CreditCard,
   History,
 } from "lucide-react";
+import { LineChart as RechartsLine, Line, BarChart, Bar, PieChart as RechartsPie, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { Link } from "react-router-dom";
+import { OptimizedLayout } from "@/components/layout/OptimizedLayout";
 import { Sale } from "@/types/sales";
 import { CreateWorkerAccount } from "@/components/worker/CreateWorkerAccount";
 import charnofsLogo from "@assets/IMG_20250703_110727_1751555868705.png";
@@ -92,13 +95,13 @@ export const OwnerDashboard = () => {
         .map((t) => ({
           id: t.id,
           type: "sale" as const,
-          amount: t.totalAmount,
+          amount: t.totalAmount || 0,
           workerEmail: t.workerEmail,
-          items: t.items.map(item => ({
+          items: t.items?.map(item => ({
             name: item.productName,
             quantity: item.quantity,
             price: item.price
-          })),
+          })) || [],
           timestamp: t.timestamp,
         }));
       setTransactions(localTransactions);
@@ -119,9 +122,9 @@ export const OwnerDashboard = () => {
           return {
             id: doc.id,
             type: "sale" as const,
-            amount: data.total,
+            amount: data.total || 0,
             workerEmail: data.workerEmail,
-            items: data.items,
+            items: data.items || [],
             timestamp: data.timestamp?.toDate() || new Date(),
           };
         });
@@ -163,13 +166,13 @@ export const OwnerDashboard = () => {
           .map((t) => ({
             id: t.id,
             type: "sale" as const,
-            amount: t.totalAmount,
+            amount: t.totalAmount || 0,
             workerEmail: t.workerEmail,
-            items: t.items.map(item => ({
+            items: t.items?.map(item => ({
               name: item.productName,
               quantity: item.quantity,
               price: item.price
-            })),
+            })) || [],
             timestamp: t.timestamp,
           }));
         setTransactions(localTransactions);
@@ -697,14 +700,217 @@ export const OwnerDashboard = () => {
     </div>
   );
 
+  // Prepare chart data
+  const chartData = [
+    { name: 'Mon', sales: 4500, expenses: 2000 },
+    { name: 'Tue', sales: 5200, expenses: 2300 },
+    { name: 'Wed', sales: 4800, expenses: 2100 },
+    { name: 'Thu', sales: 6100, expenses: 2500 },
+    { name: 'Fri', sales: 7200, expenses: 2800 },
+    { name: 'Sat', sales: 8500, expenses: 3200 },
+    { name: 'Sun', sales: 6900, expenses: 2700 },
+  ];
+
+  const pieData = [
+    { name: 'Sales', value: stats.totalSales, color: '#10b981' },
+    { name: 'Expenses', value: stats.totalExpenses, color: '#ef4444' },
+  ];
+
+  const profitData = [
+    { name: 'Week 1', profit: 12500 },
+    { name: 'Week 2', profit: 15200 },
+    { name: 'Week 3', profit: 14800 },
+    { name: 'Week 4', profit: 18100 },
+  ];
+
   return (
-    <div className="min-h-screen space-y-6">
-      {isMobile ? <MobileLayout /> : <DesktopLayout />}
+    <OptimizedLayout>
+      <div className="p-4 md:p-6 space-y-6">
+        {/* Stats Overview - Mobile Optimized */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+          <Card className="bg-black/40 backdrop-blur-lg border-white/20 hover:scale-105 transition-transform duration-300">
+            <CardContent className="p-3 md:p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs md:text-sm text-white/70">Total Sales</p>
+                  <p className="text-base md:text-2xl font-bold text-green-400">
+                    ₱{stats.totalSales.toLocaleString()}
+                  </p>
+                </div>
+                <span className="text-xl md:text-2xl">💸</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-black/40 backdrop-blur-lg border-white/20 hover:scale-105 transition-transform duration-300">
+            <CardContent className="p-3 md:p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs md:text-sm text-white/70">Total Expenses</p>
+                  <p className="text-base md:text-2xl font-bold text-red-400">
+                    ₱{stats.totalExpenses.toLocaleString()}
+                  </p>
+                </div>
+                <span className="text-xl md:text-2xl">🧾</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-black/40 backdrop-blur-lg border-white/20 hover:scale-105 transition-transform duration-300">
+            <CardContent className="p-3 md:p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs md:text-sm text-white/70">Net Profit</p>
+                  <p className="text-base md:text-2xl font-bold text-blue-400">
+                    ₱{(stats.totalSales - stats.totalExpenses).toLocaleString()}
+                  </p>
+                </div>
+                <span className="text-xl md:text-2xl">📈</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-black/40 backdrop-blur-lg border-white/20 hover:scale-105 transition-transform duration-300">
+            <CardContent className="p-3 md:p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs md:text-sm text-white/70">Today's Revenue</p>
+                  <p className="text-base md:text-2xl font-bold text-purple-400">
+                    ₱{stats.todaysRevenue.toLocaleString()}
+                  </p>
+                </div>
+                <span className="text-xl md:text-2xl">💰</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+          {/* Sales vs Expenses Chart */}
+          <Card className="bg-black/40 backdrop-blur-lg border-white/20">
+            <CardHeader className="pb-2 md:pb-4">
+              <CardTitle className="text-white text-base md:text-xl flex items-center gap-2">
+                <span className="text-xl md:text-2xl">📊</span>
+                Weekly Performance
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-2 md:p-4">
+              <ResponsiveContainer width="100%" height={isMobile ? 200 : 300}>
+                <BarChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                  <XAxis dataKey="name" stroke="#fff" tick={{ fontSize: isMobile ? 10 : 12 }} />
+                  <YAxis stroke="#fff" tick={{ fontSize: isMobile ? 10 : 12 }} />
+                  <Tooltip contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: '1px solid rgba(255,255,255,0.2)' }} />
+                  <Legend wrapperStyle={{ fontSize: isMobile ? 10 : 12 }} />
+                  <Bar dataKey="sales" fill="#10b981" name="Sales" />
+                  <Bar dataKey="expenses" fill="#ef4444" name="Expenses" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* Profit Trend Chart */}
+          <Card className="bg-black/40 backdrop-blur-lg border-white/20">
+            <CardHeader className="pb-2 md:pb-4">
+              <CardTitle className="text-white text-base md:text-xl flex items-center gap-2">
+                <span className="text-xl md:text-2xl">📈</span>
+                Profit Trend
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-2 md:p-4">
+              <ResponsiveContainer width="100%" height={isMobile ? 200 : 300}>
+                <AreaChart data={profitData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                  <XAxis dataKey="name" stroke="#fff" tick={{ fontSize: isMobile ? 10 : 12 }} />
+                  <YAxis stroke="#fff" tick={{ fontSize: isMobile ? 10 : 12 }} />
+                  <Tooltip contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: '1px solid rgba(255,255,255,0.2)' }} />
+                  <Area 
+                    type="monotone" 
+                    dataKey="profit" 
+                    stroke="#8b5cf6" 
+                    fill="url(#colorProfit)" 
+                    strokeWidth={2}
+                  />
+                  <defs>
+                    <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.1}/>
+                    </linearGradient>
+                  </defs>
+                </AreaChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* Revenue Distribution Pie Chart */}
+          <Card className="bg-black/40 backdrop-blur-lg border-white/20">
+            <CardHeader className="pb-2 md:pb-4">
+              <CardTitle className="text-white text-base md:text-xl flex items-center gap-2">
+                <span className="text-xl md:text-2xl">🥧</span>
+                Revenue Distribution
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-2 md:p-4">
+              <ResponsiveContainer width="100%" height={isMobile ? 200 : 300}>
+                <RechartsPie data={pieData}>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={isMobile ? 40 : 60}
+                    outerRadius={isMobile ? 80 : 100}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: '1px solid rgba(255,255,255,0.2)' }} />
+                  <Legend wrapperStyle={{ fontSize: isMobile ? 10 : 12 }} />
+                </RechartsPie>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* Quick Actions */}
+          <Card className="bg-black/40 backdrop-blur-lg border-white/20">
+            <CardHeader className="pb-2 md:pb-4">
+              <CardTitle className="text-white text-base md:text-xl flex items-center gap-2">
+                <span className="text-xl md:text-2xl">⚡</span>
+                Quick Actions
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button
+                onClick={() => setShowCreateWorker(true)}
+                className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white border-0"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Worker Account
+              </Button>
+              <Link to="/products" className="block">
+                <Button className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white border-0">
+                  <Package className="h-4 w-4 mr-2" />
+                  Manage Products
+                </Button>
+              </Link>
+              <Link to="/analysis" className="block">
+                <Button className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white border-0">
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  View Detailed Analysis
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
 
       {/* Create Worker Modal */}
       {showCreateWorker && (
         <CreateWorkerAccount onClose={() => setShowCreateWorker(false)} />
       )}
-    </div>
+    </OptimizedLayout>
   );
 };

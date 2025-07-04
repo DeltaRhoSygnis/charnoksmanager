@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
+import { OptimizedLayout } from "@/components/layout/OptimizedLayout";
 import {
   ShoppingCart,
   Receipt,
@@ -329,5 +330,111 @@ export const WorkerDashboard = () => {
     </div>
   );
 
-  return isMobile ? <MobileLayout /> : <DesktopLayout />;
+  return (
+    <OptimizedLayout>
+      <div className="p-4 md:p-6 space-y-6">
+        {/* Stats Overview - Mobile Optimized */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+          <Card className="bg-black/40 backdrop-blur-lg border-white/20 hover:scale-105 transition-transform duration-300">
+            <CardContent className="p-3 md:p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs md:text-sm text-white/70">Today's Sales</p>
+                  <p className="text-base md:text-2xl font-bold text-green-400">
+                    {todayStats.sales}
+                  </p>
+                </div>
+                <span className="text-xl md:text-2xl">💸</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-black/40 backdrop-blur-lg border-white/20 hover:scale-105 transition-transform duration-300">
+            <CardContent className="p-3 md:p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs md:text-sm text-white/70">Revenue</p>
+                  <p className="text-base md:text-2xl font-bold text-blue-400">
+                    ₱{todayStats.revenue.toLocaleString()}
+                  </p>
+                </div>
+                <span className="text-xl md:text-2xl">💰</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-black/40 backdrop-blur-lg border-white/20 hover:scale-105 transition-transform duration-300">
+            <CardContent className="p-3 md:p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs md:text-sm text-white/70">Avg Order</p>
+                  <p className="text-base md:text-2xl font-bold text-purple-400">
+                    ₱{todayStats.avgOrder}
+                  </p>
+                </div>
+                <span className="text-xl md:text-2xl">📊</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-black/40 backdrop-blur-lg border-white/20 hover:scale-105 transition-transform duration-300">
+            <CardContent className="p-3 md:p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs md:text-sm text-white/70">Target Progress</p>
+                  <p className="text-base md:text-2xl font-bold text-orange-400">
+                    {Math.round((todayStats.revenue / todayStats.target) * 100)}%
+                  </p>
+                </div>
+                <span className="text-xl md:text-2xl">🎯</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Quick Actions Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {quickActions.map((action) => (
+            <Link key={action.path} to={action.path} className="block group">
+              <Card className="bg-black/40 backdrop-blur-lg border-white/20 hover:bg-white/10 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/20">
+                <CardContent className="p-4 md:p-6">
+                  <div className="flex items-center space-x-4">
+                    <div className={`p-3 md:p-4 rounded-2xl ${action.bgColor} border border-white/20 group-hover:scale-110 transition-transform duration-300`}>
+                      <action.icon className={`h-6 w-6 md:h-8 md:w-8 ${action.iconColor}`} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-base md:text-lg text-white group-hover:text-orange-300 transition-colors duration-300">{action.title}</h3>
+                      <p className="text-white/70 text-xs md:text-sm mt-1">{action.description}</p>
+                    </div>
+                    <ArrowRight className="h-4 w-4 md:h-5 md:w-5 text-white/50 group-hover:text-white group-hover:translate-x-1 transition-all duration-300" />
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+
+        {/* Recent Activity */}
+        <Card className="bg-black/40 backdrop-blur-lg border-white/20">
+          <CardHeader className="pb-2 md:pb-4">
+            <CardTitle className="text-white text-base md:text-xl flex items-center gap-2">
+              <span className="text-xl md:text-2xl">⏰</span>
+              Recent Activity
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {[1, 2, 3].map((item) => (
+              <div key={item} className="flex items-center space-x-3 p-3 bg-white/5 rounded-xl">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-white">Sale recorded</p>
+                  <p className="text-xs text-white/60">₱250.00 • 2 minutes ago</p>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    </OptimizedLayout>
+  );
 };

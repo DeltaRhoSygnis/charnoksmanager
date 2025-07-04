@@ -100,6 +100,14 @@ function App() {
               }
             />
             <Route
+              path="/analysis"
+              element={
+                <ProtectedRoute>
+                  <DataAnalysis />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/data-analysis"
               element={
                 <ProtectedRoute>

@@ -44,7 +44,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import { Edit, Trash2, Plus, Package, Star, TrendingUp } from "lucide-react";
-import { UniversalLayout } from "@/components/layout/UniversalLayout";
+import { OptimizedLayout } from "@/components/layout/OptimizedLayout";
 import { ImageUpload } from "./ImageUpload";
 
 const productSchema = z.object({
@@ -243,7 +243,7 @@ export const Products = () => {
   };
 
   return (
-    <UniversalLayout>
+    <OptimizedLayout>
       <div className="container mx-auto p-6 space-y-8">
         {/* Header */}
         <div className="flex justify-between items-center">
@@ -343,7 +343,7 @@ export const Products = () => {
 
                 <ImageUpload
                   onImageUpload={handleImageUpload}
-                  initialImage={form.watch("imageUrl")}
+                  currentImageUrl={form.watch("imageUrl")}
                   disabled={false}
                 />
 
@@ -475,6 +475,6 @@ export const Products = () => {
           </CardContent>
         </Card>
       </div>
-    </UniversalLayout>
+    </OptimizedLayout>
   );
 };
