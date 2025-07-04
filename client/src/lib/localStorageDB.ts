@@ -95,7 +95,6 @@ export class LocalStorageDB {
     const now = new Date();
     const sampleTransactions: Transaction[] = [
       {
-        type: "sale",
         id: "demo-trans-1",
         items: [
           {
@@ -125,7 +124,6 @@ export class LocalStorageDB {
         status: "completed",
       },
       {
-        type: "sale",
         id: "demo-trans-2",
         items: [
           {
@@ -147,7 +145,6 @@ export class LocalStorageDB {
         status: "completed",
       },
       {
-        type: "sale",
         id: "demo-trans-3",
         items: [
           {
@@ -295,17 +292,17 @@ export class LocalStorageDB {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const totalSales = transactions.reduce((sum, t) => sum + (t.totalAmount || t.amount || 0), 0);
+    const totalSales = transactions.reduce((sum, t) => sum + t.totalAmount, 0);
     const totalTransactions = transactions.length;
     const todaysTransactions = transactions.filter((t) => t.timestamp >= today);
     const todaysRevenue = todaysTransactions.reduce(
-      (sum, t) => sum + (t.totalAmount || t.amount || 0),
+      (sum, t) => sum + t.totalAmount,
       0,
     );
     const voiceTransactions = transactions.filter(
       (t) => t.isVoiceTransaction,
     ).length;
-    const workers = this.getUsers().filter((u: any) => u.role === "worker");
+    const workers = this.getUsers().filter((u) => u.role === "worker");
 
     return {
       totalSales,

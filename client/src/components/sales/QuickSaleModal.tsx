@@ -84,7 +84,6 @@ export const QuickSaleModal = ({
     setIsProcessing(true);
     try {
       const transactionData: Omit<Transaction, "id"> = {
-        type: "sale",
         items: cartItems.map((item) => ({
           productId: item.product.id,
           productName: item.product.name,

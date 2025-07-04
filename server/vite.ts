@@ -36,10 +36,7 @@ export async function setupVite(app: Express, server: Server) {
         process.exit(1);
       },
     },
-    server: {
-      middlewareMode: true,
-      hmr: { server },
-    },
+    server: serverOptions,
     appType: "custom",
   });
 
