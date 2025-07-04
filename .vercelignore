@@ -1,0 +1,8 @@
+server/
+shared/
+.cache/
+node_modules/
+.local/
+*.log
+*.md
+!README.md
