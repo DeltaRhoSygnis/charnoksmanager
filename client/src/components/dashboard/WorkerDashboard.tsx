@@ -111,12 +111,12 @@ export const WorkerDashboard = () => {
   );
 
   const MobileLayout = () => (
-    <div className="min-h-screen space-y-6">
-      {/* Mobile Header */}
-      <div className="bg-black/30 backdrop-blur-xl border border-white/20 rounded-3xl p-6 animate-fade-in">
+    <div className="min-h-screen space-y-5">
+      {/* Mobile Header - Optimized */}
+      <div className="bg-black/20 backdrop-blur-xl border border-orange-400/30 rounded-2xl p-4 animate-fade-in">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-3 shadow-lg">
+            <div className="w-18 h-18 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-2xl p-3 border border-orange-400/40 backdrop-blur-sm">
               <img 
                 src={charnofsLogo} 
                 alt="Charnoks Special Fried Chicken" 
@@ -124,11 +124,11 @@ export const WorkerDashboard = () => {
               />
             </div>
             <div>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-                Charnoks
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-400 via-red-400 to-yellow-400 bg-clip-text text-transparent">
+                Charnoks POS
               </h2>
-              <p className="text-white/80 font-medium">Worker Station</p>
-              <Badge className="mt-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0">
+              <p className="text-white/90 font-semibold tracking-wide">Worker Station</p>
+              <Badge className="mt-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 font-medium">
                 {user?.email?.split('@')[0]}
               </Badge>
             </div>
@@ -137,7 +137,7 @@ export const WorkerDashboard = () => {
             variant="ghost"
             size="sm"
             onClick={logout}
-            className="text-white hover:bg-red-500/20 border border-white/30 px-4 py-2 rounded-xl"
+            className="text-white hover:bg-red-500/20 border border-red-400/40 px-3 py-2 rounded-xl transition-all duration-300"
           >
             Logout
           </Button>

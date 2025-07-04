@@ -268,12 +268,12 @@ export const OwnerDashboard = () => {
 
   const MobileLayout = () => (
     <div className="min-h-screen w-full galaxy-animated cosmic-overlay">
-      {/* Mobile Header */}
-      <div className="bg-black/40 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
-        <div className="px-4 py-4">
+      {/* Mobile Header - Optimized */}
+      <div className="bg-black/30 backdrop-blur-xl border-b border-orange-400/30 sticky top-0 z-50">
+        <div className="px-3 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3 animate-slide-in-left">
-              <div className="w-12 h-12 bg-black/20 rounded-2xl p-2 border border-white/20">
+            <div className="flex items-center space-x-4 animate-slide-in-left">
+              <div className="w-16 h-16 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-2xl p-2 border border-orange-400/40 backdrop-blur-sm">
                 <img 
                   src={charnofsLogo} 
                   alt="Charnoks Special Fried Chicken" 
@@ -281,164 +281,113 @@ export const OwnerDashboard = () => {
                 />
               </div>
               <div>
-                <h1 className="text-xl font-bold charnoks-text">
-                  Charnoks
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-orange-400 via-red-400 to-yellow-400 bg-clip-text text-transparent">
+                  Charnoks POS
                 </h1>
-                <p className="text-sm text-white font-medium">Owner Dashboard</p>
+                <p className="text-sm text-white/90 font-semibold tracking-wide">Owner Dashboard</p>
               </div>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowCreateWorker(true)}
-              className="charnoks-gradient text-white border-0 font-bold animate-pulse-glow"
-            >
-              <Plus className="h-4 w-4 mr-1" />
-              Add Worker
-            </Button>
           </div>
         </div>
       </div>
 
-      <div className="p-4 space-y-4">
-        <FirebaseTestButton />
+      <div className="px-3 py-4 space-y-5">
+        {/* Mobile Charts & Analytics Dashboard */}
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2 mb-4">
+            <TrendingUp className="h-6 w-6 text-orange-400" />
+            <h2 className="text-lg font-bold text-white">Business Analytics</h2>
+          </div>
+          
+          {/* Compact Stats Grid */}
+          <div className="grid grid-cols-2 gap-3">
+            <Card className="bg-gradient-to-br from-green-500/20 to-emerald-600/20 backdrop-blur-lg border border-green-400/30 text-white">
+              <CardContent className="p-3">
+                <div className="text-center">
+                  <DollarSign className="h-5 w-5 text-green-400 mx-auto mb-1" />
+                  <p className="text-lg font-bold text-green-400">₱{stats.totalSales.toLocaleString()}</p>
+                  <p className="text-xs text-green-200 font-medium">Total Sales</p>
+                </div>
+              </CardContent>
+            </Card>
 
-        {/* Mobile Quick Actions */}
-        <div className="grid grid-cols-3 gap-3 animate-bounce-in">
-          <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white h-24 hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-3 flex items-center justify-center">
-              <div className="text-center">
-                <ShoppingCart className="h-7 w-7 mx-auto mb-2 text-green-400" />
-                <p className="text-xs font-bold">Record Sale</p>
+            <Card className="bg-gradient-to-br from-red-500/20 to-orange-600/20 backdrop-blur-lg border border-red-400/30 text-white">
+              <CardContent className="p-3">
+                <div className="text-center">
+                  <Receipt className="h-5 w-5 text-red-400 mx-auto mb-1" />
+                  <p className="text-lg font-bold text-red-400">₱{stats.totalExpenses.toLocaleString()}</p>
+                  <p className="text-xs text-red-200 font-medium">Total Expenses</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-blue-500/20 to-indigo-600/20 backdrop-blur-lg border border-blue-400/30 text-white">
+              <CardContent className="p-3">
+                <div className="text-center">
+                  <Users className="h-5 w-5 text-blue-400 mx-auto mb-1" />
+                  <p className="text-lg font-bold text-blue-400">{stats.totalWorkers}</p>
+                  <p className="text-xs text-blue-200 font-medium">Active Workers</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-purple-500/20 to-pink-600/20 backdrop-blur-lg border border-purple-400/30 text-white">
+              <CardContent className="p-3">
+                <div className="text-center">
+                  <TrendingUp className="h-5 w-5 text-purple-400 mx-auto mb-1" />
+                  <p className="text-lg font-bold text-purple-400">₱{stats.todaysRevenue.toLocaleString()}</p>
+                  <p className="text-xs text-purple-200 font-medium">Today's Revenue</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Performance Chart Placeholder */}
+          <Card className="bg-black/20 backdrop-blur-lg border border-orange-400/30">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base text-white flex items-center">
+                <BarChart3 className="h-5 w-5 mr-2 text-orange-400" />
+                Performance Overview
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4">
+              <div className="space-y-3">
+                {/* Chart Bars Simulation */}
+                <div className="flex items-end space-x-2 h-20">
+                  <div className="bg-gradient-to-t from-green-600 to-green-400 w-8 h-16 rounded-t-lg"></div>
+                  <div className="bg-gradient-to-t from-blue-600 to-blue-400 w-8 h-12 rounded-t-lg"></div>
+                  <div className="bg-gradient-to-t from-purple-600 to-purple-400 w-8 h-20 rounded-t-lg"></div>
+                  <div className="bg-gradient-to-t from-orange-600 to-orange-400 w-8 h-14 rounded-t-lg"></div>
+                  <div className="bg-gradient-to-t from-red-600 to-red-400 w-8 h-18 rounded-t-lg"></div>
+                </div>
+                <div className="flex justify-between text-xs text-white/60">
+                  <span>Mon</span>
+                  <span>Tue</span>
+                  <span>Wed</span>
+                  <span>Thu</span>
+                  <span>Fri</span>
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white h-24 hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-3 flex items-center justify-center">
-              <div className="text-center">
-                <Receipt className="h-7 w-7 mx-auto mb-2 text-orange-400" />
-                <p className="text-xs font-bold">Record Expense</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white h-24 hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-3 flex items-center justify-center">
-              <div className="text-center">
-                <TrendingUp className="h-7 w-7 mx-auto mb-2 text-blue-400" />
-                <p className="text-xs font-bold">View Summary</p>
+          {/* Net Profit Card */}
+          <Card className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 backdrop-blur-lg border border-yellow-400/30">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-yellow-200 font-medium">Net Profit</p>
+                  <p className="text-2xl font-bold text-yellow-400">
+                    ₱{(stats.totalSales - stats.totalExpenses).toLocaleString()}
+                  </p>
+                </div>
+                <div className="bg-yellow-400/20 p-3 rounded-xl">
+                  <TrendingUp className="h-8 w-8 text-yellow-400" />
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
-
-        {/* Mobile Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-white/10 backdrop-blur-xl border-white/20">
-            <TabsTrigger value="overview" className="text-white data-[state=active]:bg-blue-600 data-[state=active]:text-white text-xs">
-              Overview
-            </TabsTrigger>
-            <TabsTrigger value="transactions" className="text-white data-[state=active]:bg-blue-600 data-[state=active]:text-white text-xs">
-              Transactions
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="overview" className="space-y-4 mt-4">
-            {/* Mobile Stats Grid */}
-            <div className="grid grid-cols-2 gap-3">
-              <Card className="bg-white/10 backdrop-blur-xl border-white/20 text-white">
-                <CardContent className="p-4">
-                  <div className="text-center">
-                    <DollarSign className="h-6 w-6 text-green-400 mx-auto mb-2" />
-                    <p className="text-xl font-bold text-green-400">₱{stats.totalSales.toLocaleString()}</p>
-                    <p className="text-xs text-blue-200">Total Sales</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white/10 backdrop-blur-xl border-white/20 text-white">
-                <CardContent className="p-4">
-                  <div className="text-center">
-                    <Receipt className="h-6 w-6 text-red-400 mx-auto mb-2" />
-                    <p className="text-xl font-bold text-red-400">₱{stats.totalExpenses.toLocaleString()}</p>
-                    <p className="text-xs text-blue-200">Total Expenses</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white/10 backdrop-blur-xl border-white/20 text-white">
-                <CardContent className="p-4">
-                  <div className="text-center">
-                    <Users className="h-6 w-6 text-blue-400 mx-auto mb-2" />
-                    <p className="text-xl font-bold text-blue-400">{stats.totalWorkers}</p>
-                    <p className="text-xs text-blue-200">Workers</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white/10 backdrop-blur-xl border-white/20 text-white">
-                <CardContent className="p-4">
-                  <div className="text-center">
-                    <TrendingUp className="h-6 w-6 text-purple-400 mx-auto mb-2" />
-                    <p className="text-xl font-bold text-purple-400">₱{stats.todaysRevenue.toLocaleString()}</p>
-                    <p className="text-xs text-blue-200">Today's Revenue</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Mobile Recent Transactions */}
-            <Card className="bg-white/10 backdrop-blur-xl border-white/20">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg text-white flex items-center">
-                  <Receipt className="h-5 w-5 mr-2 text-blue-400" />
-                  Recent Activity
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {transactions.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Package className="h-12 w-12 text-blue-300 mx-auto mb-2 opacity-50" />
-                    <p className="text-blue-200">No transactions yet</p>
-                  </div>
-                ) : (
-                  transactions.slice(0, 5).map((transaction) => (
-                    <div
-                      key={transaction.id}
-                      className="flex items-center justify-between p-3 bg-white/5 rounded-lg"
-                    >
-                      <div className="flex-1">
-                        <p className="font-medium text-white text-sm">
-                          {transaction.type === "sale" ? "Sale" : "Expense"}
-                          {transaction.workerEmail && (
-                            <span className="text-xs text-blue-300 block">
-                              by {transaction.workerEmail}
-                            </span>
-                          )}
-                        </p>
-                        <p className="text-xs text-blue-200">
-                          {formatDate(transaction.timestamp)}
-                        </p>
-                      </div>
-                      <p
-                        className={`font-bold ${
-                          transaction.type === "sale" ? "text-green-400" : "text-red-400"
-                        }`}
-                      >
-                        {transaction.type === "sale" ? "+" : "-"}₱{transaction.amount.toLocaleString()}
-                      </p>
-                    </div>
-                  ))
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="transactions" className="mt-4">
-            <TransactionHistory />
-          </TabsContent>
-        </Tabs>
       </div>
     </div>
   );
