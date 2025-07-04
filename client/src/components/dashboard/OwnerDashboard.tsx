@@ -92,9 +92,9 @@ export const OwnerDashboard = () => {
         .map((t) => ({
           id: t.id,
           type: "sale" as const,
-          amount: t.totalAmount || t.amount || 0,
+          amount: t.totalAmount,
           workerEmail: t.workerEmail,
-          items: (t.items || []).map(item => ({
+          items: t.items.map(item => ({
             name: item.productName,
             quantity: item.quantity,
             price: item.price
@@ -163,9 +163,9 @@ export const OwnerDashboard = () => {
           .map((t) => ({
             id: t.id,
             type: "sale" as const,
-            amount: t.totalAmount || t.amount || 0,
+            amount: t.totalAmount,
             workerEmail: t.workerEmail,
-            items: (t.items || []).map(item => ({
+            items: t.items.map(item => ({
               name: item.productName,
               quantity: item.quantity,
               price: item.price
