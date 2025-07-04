@@ -184,6 +184,7 @@ Changelog:
 - July 04, 2025. Mobile layout optimization with compact cards, trading-style dashboard, and professional UI improvements
 - July 04, 2025. UI reorganization: moved Firebase Test and Add Worker buttons to Settings page, removed unnecessary Quick button
 - July 04, 2025. Enhanced bottom navigation with Transactions tab for owners and improved mobile responsiveness
+- July 04, 2025. Successfully migrated from Firebase to PostgreSQL database with Drizzle ORM
 
 ## Deployment Guide
 
