@@ -10,7 +10,7 @@ console.log('Building for Vercel deployment...');
 try {
   // Build the client
   console.log('Building client...');
-  execSync('npm run build:client', { stdio: 'inherit' });
+  execSync('vite build', { stdio: 'inherit' });
   
   // Copy necessary files for server
   console.log('Preparing server files...');
