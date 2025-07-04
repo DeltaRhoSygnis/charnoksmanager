@@ -395,51 +395,128 @@ export const OwnerDashboard = () => {
               </Card>
             </div>
 
-            {/* Mobile Recent Transactions */}
-            <Card className="bg-white/10 backdrop-blur-xl border-white/20">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg text-white flex items-center">
-                  <Receipt className="h-5 w-5 mr-2 text-blue-400" />
-                  Recent Activity
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {transactions.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Package className="h-12 w-12 text-blue-300 mx-auto mb-2 opacity-50" />
-                    <p className="text-blue-200">No transactions yet</p>
-                  </div>
-                ) : (
-                  transactions.slice(0, 5).map((transaction) => (
-                    <div
-                      key={transaction.id}
-                      className="flex items-center justify-between p-3 bg-white/5 rounded-lg"
-                    >
-                      <div className="flex-1">
-                        <p className="font-medium text-white text-sm">
-                          {transaction.type === "sale" ? "Sale" : "Expense"}
-                          {transaction.workerEmail && (
-                            <span className="text-xs text-blue-300 block">
-                              by {transaction.workerEmail}
-                            </span>
-                          )}
-                        </p>
-                        <p className="text-xs text-blue-200">
-                          {formatDate(transaction.timestamp)}
-                        </p>
-                      </div>
-                      <p
-                        className={`font-bold ${
-                          transaction.type === "sale" ? "text-green-400" : "text-red-400"
-                        }`}
+            {/* Mobile Charts - Trading Style */}
+            <div className="space-y-3">
+              {/* Sales vs Expenses Bar Chart */}
+              <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm text-white flex items-center">
+                    <BarChart3 className="h-4 w-4 mr-1.5 text-blue-400" />
+                    Daily Performance
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-2">
+                  <ResponsiveContainer width="100%" height={150}>
+                    <BarChart data={[
+                      { name: 'Today', sales: stats.todaysRevenue, expenses: stats.totalExpenses / 30 },
+                      { name: 'Average', sales: stats.totalSales / 30, expenses: stats.totalExpenses / 30 }
+                    ]}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                      <XAxis dataKey="name" stroke="#888" fontSize={10} />
+                      <YAxis stroke="#888" fontSize={10} />
+                      <Tooltip 
+                        contentStyle={{ backgroundColor: '#1a1a2e', border: '1px solid #333', fontSize: '11px' }}
+                        formatter={(value: number) => `₱${value.toLocaleString()}`}
+                      />
+                      <Bar dataKey="sales" fill="#4ade80" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="expenses" fill="#f87171" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              {/* Revenue Trend Area Chart */}
+              <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm text-white flex items-center">
+                    <Activity className="h-4 w-4 mr-1.5 text-green-400" />
+                    Revenue Trend
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-2">
+                  <ResponsiveContainer width="100%" height={120}>
+                    <AreaChart data={[
+                      { time: '6AM', revenue: stats.todaysRevenue * 0.1 },
+                      { time: '9AM', revenue: stats.todaysRevenue * 0.3 },
+                      { time: '12PM', revenue: stats.todaysRevenue * 0.5 },
+                      { time: '3PM', revenue: stats.todaysRevenue * 0.7 },
+                      { time: '6PM', revenue: stats.todaysRevenue * 0.9 },
+                      { time: 'Now', revenue: stats.todaysRevenue }
+                    ]}>
+                      <defs>
+                        <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#4ade80" stopOpacity={0.8}/>
+                          <stop offset="95%" stopColor="#4ade80" stopOpacity={0.1}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                      <XAxis dataKey="time" stroke="#888" fontSize={9} />
+                      <YAxis hide />
+                      <Tooltip 
+                        contentStyle={{ backgroundColor: '#1a1a2e', border: '1px solid #333', fontSize: '11px' }}
+                        formatter={(value: number) => `₱${value.toLocaleString()}`}
+                      />
+                      <Area type="monotone" dataKey="revenue" stroke="#4ade80" fillOpacity={1} fill="url(#colorRevenue)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              {/* Profit Breakdown Pie Chart */}
+              <Card className="bg-white/10 backdrop-blur-xl border-white/20">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm text-white flex items-center">
+                    <PieChart className="h-4 w-4 mr-1.5 text-purple-400" />
+                    Profit Breakdown
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-2">
+                  <ResponsiveContainer width="100%" height={120}>
+                    <RechartsPie>
+                      <Pie
+                        data={[
+                          { name: 'Sales', value: stats.totalSales, color: '#4ade80' },
+                          { name: 'Expenses', value: stats.totalExpenses, color: '#f87171' },
+                          { name: 'Net Profit', value: Math.max(0, stats.totalSales - stats.totalExpenses), color: '#60a5fa' }
+                        ]}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={25}
+                        outerRadius={45}
+                        paddingAngle={5}
+                        dataKey="value"
                       >
-                        {transaction.type === "sale" ? "+" : "-"}₱{transaction.amount.toLocaleString()}
-                      </p>
+                        {[
+                          { name: 'Sales', value: stats.totalSales, color: '#4ade80' },
+                          { name: 'Expenses', value: stats.totalExpenses, color: '#f87171' },
+                          { name: 'Net Profit', value: Math.max(0, stats.totalSales - stats.totalExpenses), color: '#60a5fa' }
+                        ].map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        contentStyle={{ backgroundColor: '#1a1a2e', border: '1px solid #333', fontSize: '11px' }}
+                        formatter={(value: number) => `₱${value.toLocaleString()}`}
+                      />
+                    </RechartsPie>
+                  </ResponsiveContainer>
+                  <div className="flex justify-around mt-2">
+                    <div className="text-center">
+                      <div className="w-2 h-2 bg-green-400 rounded-full mx-auto mb-1"></div>
+                      <p className="text-[10px] text-green-400">Sales</p>
                     </div>
-                  ))
-                )}
-              </CardContent>
-            </Card>
+                    <div className="text-center">
+                      <div className="w-2 h-2 bg-red-400 rounded-full mx-auto mb-1"></div>
+                      <p className="text-[10px] text-red-400">Expenses</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="w-2 h-2 bg-blue-400 rounded-full mx-auto mb-1"></div>
+                      <p className="text-[10px] text-blue-400">Profit</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="transactions" className="mt-4">

@@ -88,81 +88,80 @@ export const OptimizedLayout: React.FC<OptimizedLayoutProps> = ({ children }) =>
 
   const MobileLayout = () => (
     <div className="min-h-screen w-full galaxy-animated cosmic-overlay">
-      {/* Mobile Header */}
+      {/* Mobile Header - Compact */}
       <div className="bg-black/40 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
-        <div className="px-3 py-3">
+        <div className="px-2 py-1.5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1.5">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="text-white p-1"
+                className="text-white p-0.5 h-7 w-7"
               >
-                {isSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                {isSidebarOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
               </Button>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1.5">
                 <img 
                   src={charnofsLogo} 
                   alt="Charnoks" 
-                  className="h-8 w-8 object-contain"
+                  className="h-6 w-6 object-contain"
                 />
                 <div>
-                  <h1 className="text-sm font-bold charnoks-text">Charnoks</h1>
-                  <p className="text-xs text-white/70">{isOwner ? 'Owner' : 'Worker'}</p>
+                  <h1 className="text-xs font-bold charnoks-text">Charnoks</h1>
+                  <p className="text-[10px] text-white/70">{isOwner ? 'Owner' : 'Worker'}</p>
                 </div>
               </div>
             </div>
             <Link to="/settings">
-              <Button variant="ghost" size="sm" className="text-white p-1.5">
-                <Settings className="h-5 w-5" />
+              <Button variant="ghost" size="sm" className="text-white p-0.5 h-7 w-7">
+                ⚙️
               </Button>
             </Link>
           </div>
         </div>
       </div>
 
-      {/* Mobile Sidebar */}
+      {/* Mobile Sidebar - Compact */}
       {isSidebarOpen && (
         <div className="fixed inset-0 z-40 flex">
           <div className="fixed inset-0 bg-black/50" onClick={() => setIsSidebarOpen(false)} />
-          <div className="relative flex-1 flex flex-col max-w-xs w-full bg-black/80 backdrop-blur-xl">
-            <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-              <nav className="mt-5 px-2 space-y-1">
+          <div className="relative flex-1 flex flex-col max-w-[240px] w-full bg-black/80 backdrop-blur-xl">
+            <div className="flex-1 h-0 pt-3 pb-2 overflow-y-auto">
+              <nav className="mt-2 px-1.5 space-y-0.5">
                 {filteredNavItems.map((item) => (
                   <Link
                     key={item.path}
                     to={item.path}
                     onClick={() => setIsSidebarOpen(false)}
                     className={cn(
-                      "group flex items-center px-3 py-2 text-sm font-medium rounded-xl transition-all duration-200",
+                      "group flex items-center px-2 py-1.5 text-xs font-medium rounded-lg transition-all duration-200",
                       location.pathname === item.path
                         ? "bg-white/20 text-white"
                         : "text-white/70 hover:bg-white/10 hover:text-white"
                     )}
                   >
-                    <span className="text-lg mr-2">{item.emoji}</span>
-                    {item.icon}
-                    <span className="ml-3">{item.label}</span>
+                    <span className="text-sm mr-1.5">{item.emoji}</span>
+                    <span className="ml-1">{item.label}</span>
                   </Link>
                 ))}
               </nav>
             </div>
-            <div className="flex-shrink-0 flex border-t border-white/20 p-4">
+            <div className="flex-shrink-0 flex border-t border-white/20 p-2">
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center">
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-white">{user?.email?.split('@')[0]}</p>
-                    <p className="text-xs text-white/70">{user?.role}</p>
+                  <div className="ml-1.5">
+                    <p className="text-xs font-medium text-white">{user?.email?.split('@')[0]}</p>
+                    <p className="text-[10px] text-white/70">{user?.role}</p>
                   </div>
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={handleLogout}
-                  className="text-red-400 hover:text-red-300 p-1"
+                  className="text-red-400 hover:text-red-300 p-0.5 h-6 w-6"
                 >
-                  <LogOut className="h-4 w-4" />
+                  <LogOut className="h-3.5 w-3.5" />
                 </Button>
               </div>
             </div>
@@ -170,26 +169,26 @@ export const OptimizedLayout: React.FC<OptimizedLayoutProps> = ({ children }) =>
         </div>
       )}
 
-      {/* Mobile Content */}
-      <div className="pb-16">
+      {/* Mobile Content - Compact */}
+      <div className="pb-12">
         {children}
       </div>
 
-      {/* Mobile Bottom Navigation */}
+      {/* Mobile Bottom Navigation - Compact */}
       <div className="fixed bottom-0 left-0 right-0 bg-black/60 backdrop-blur-xl border-t border-white/20 z-30">
-        <div className="grid grid-cols-5 h-16">
+        <div className="grid grid-cols-5 h-12">
           {filteredNavItems.slice(0, 5).map((item) => (
             <Link
               key={item.path}
               to={item.path}
               className={cn(
-                "flex flex-col items-center justify-center space-y-1 text-xs transition-all duration-200",
+                "flex flex-col items-center justify-center space-y-0.5 text-[10px] transition-all duration-200",
                 location.pathname === item.path
                   ? "text-orange-400"
                   : "text-white/70"
               )}
             >
-              <span className="text-base">{item.emoji}</span>
+              <span className="text-sm">{item.emoji}</span>
               <span className="font-medium">{item.label}</span>
             </Link>
           ))}
