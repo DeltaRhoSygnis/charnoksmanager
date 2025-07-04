@@ -9,9 +9,9 @@ export class FirebaseTest {
     try {
       console.log("Testing Firebase connectivity...");
 
-      // Simple timeout wrapper
+      // Faster timeout for better UX (3 seconds instead of 5)
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Firebase timeout")), 5000),
+        setTimeout(() => reject(new Error("Firebase timeout")), 3000),
       );
 
       // Try to read from a collection (this will fail if permissions are wrong)
@@ -27,8 +27,8 @@ export class FirebaseTest {
 
       return true;
     } catch (error: any) {
-      console.error("❌ Firebase access failed:", error.message || error);
       console.log("🔄 Falling back to demo mode");
+      console.log("📱 Using demo mode with local storage.");
       OfflineState.setFirebaseAccess(false);
       LocalStorageDB.enableDemoMode();
       return false;

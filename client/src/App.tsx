@@ -24,6 +24,7 @@ import { Transactions } from "@/pages/Transactions";
 import { DataAnalysis } from "@/pages/DataAnalysis";
 import { CosmicBackground } from "@/components/ui/cosmic-background";
 import { Toaster } from "@/components/ui/toaster";
+import { DemoStatus } from "@/components/ui/demo-status";
 import { queryClient } from "@/lib/queryClient";
 import "./App.css";
 import "./styles/mobile-optimized.css";
@@ -69,6 +70,7 @@ function App() {
         <Router>
           <div className="min-h-screen w-full relative">
             <CosmicBackground />
+            <DemoStatus />
             <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
