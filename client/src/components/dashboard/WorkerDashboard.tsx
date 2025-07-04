@@ -1,515 +1,331 @@
-import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsMobile } from "@/hooks/use-mobile";
-import {
-  collection,
-  query,
-  orderBy,
-  limit,
-  getDocs,
-  where,
-} from "firebase/firestore";
-import { db } from "@/lib/firebase";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Receipt, DollarSign, Package, Stars, Sparkles } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import charnofsLogo from "@assets/IMG_20250703_110727_1751555868705.png";
+import {
+  ShoppingCart,
+  Receipt,
+  TrendingUp,
+  Clock,
+  DollarSign,
+  Package,
+  Star,
+  ArrowRight,
+  Activity,
+  Target,
+} from "lucide-react";
 
-interface WorkerTransaction {
-  id: string;
-  type: "sale" | "expense";
-  amount: number;
-  description?: string;
-  timestamp: Date;
-  items?: Array<{ name: string; quantity: number; price: number }>;
-}
+const charnofsLogo = "/lovable-uploads/389a9fc0-9ada-493a-a167-71ea82a7aabb.png";
 
 export const WorkerDashboard = () => {
   const { user, logout } = useAuth();
   const isMobile = useIsMobile();
-  const [transactions, setTransactions] = useState<WorkerTransaction[]>([]);
-  const [stats, setStats] = useState({
-    todaySales: 0,
-    todayExpenses: 0,
-    totalTransactions: 0,
-  });
 
-  useEffect(() => {
-    fetchWorkerTransactions();
-    calculateWorkerStats();
-  }, [user]);
-
-  const fetchWorkerTransactions = async () => {
-    if (!user || !user.uid) {
-      console.log("User not authenticated, skipping worker transaction fetch");
-      return;
-    }
-
-    try {
-      // Fetch worker's sales - using simple query without composite indexes
-      const salesQuery = query(
-        collection(db, "sales"),
-        where("workerEmail", "==", user.email),
-        limit(20),
-      );
-      const salesSnapshot = await getDocs(salesQuery);
-      const sales = salesSnapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          type: "sale" as const,
-          amount: data.total || data.totalAmount || 0,
-          items: data.items,
-          timestamp: data.timestamp?.toDate() || new Date(),
-        };
-      });
-
-      // Fetch worker's expenses - using simple query without composite indexes
-      const expensesQuery = query(
-        collection(db, "expenses"),
-        where("workerEmail", "==", user.email),
-        limit(20),
-      );
-      const expensesSnapshot = await getDocs(expensesQuery);
-      const expenses = expensesSnapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          type: "expense" as const,
-          amount: data.amount || 0,
-          description: data.description,
-          timestamp: data.timestamp?.toDate() || new Date(),
-        };
-      });
-
-      // Sort and limit on client side to avoid needing composite indexes
-      const allTransactions = [...sales, ...expenses]
-        .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-        .slice(0, 10);
-
-      setTransactions(allTransactions);
-    } catch (error: any) {
-      console.error("Error fetching worker transactions:", error);
-      if (error.code === "permission-denied") {
-        console.warn(
-          "Firestore access denied. This might be due to database security rules.",
-        );
-      }
-    }
+  // Mock data - replace with real data
+  const todayStats = {
+    sales: 12,
+    revenue: 2850,
+    avgOrder: 237.50,
+    target: 3000,
   };
 
-  const calculateWorkerStats = async () => {
-    if (!user || !user.uid) {
-      console.log("User not authenticated, skipping worker stats calculation");
-      return;
-    }
+  const quickActions = [
+    {
+      title: "Record Sale",
+      description: "Add new transaction",
+      icon: ShoppingCart,
+      path: "/sales",
+      color: "from-green-500 to-emerald-600",
+      bgColor: "bg-green-500/10",
+      iconColor: "text-green-400",
+    },
+    {
+      title: "Record Expense",
+      description: "Log business expense",
+      icon: Receipt,
+      path: "/expenses",
+      color: "from-orange-500 to-red-600",
+      bgColor: "bg-orange-500/10",
+      iconColor: "text-orange-400",
+    },
+    {
+      title: "View History",
+      description: "Check past transactions",
+      icon: Activity,
+      path: "/transactions",
+      color: "from-blue-500 to-indigo-600",
+      bgColor: "bg-blue-500/10",
+      iconColor: "text-blue-400",
+    },
+    {
+      title: "Today's Target",
+      description: `₱${todayStats.target - todayStats.revenue} remaining`,
+      icon: Target,
+      path: "/analytics",
+      color: "from-purple-500 to-pink-600",
+      bgColor: "bg-purple-500/10",
+      iconColor: "text-purple-400",
+    },
+  ];
 
-    try {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+  const StatCard = ({ title, value, icon: Icon, trend, color }: any) => (
+    <Card className="bg-white/10 backdrop-blur-lg border-white/20 text-white hover:bg-white/15 transition-all duration-300 group">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-white/70 text-sm font-medium">{title}</p>
+            <p className="text-2xl font-bold text-white mt-1">{value}</p>
+            {trend && (
+              <p className={`text-sm mt-1 ${trend > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {trend > 0 ? '+' : ''}{trend}% from yesterday
+              </p>
+            )}
+          </div>
+          <div className={`p-3 rounded-xl ${color} group-hover:scale-110 transition-transform duration-300`}>
+            <Icon className="h-6 w-6 text-white" />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
 
-      // Calculate today's sales using simpler query
-      const salesQuery = query(
-        collection(db, "sales"),
-        where("workerEmail", "==", user.email),
-      );
-      const salesSnapshot = await getDocs(salesQuery);
-      
-      let todaySales = 0;
-      let todayTransactionCount = 0;
-      
-      salesSnapshot.docs.forEach(doc => {
-        const data = doc.data();
-        const timestamp = data.timestamp?.toDate() || new Date();
-        if (timestamp >= today) {
-          todaySales += data.total || data.totalAmount || 0;
-          todayTransactionCount++;
-        }
-      });
-
-      // Calculate today's expenses using simpler query
-      const expensesQuery = query(
-        collection(db, "expenses"),
-        where("workerEmail", "==", user.email),
-      );
-      const expensesSnapshot = await getDocs(expensesQuery);
-      
-      let todayExpenses = 0;
-      let todayExpenseCount = 0;
-      
-      expensesSnapshot.docs.forEach(doc => {
-        const data = doc.data();
-        const timestamp = data.timestamp?.toDate() || new Date();
-        if (timestamp >= today) {
-          todayExpenses += data.amount || 0;
-          todayExpenseCount++;
-        }
-      });
-
-      setStats({
-        todaySales,
-        todayExpenses,
-        totalTransactions: todayTransactionCount + todayExpenseCount,
-      });
-    } catch (error: any) {
-      console.error("Error calculating worker stats:", error);
-      // Set default stats on error
-      setStats({
-        todaySales: 0,
-        todayExpenses: 0,
-        totalTransactions: 0,
-      });
-    }
-  };
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(date);
-  };
+  const ActionCard = ({ title, description, icon: Icon, path, color, bgColor, iconColor }: any) => (
+    <Link to={path} className="block group">
+      <Card className="bg-white/5 backdrop-blur-lg border-white/20 text-white hover:bg-white/10 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/20">
+        <CardContent className="p-6">
+          <div className="flex items-center space-x-4">
+            <div className={`p-4 rounded-2xl ${bgColor} border border-white/20 group-hover:scale-110 transition-transform duration-300`}>
+              <Icon className={`h-8 w-8 ${iconColor}`} />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-lg text-white group-hover:text-orange-300 transition-colors duration-300">{title}</h3>
+              <p className="text-white/70 text-sm mt-1">{description}</p>
+            </div>
+            <ArrowRight className="h-5 w-5 text-white/50 group-hover:text-white group-hover:translate-x-1 transition-all duration-300" />
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
+  );
 
   const MobileLayout = () => (
-    <div className="min-h-screen w-full galaxy-animated cosmic-overlay relative">
+    <div className="min-h-screen space-y-6">
       {/* Mobile Header */}
-      <div className="bg-black/30 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
-        <div className="px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3 animate-slide-in-left">
-              <div className="w-12 h-12 bg-black/20 rounded-2xl p-2 border border-white/20">
-                <img 
-                  src={charnofsLogo} 
-                  alt="Charnoks Special Fried Chicken" 
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold charnoks-text">Charnoks</h2>
-                <p className="text-sm text-white font-medium">Worker Station</p>
+      <div className="bg-black/30 backdrop-blur-xl border border-white/20 rounded-3xl p-6 animate-fade-in">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-3 shadow-lg">
+              <img 
+                src={charnofsLogo} 
+                alt="Charnoks Special Fried Chicken" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
+                Charnoks
+              </h2>
+              <p className="text-white/80 font-medium">Worker Station</p>
+              <Badge className="mt-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0">
+                {user?.email?.split('@')[0]}
+              </Badge>
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={logout}
+            className="text-white hover:bg-red-500/20 border border-white/30 px-4 py-2 rounded-xl"
+          >
+            Logout
+          </Button>
+        </div>
+      </div>
+
+      {/* Today's Performance */}
+      <div className="space-y-4">
+        <h3 className="text-xl font-bold text-white px-2">Today's Performance</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <StatCard 
+            title="Sales Count" 
+            value={todayStats.sales} 
+            icon={ShoppingCart} 
+            trend={8}
+            color="bg-green-500/20"
+          />
+          <StatCard 
+            title="Revenue" 
+            value={`₱${todayStats.revenue}`} 
+            icon={DollarSign} 
+            trend={12}
+            color="bg-blue-500/20"
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <StatCard 
+            title="Avg Order" 
+            value={`₱${todayStats.avgOrder}`} 
+            icon={TrendingUp} 
+            trend={-3}
+            color="bg-purple-500/20"
+          />
+          <StatCard 
+            title="Target Progress" 
+            value={`${Math.round((todayStats.revenue / todayStats.target) * 100)}%`} 
+            icon={Target} 
+            color="bg-orange-500/20"
+          />
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="space-y-4">
+        <h3 className="text-xl font-bold text-white px-2">Quick Actions</h3>
+        <div className="space-y-3">
+          {quickActions.map((action, index) => (
+            <ActionCard key={action.path} {...action} />
+          ))}
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <Card className="bg-white/5 backdrop-blur-lg border-white/20 text-white">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center space-x-2">
+            <Clock className="h-5 w-5 text-orange-400" />
+            <span>Recent Activity</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {[1, 2, 3].map((item) => (
+            <div key={item} className="flex items-center space-x-3 p-3 bg-white/5 rounded-xl">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-white">Sale recorded</p>
+                <p className="text-xs text-white/60">₱250.00 • 2 minutes ago</p>
               </div>
             </div>
+          ))}
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  const DesktopLayout = () => (
+    <div className="min-h-screen space-y-8">
+      {/* Desktop Header */}
+      <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-6">
+            <div className="w-20 h-20 bg-gradient-to-r from-orange-500 to-red-500 rounded-3xl p-4 shadow-xl animate-pulse-glow">
+              <img 
+                src={charnofsLogo} 
+                alt="Charnoks Special Fried Chicken" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div>
+              <h2 className="text-4xl font-bold bg-gradient-to-r from-orange-400 via-red-400 to-yellow-400 bg-clip-text text-transparent">
+                Charnoks POS
+              </h2>
+              <p className="text-white/80 text-lg font-medium">Worker Station • Special Fried Chicken</p>
+              <div className="flex items-center space-x-3 mt-2">
+                <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 px-3 py-1">
+                  {user?.email?.split('@')[0]}
+                </Badge>
+                <Badge variant="outline" className="border-white/30 text-white/80">
+                  Active Session
+                </Badge>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center space-x-4">
+            <div className="text-right">
+              <p className="text-white/60 text-sm">Current Time</p>
+              <p className="text-white font-bold text-lg">{new Date().toLocaleTimeString()}</p>
+            </div>
             <Button
-              variant="ghost"
-              size="sm"
+              variant="outline"
               onClick={logout}
-              className="text-white hover:bg-white/20 border border-white/30 animate-slide-in-right"
+              className="bg-white/10 border-white/20 text-white hover:bg-red-500/20 hover:border-red-400/50 px-6 py-3 rounded-xl"
             >
-              Logout
+              <span>Logout</span>
             </Button>
           </div>
         </div>
       </div>
 
-      <div className="p-4 space-y-4">
-        {/* Mobile Quick Actions */}
-        <div className="grid grid-cols-2 gap-4 animate-bounce-in">
-          <Link to="/sales">
-            <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white h-28 hover:scale-105 transition-transform duration-300 animate-pulse-glow">
-              <CardContent className="p-4 flex items-center justify-center">
-                <div className="text-center">
-                  <ShoppingCart className="h-10 w-10 mx-auto mb-2 text-green-400" />
-                  <p className="text-sm font-bold">Record Sale</p>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link to="/expenses">
-            <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white h-28 hover:scale-105 transition-transform duration-300 animate-pulse-glow">
-              <CardContent className="p-4 flex items-center justify-center">
-                <div className="text-center">
-                  <Receipt className="h-10 w-10 mx-auto mb-2 text-orange-400" />
-                  <p className="text-sm font-bold">Record Expense</p>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        </div>
-
-        {/* Mobile Stats */}
-        <div className="grid grid-cols-1 gap-4 animate-slide-in-right">
-          <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-300 font-medium">Today's Sales</p>
-                  <p className="text-3xl font-bold text-green-400">₱{stats.todaySales.toLocaleString()}</p>
-                </div>
-                <DollarSign className="h-10 w-10 text-green-400" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-300 font-medium">Today's Expenses</p>
-                  <p className="text-3xl font-bold text-red-400">₱{stats.todayExpenses.toLocaleString()}</p>
-                </div>
-                <Receipt className="h-10 w-10 text-red-400" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Mobile Recent Transactions */}
-        <Card className="bg-black/40 backdrop-blur-lg border-white/20 animate-slide-in-left">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-xl text-white flex items-center font-bold">
-              <Stars className="h-6 w-6 mr-2 text-yellow-400" />
-              Recent Activity
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {transactions.length === 0 ? (
-              <div className="text-center py-8">
-                <Package className="h-12 w-12 text-blue-300 mx-auto mb-2 opacity-50" />
-                <p className="text-blue-200">No transactions yet</p>
-              </div>
-            ) : (
-              transactions.slice(0, 5).map((transaction) => (
-                <div
-                  key={transaction.id}
-                  className="flex items-center justify-between p-3 bg-white/5 rounded-lg"
-                >
-                  <div className="flex-1">
-                    <p className="font-medium text-white text-sm">
-                      {transaction.type === "sale" ? "Sale" : "Expense"}
-                    </p>
-                    <p className="text-xs text-blue-200">
-                      {formatDate(transaction.timestamp)}
-                    </p>
-                  </div>
-                  <p
-                    className={`font-bold ${
-                      transaction.type === "sale" ? "text-green-400" : "text-red-400"
-                    }`}
-                  >
-                    {transaction.type === "sale" ? "+" : "-"}₱{transaction.amount.toLocaleString()}
-                  </p>
-                </div>
-              ))
-            )}
-          </CardContent>
-        </Card>
+      {/* Performance Dashboard */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <StatCard 
+          title="Today's Sales" 
+          value={todayStats.sales} 
+          icon={ShoppingCart} 
+          trend={8}
+          color="bg-green-500/20"
+        />
+        <StatCard 
+          title="Revenue" 
+          value={`₱${todayStats.revenue.toLocaleString()}`} 
+          icon={DollarSign} 
+          trend={12}
+          color="bg-blue-500/20"
+        />
+        <StatCard 
+          title="Average Order" 
+          value={`₱${todayStats.avgOrder}`} 
+          icon={TrendingUp} 
+          trend={-3}
+          color="bg-purple-500/20"
+        />
+        <StatCard 
+          title="Target Progress" 
+          value={`${Math.round((todayStats.revenue / todayStats.target) * 100)}%`} 
+          icon={Target}
+          color="bg-orange-500/20"
+        />
       </div>
-    </div>
-  );
 
-  const DesktopLayout = () => (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 text-blue-300 opacity-10 animate-pulse">
-          <Stars size={32} />
-        </div>
-        <div className="absolute top-40 right-20 text-purple-300 opacity-15 animate-bounce">
-          <Sparkles size={24} />
-        </div>
-        <div className="absolute bottom-20 left-1/4 text-blue-400 opacity-10 animate-pulse">
-          <Stars size={28} />
+      {/* Quick Actions Grid */}
+      <div className="space-y-6">
+        <h3 className="text-2xl font-bold text-white">Quick Actions</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {quickActions.map((action) => (
+            <ActionCard key={action.path} {...action} />
+          ))}
         </div>
       </div>
 
-      {/* Dashboard Header */}
-      <div className="bg-white/10 backdrop-blur-xl border-b border-white/20 shadow-xl relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center space-x-3">
-            <img 
-              src="/lovable-uploads/389a9fc0-9ada-493a-a167-71ea82a7aabb.png" 
-              alt="Charnoks" 
-              className="h-10 w-10 object-contain"
-            />
-            <div>
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-transparent">
-                Charnoks POS
-              </h2>
-              <p className="text-blue-200">Worker Station • {user?.email}</p>
-            </div>
+      {/* Recent Activity */}
+      <Card className="bg-white/5 backdrop-blur-lg border-white/20 text-white">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center space-x-2 text-xl">
+            <Clock className="h-6 w-6 text-orange-400" />
+            <span>Recent Activity</span>
+          </CardTitle>
+          <CardDescription className="text-white/60">
+            Latest transactions and activities
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {[1, 2, 3, 4].map((item) => (
+              <div key={item} className="flex items-center space-x-4 p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors duration-300">
+                <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" />
+                <div className="flex-1">
+                  <p className="font-medium text-white">Sale recorded - Chicken Combo</p>
+                  <p className="text-sm text-white/60">₱250.00 • 2 minutes ago</p>
+                </div>
+                <Badge variant="outline" className="border-green-400/50 text-green-400">
+                  Completed
+                </Badge>
+              </div>
+            ))}
           </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <Link to="/sales">
-            <Card className="bg-gradient-to-br from-emerald-500 to-green-600 text-white border-0 hover:shadow-2xl transition-all duration-200 cursor-pointer transform hover:scale-105 backdrop-blur-sm">
-              <CardContent className="p-8">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-2xl font-bold mb-3">Record Sale</h3>
-                    <p className="text-green-100 text-lg">Process new transactions</p>
-                  </div>
-                  <ShoppingCart className="h-16 w-16 text-green-200" />
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link to="/expenses">
-            <Card className="bg-gradient-to-br from-orange-500 to-red-500 text-white border-0 hover:shadow-2xl transition-all duration-200 cursor-pointer transform hover:scale-105 backdrop-blur-sm">
-              <CardContent className="p-8">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-2xl font-bold mb-3">Record Expense</h3>
-                    <p className="text-orange-100 text-lg">Track business costs</p>
-                  </div>
-                  <Receipt className="h-16 w-16 text-orange-200" />
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl text-white">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-blue-200">
-                Today's Sales
-              </CardTitle>
-              <DollarSign className="h-5 w-5 text-green-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-green-400">
-                ₱{stats.todaySales.toLocaleString()}
-              </div>
-              <p className="text-xs text-blue-200 mt-1">
-                Sales recorded today
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl text-white">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-blue-200">
-                Today's Expenses
-              </CardTitle>
-              <Receipt className="h-5 w-5 text-red-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-red-400">
-                ₱{stats.todayExpenses.toLocaleString()}
-              </div>
-              <p className="text-xs text-blue-200 mt-1">
-                Expenses recorded today
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl text-white">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-blue-200">
-                Total Transactions
-              </CardTitle>
-              <Package className="h-5 w-5 text-blue-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-blue-400">
-                {stats.totalTransactions}
-              </div>
-              <p className="text-xs text-blue-200 mt-1">
-                Today's transactions
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Recent Transactions */}
-        <Card className="bg-white/10 backdrop-blur-xl border-white/20 shadow-2xl">
-          <CardHeader className="border-b border-white/20">
-            <CardTitle className="text-xl text-white flex items-center">
-              <Receipt className="h-6 w-6 mr-3 text-blue-400" />
-              My Recent Transactions
-            </CardTitle>
-            <CardDescription className="text-blue-200">
-              Your latest sales and expenses
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="space-y-4">
-              {transactions.length === 0 ? (
-                <div className="text-center py-12">
-                  <Package className="h-16 w-16 text-blue-300 mx-auto mb-4 opacity-50" />
-                  <p className="text-blue-200 text-lg">
-                    No transactions recorded yet
-                  </p>
-                  <p className="text-blue-300 opacity-60">
-                    Start by recording your first sale or expense
-                  </p>
-                </div>
-              ) : (
-                transactions.map((transaction) => (
-                  <div
-                    key={transaction.id}
-                    className="flex items-center justify-between p-5 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all duration-200 shadow-lg backdrop-blur-sm"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div
-                        className={`w-4 h-4 rounded-full ${
-                          transaction.type === "sale"
-                            ? "bg-green-400 shadow-green-400/50 shadow-lg"
-                            : "bg-red-400 shadow-red-400/50 shadow-lg"
-                        }`}
-                      ></div>
-                      <div>
-                        <p className="font-semibold text-white">
-                          {transaction.type === "sale" ? "Sale" : "Expense"}
-                        </p>
-                        <p className="text-sm text-blue-200">
-                          {transaction.description ||
-                            (transaction.items &&
-                              `${transaction.items.length} item(s)`) ||
-                            "Transaction"}{" "}
-                          •{" "}
-                          {formatDate(transaction.timestamp)}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p
-                        className={`font-bold text-lg ${
-                          transaction.type === "sale"
-                            ? "text-green-400"
-                            : "text-red-400"
-                        }`}
-                      >
-                        {transaction.type === "sale" ? "+" : "-"}₱
-                        {transaction.amount.toLocaleString()}
-                      </p>
-                      <Badge
-                        variant={
-                          transaction.type === "sale" ? "default" : "secondary"
-                        }
-                        className={`shadow-sm ${
-                          transaction.type === "sale"
-                            ? "bg-green-600 text-white"
-                            : "bg-red-600 text-white"
-                        }`}
-                      >
-                        {transaction.type}
-                      </Badge>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 

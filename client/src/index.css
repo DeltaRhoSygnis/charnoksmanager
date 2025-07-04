@@ -185,7 +185,7 @@ html, body, #root {
   }
 }
 
-/* Custom animations for Charnoks POS */
+/* Enhanced Custom animations for Charnoks POS */
 @keyframes gradient-x {
   0%, 100% {
     background-position: 0% 50%;
@@ -197,14 +197,67 @@ html, body, #root {
 
 @keyframes bounce-in {
   0% {
-    transform: scale(0.3);
+    transform: scale(0.3) rotate(-10deg);
     opacity: 0;
   }
   50% {
-    transform: scale(1.05);
+    transform: scale(1.05) rotate(2deg);
   }
   70% {
+    transform: scale(0.9) rotate(-1deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-right {
+  0% {
+    transform: translateX(100%) scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-left {
+  0% {
+    transform: translateX(-100%) scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.4), 0 0 40px rgba(255, 0, 0, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 165, 0, 0.6), 0 0 60px rgba(255, 0, 0, 0.4);
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  0% {
     transform: scale(0.9);
+    opacity: 0;
   }
   100% {
     transform: scale(1);
@@ -212,57 +265,138 @@ html, body, #root {
   }
 }
 
-@keyframes slide-in-right {
-  0% {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slide-in-left {
-  0% {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes pulse-glow {
+@keyframes float {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+    transform: translateY(0px);
   }
   50% {
-    box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
+    transform: translateY(-10px);
   }
 }
 
-/* Custom utility classes */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(255, 165, 0, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.8), 0 0 30px rgba(255, 0, 0, 0.5);
+  }
+}
+
+/* Enhanced Custom utility classes */
 .animate-gradient-x {
   background-size: 200% 200%;
   animation: gradient-x 15s ease infinite;
 }
 
 .animate-bounce-in {
-  animation: bounce-in 0.8s ease-out;
+  animation: bounce-in 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .animate-slide-in-right {
-  animation: slide-in-right 0.6s ease-out;
+  animation: slide-in-right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .animate-slide-in-left {
-  animation: slide-in-left 0.6s ease-out;
+  animation: slide-in-left 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.4s ease-out;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+/* Glass morphism enhanced */
+.glass-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.glass-nav {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive text sizing */
+.text-responsive-xs {
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+}
+
+.text-responsive-sm {
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+}
+
+.text-responsive-base {
+  font-size: clamp(1rem, 3vw, 1.125rem);
+}
+
+.text-responsive-lg {
+  font-size: clamp(1.125rem, 4vw, 1.5rem);
+}
+
+.text-responsive-xl {
+  font-size: clamp(1.5rem, 5vw, 2rem);
+}
+
+.text-responsive-2xl {
+  font-size: clamp(2rem, 6vw, 3rem);
+}
+
+/* Enhanced hover effects */
+.hover-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Better focus states */
+.focus-ring {
+  transition: all 0.2s ease-in-out;
+}
+
+.focus-ring:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: rgba(255, 165, 0, 0.5);
+  ring-offset: 2px;
+  ring-offset-color: rgba(0, 0, 0, 0.1);
 }
 
 /* Charnoks brand styling */

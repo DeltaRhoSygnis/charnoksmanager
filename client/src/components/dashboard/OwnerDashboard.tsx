@@ -694,13 +694,13 @@ export const OwnerDashboard = () => {
   );
 
   return (
-    <>
+    <div className="min-h-screen space-y-6">
       {isMobile ? <MobileLayout /> : <DesktopLayout />}
 
       {/* Create Worker Modal */}
       {showCreateWorker && (
         <CreateWorkerAccount onClose={() => setShowCreateWorker(false)} />
       )}
-    </>
+    </div>
   );
 };
