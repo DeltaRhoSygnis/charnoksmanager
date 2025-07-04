@@ -14,6 +14,8 @@ import {
   FileText,
   Receipt,
   Users,
+  TrendingUp,
+  Activity,
 } from "lucide-react";
 
 export const Navigation = () => {
@@ -26,7 +28,9 @@ export const Navigation = () => {
     { path: "/products", label: "Products", icon: Package },
     { path: "/sales", label: "Sales", icon: ShoppingCart },
     { path: "/expenses", label: "Expenses", icon: Receipt },
+    { path: "/transactions", label: "Transactions", icon: Activity },
     { path: "/analytics", label: "Analytics", icon: BarChart3 },
+    { path: "/data-analysis", label: "Data Analysis", icon: TrendingUp },
     { path: "/reports", label: "Reports", icon: FileText },
   ];
 

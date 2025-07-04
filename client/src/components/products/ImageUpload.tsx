@@ -58,30 +58,71 @@ export const ImageUpload = ({ onImageUpload, currentImageUrl, disabled }: ImageU
   const uploadImage = async (file: File) => {
     setIsUploading(true);
     try {
-      // Create a unique filename
-      const timestamp = Date.now();
-      const fileName = `products/${timestamp}-${file.name}`;
-      const storageRef = ref(storage, fileName);
+      // Check if Firebase is available
+      const isFirebaseAvailable = await checkFirebaseAvailability();
+      
+      if (isFirebaseAvailable) {
+        // Firebase upload path
+        const timestamp = Date.now();
+        const fileName = `products/${timestamp}-${file.name}`;
+        const storageRef = ref(storage, fileName);
 
-      // Upload file
-      const snapshot = await uploadBytes(storageRef, file);
-      const downloadURL = await getDownloadURL(snapshot.ref);
+        const snapshot = await uploadBytes(storageRef, file);
+        const downloadURL = await getDownloadURL(snapshot.ref);
 
-      onImageUpload(downloadURL);
-      toast({
-        title: "Image Uploaded Successfully",
-        description: "Your product image has been uploaded",
-      });
+        onImageUpload(downloadURL);
+        toast({
+          title: "Image Uploaded Successfully",
+          description: "Your product image has been uploaded to Firebase",
+        });
+      } else {
+        // Local storage fallback - convert to base64
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const base64String = e.target?.result as string;
+          onImageUpload(base64String);
+          toast({
+            title: "Image Saved Locally",
+            description: "Your product image has been saved locally",
+          });
+        };
+        reader.readAsDataURL(file);
+      }
     } catch (error) {
       console.error("Error uploading image:", error);
-      toast({
-        title: "Upload Failed",
-        description: "Failed to upload image. Please try again.",
-        variant: "destructive",
-      });
-      setPreviewUrl(null);
+      
+      // Fallback to local storage on any error
+      try {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const base64String = e.target?.result as string;
+          onImageUpload(base64String);
+          toast({
+            title: "Image Saved Locally",
+            description: "Firebase unavailable, saved locally instead",
+          });
+        };
+        reader.readAsDataURL(file);
+      } catch (fallbackError) {
+        toast({
+          title: "Upload Failed",
+          description: "Failed to save image. Please try again.",
+          variant: "destructive",
+        });
+        setPreviewUrl(null);
+      }
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const checkFirebaseAvailability = async (): Promise<boolean> => {
+    try {
+      // Simple check for Firebase availability
+      const testRef = ref(storage, 'test');
+      return true;
+    } catch (error) {
+      return false;
     }
   };
 

@@ -19,23 +19,27 @@ export interface CartItem {
 
 export interface Transaction {
   id: string;
-  items: Array<{
+  type: "sale" | "expense";
+  items?: Array<{
     productId: string;
     productName: string;
     quantity: number;
     price: number;
     total: number;
   }>;
-  totalAmount: number;
-  amountPaid: number;
-  change: number;
-  paymentMethod: "cash" | "card" | "digital";
+  totalAmount?: number;
+  amount?: number;
+  amountPaid?: number;
+  change?: number;
+  paymentMethod?: "cash" | "card" | "digital";
   workerId: string;
   workerEmail: string;
   timestamp: Date;
-  isVoiceTransaction: boolean;
+  isVoiceTransaction?: boolean;
   voiceInput?: string;
   status: "completed" | "pending" | "cancelled";
+  description?: string;
+  category?: string;
 }
 
 export interface VoiceTransactionInput {

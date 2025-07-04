@@ -18,6 +18,8 @@ import { Expenses } from "@/pages/Expenses";
 import { Analytics } from "@/components/analytics/Analytics";
 import { Summary } from "@/components/reports/Summary";
 import { Settings } from "@/pages/Settings";
+import { Transactions } from "@/pages/Transactions";
+import { DataAnalysis } from "@/pages/DataAnalysis";
 import { Toaster } from "@/components/ui/toaster";
 import "./App.css";
 
@@ -77,10 +79,26 @@ function App() {
               }
             />
             <Route
+              path="/transactions"
+              element={
+                <ProtectedRoute>
+                  <Transactions />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/analytics"
               element={
                 <ProtectedRoute>
                   <Analytics />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/data-analysis"
+              element={
+                <ProtectedRoute>
+                  <DataAnalysis />
                 </ProtectedRoute>
               }
             />
