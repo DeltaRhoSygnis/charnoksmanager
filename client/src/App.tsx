@@ -9,6 +9,7 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { RoleBasedRoute } from "@/components/auth/RoleBasedRoute";
 import { FirebaseTest } from "@/lib/firebaseTest";
 import { Login } from "@/components/auth/Login";
 import { Register } from "@/components/auth/Register";
@@ -25,6 +26,7 @@ import { CosmicBackground } from "@/components/ui/cosmic-background";
 import { Toaster } from "@/components/ui/toaster";
 import { queryClient } from "@/lib/queryClient";
 import "./App.css";
+import "./styles/mobile-optimized.css";
 
 function App() {
   useEffect(() => {
@@ -70,87 +72,97 @@ function App() {
             <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            {/* Shared Routes - Accessible by both owners and workers */}
             <Route
               path="/dashboard"
               element={
-                <ProtectedRoute>
+                <RoleBasedRoute allowedRoles={['owner', 'worker']}>
                   <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/products"
-              element={
-                <ProtectedRoute>
-                  <Products />
-                </ProtectedRoute>
+                </RoleBasedRoute>
               }
             />
             <Route
               path="/sales"
               element={
-                <ProtectedRoute>
+                <RoleBasedRoute allowedRoles={['owner', 'worker']}>
                   <Sales />
-                </ProtectedRoute>
+                </RoleBasedRoute>
               }
             />
             <Route
               path="/expenses"
               element={
-                <ProtectedRoute>
+                <RoleBasedRoute allowedRoles={['owner', 'worker']}>
                   <Expenses />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/transactions"
-              element={
-                <ProtectedRoute>
-                  <Transactions />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/analytics"
-              element={
-                <ProtectedRoute>
-                  <Analytics />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/analysis"
-              element={
-                <ProtectedRoute>
-                  <DataAnalysis />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/data-analysis"
-              element={
-                <ProtectedRoute>
-                  <DataAnalysis />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/reports"
-              element={
-                <ProtectedRoute>
-                  <Summary />
-                </ProtectedRoute>
+                </RoleBasedRoute>
               }
             />
             <Route
               path="/settings"
               element={
-                <ProtectedRoute>
+                <RoleBasedRoute allowedRoles={['owner', 'worker']}>
                   <Settings />
-                </ProtectedRoute>
+                </RoleBasedRoute>
               }
             />
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
+            {/* Owner-Only Routes - Restricted to owners only */}
+            <Route
+              path="/products"
+              element={
+                <RoleBasedRoute allowedRoles={['owner']} redirectTo="/">
+                  <Products />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/transactions"
+              element={
+                <RoleBasedRoute allowedRoles={['owner']} redirectTo="/">
+                  <Transactions />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/analytics"
+              element={
+                <RoleBasedRoute allowedRoles={['owner']} redirectTo="/">
+                  <Analytics />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/analysis"
+              element={
+                <RoleBasedRoute allowedRoles={['owner']} redirectTo="/">
+                  <DataAnalysis />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/data-analysis"
+              element={
+                <RoleBasedRoute allowedRoles={['owner']} redirectTo="/">
+                  <DataAnalysis />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/reports"
+              element={
+                <RoleBasedRoute allowedRoles={['owner']} redirectTo="/">
+                  <Summary />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/"
+              element={
+                <RoleBasedRoute allowedRoles={['owner', 'worker']}>
+                  <Dashboard />
+                </RoleBasedRoute>
+              }
+            />
           </Routes>
           <Toaster />
         </div>

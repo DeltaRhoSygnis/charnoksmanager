@@ -1,0 +1,216 @@
+/* Mobile-First Responsive Styles for Charnoks POS */
+
+/* Global Mobile Optimizations */
+.mobile-optimized {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.mobile-optimized * {
+  box-sizing: border-box;
+}
+
+/* Typography Scaling */
+.mobile-optimized h1 {
+  font-size: 1.5rem;
+  line-height: 1.3;
+  margin-bottom: 0.75rem;
+}
+
+.mobile-optimized h2 {
+  font-size: 1.25rem;
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
+}
+
+.mobile-optimized h3 {
+  font-size: 1.125rem;
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
+}
+
+.mobile-optimized p {
+  font-size: 0.875rem;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+/* Card and Container Optimizations */
+.mobile-optimized .card,
+.mobile-optimized [class*="card"] {
+  padding: 0.75rem !important;
+  margin-bottom: 0.75rem !important;
+  border-radius: 0.5rem !important;
+}
+
+.mobile-optimized .card-header {
+  padding: 0.5rem 0.75rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.mobile-optimized .card-content {
+  padding: 0.5rem 0.75rem !important;
+}
+
+.mobile-optimized .card-title {
+  font-size: 1rem !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.mobile-optimized .card-description {
+  font-size: 0.8rem !important;
+  line-height: 1.3 !important;
+}
+
+/* Button Optimizations */
+.mobile-optimized button,
+.mobile-optimized .btn {
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  min-height: 2.5rem !important;
+  border-radius: 0.375rem !important;
+}
+
+.mobile-optimized button.btn-sm,
+.mobile-optimized .btn-sm {
+  padding: 0.375rem 0.5rem !important;
+  font-size: 0.8rem !important;
+  min-height: 2rem !important;
+}
+
+.mobile-optimized button.btn-lg,
+.mobile-optimized .btn-lg {
+  padding: 0.75rem 1rem !important;
+  font-size: 1rem !important;
+  min-height: 3rem !important;
+}
+
+/* Form Optimizations */
+.mobile-optimized input,
+.mobile-optimized textarea,
+.mobile-optimized select {
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  min-height: 2.5rem !important;
+  border-radius: 0.375rem !important;
+}
+
+.mobile-optimized label {
+  font-size: 0.875rem !important;
+  margin-bottom: 0.25rem !important;
+  font-weight: 500 !important;
+}
+
+.mobile-optimized .form-group {
+  margin-bottom: 0.75rem !important;
+}
+
+/* Table Optimizations */
+.mobile-optimized table {
+  width: 100% !important;
+  font-size: 0.8rem !important;
+}
+
+.mobile-optimized th,
+.mobile-optimized td {
+  padding: 0.5rem 0.375rem !important;
+  text-align: left !important;
+}
+
+.mobile-optimized th {
+  font-weight: 600 !important;
+  font-size: 0.75rem !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Grid and Layout Optimizations */
+.mobile-optimized .grid {
+  gap: 0.75rem !important;
+}
+
+.mobile-optimized .grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+}
+
+.mobile-optimized .grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+.mobile-optimized .grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+/* Specific Component Optimizations */
+.mobile-optimized .sales-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 0.5rem !important;
+}
+
+.mobile-optimized .product-card {
+  padding: 0.5rem !important;
+  min-height: 4rem !important;
+}
+
+.mobile-optimized .product-card h3 {
+  font-size: 0.875rem !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.mobile-optimized .product-card p {
+  font-size: 0.75rem !important;
+}
+
+.mobile-optimized .chart-container {
+  height: 200px !important;
+  margin-bottom: 1rem !important;
+}
+
+.mobile-optimized .stats-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 0.5rem !important;
+}
+
+.mobile-optimized .stat-card {
+  padding: 0.75rem !important;
+  text-align: center !important;
+}
+
+.mobile-optimized .stat-value {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+}
+
+.mobile-optimized .stat-label {
+  font-size: 0.75rem !important;
+  margin-top: 0.25rem !important;
+}
+
+/* Desktop Optimizations */
+.desktop-optimized {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.desktop-optimized .sales-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.desktop-optimized .stats-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.desktop-optimized .chart-container {
+  height: 400px;
+  margin-bottom: 2rem;
+}
+
+/* Touch-friendly targets */
+.mobile-optimized a,
+.mobile-optimized button,
+.mobile-optimized input,
+.mobile-optimized select {
+  min-height: 2.5rem !important;
+  min-width: 2.5rem !important;
+}
