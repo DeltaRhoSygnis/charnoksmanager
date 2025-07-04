@@ -20,6 +20,7 @@ import { Summary } from "@/components/reports/Summary";
 import { Settings } from "@/pages/Settings";
 import { Transactions } from "@/pages/Transactions";
 import { DataAnalysis } from "@/pages/DataAnalysis";
+import { CosmicBackground } from "@/components/ui/cosmic-background";
 import { Toaster } from "@/components/ui/toaster";
 import "./App.css";
 
@@ -42,7 +43,8 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen w-full galaxy-animated cosmic-overlay">
+        <div className="min-h-screen w-full relative">
+          <CosmicBackground />
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
