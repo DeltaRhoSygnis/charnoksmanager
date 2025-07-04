@@ -35,6 +35,14 @@ import {
   Sparkles,
   Stars,
   Menu,
+  BarChart3,
+  PieChart,
+  LineChart,
+  Activity,
+  Home,
+  Settings,
+  CreditCard,
+  History,
 } from "lucide-react";
 import { Sale } from "@/types/sales";
 import { CreateWorkerAccount } from "@/components/worker/CreateWorkerAccount";
@@ -287,47 +295,43 @@ export const OwnerDashboard = () => {
                 <p className="text-sm text-white font-medium">Owner Dashboard</p>
               </div>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowCreateWorker(true)}
-              className="charnoks-gradient text-white border-0 font-bold animate-pulse-glow"
-            >
-              <Plus className="h-4 w-4 mr-1" />
-              Add Worker
-            </Button>
+            <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center animate-pulse">
+              <Activity className="h-4 w-4 text-green-400" />
+            </div>
           </div>
         </div>
       </div>
 
       <div className="p-4 space-y-4">
-        <FirebaseTestButton />
 
-        {/* Mobile Quick Actions */}
+        {/* Trading-Style Analytics Cards */}
         <div className="grid grid-cols-3 gap-3 animate-bounce-in">
-          <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white h-24 hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-3 flex items-center justify-center">
+          <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white hover:scale-105 transition-transform duration-300">
+            <CardContent className="p-3">
               <div className="text-center">
-                <ShoppingCart className="h-7 w-7 mx-auto mb-2 text-green-400" />
-                <p className="text-xs font-bold">Record Sale</p>
+                <BarChart3 className="h-6 w-6 mx-auto mb-2 text-green-400" />
+                <p className="text-lg font-bold text-green-400">₱{stats.totalSales.toLocaleString()}</p>
+                <p className="text-xs text-white/70">Sales</p>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white h-24 hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-3 flex items-center justify-center">
+          <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white hover:scale-105 transition-transform duration-300">
+            <CardContent className="p-3">
               <div className="text-center">
-                <Receipt className="h-7 w-7 mx-auto mb-2 text-orange-400" />
-                <p className="text-xs font-bold">Record Expense</p>
+                <PieChart className="h-6 w-6 mx-auto mb-2 text-red-400" />
+                <p className="text-lg font-bold text-red-400">₱{stats.totalExpenses.toLocaleString()}</p>
+                <p className="text-xs text-white/70">Expenses</p>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white h-24 hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-3 flex items-center justify-center">
+          <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white hover:scale-105 transition-transform duration-300">
+            <CardContent className="p-3">
               <div className="text-center">
-                <TrendingUp className="h-7 w-7 mx-auto mb-2 text-blue-400" />
-                <p className="text-xs font-bold">View Summary</p>
+                <LineChart className="h-6 w-6 mx-auto mb-2 text-blue-400" />
+                <p className="text-lg font-bold text-blue-400">₱{(stats.totalSales - stats.totalExpenses).toLocaleString()}</p>
+                <p className="text-xs text-white/70">Profit</p>
               </div>
             </CardContent>
           </Card>

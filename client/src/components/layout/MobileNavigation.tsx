@@ -10,6 +10,7 @@ import {
   Settings,
   Activity,
   Plus,
+  FileText,
 } from "lucide-react";
 
 export const MobileNavigation = () => {
@@ -22,6 +23,7 @@ export const MobileNavigation = () => {
     { path: "/sales", label: "Sales", icon: ShoppingCart },
     { path: "/expenses", label: "Expenses", icon: Receipt },
     { path: "/settings", label: "Settings", icon: Settings },
+    { path: "/transactions", label: "Transactions", icon: FileText },
   ];
 
   const workerNavItems = [
@@ -39,7 +41,7 @@ export const MobileNavigation = () => {
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/30 backdrop-blur-xl border-t border-white/20">
         <div className="safe-area-pb">
-          <div className="grid grid-cols-5 gap-1 px-2 py-2">
+          <div className="grid grid-cols-6 gap-1 px-2 py-2">
             {navItems.map(({ path, label, icon: Icon }) => (
               <Link
                 key={path}
@@ -63,25 +65,19 @@ export const MobileNavigation = () => {
               </Link>
             ))}
             
-            {/* Quick Action Button */}
-            <div className="flex flex-col items-center p-3 rounded-2xl">
-              <div className="relative">
-                <div className="w-5 h-5 mb-1 bg-gradient-to-r from-green-400 to-blue-400 rounded-full flex items-center justify-center animate-pulse">
-                  <Plus className="h-3 w-3 text-white" />
-                </div>
-              </div>
-              <span className="text-xs font-medium text-white/70 truncate w-full text-center">Quick</span>
-            </div>
+
           </div>
         </div>
       </div>
 
       {/* Safe area for bottom navigation */}
-      <style jsx global>{`
-        .safe-area-pb {
-          padding-bottom: env(safe-area-inset-bottom);
-        }
-      `}</style>
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .safe-area-pb {
+            padding-bottom: env(safe-area-inset-bottom);
+          }
+        `
+      }} />
     </>
   );
 };

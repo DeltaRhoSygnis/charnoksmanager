@@ -1,12 +1,16 @@
+import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { UniversalLayout } from "@/components/layout/UniversalLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Settings as SettingsIcon, User, LogOut, Crown, Shield, Star } from "lucide-react";
+import { FirebaseTestButton } from "@/components/ui/firebase-test-button";
+import { CreateWorkerAccount } from "@/components/worker/CreateWorkerAccount";
+import { Settings as SettingsIcon, User, LogOut, Crown, Shield, Star, Plus, TestTube } from "lucide-react";
 
 export const Settings = () => {
   const { user, logout } = useAuth();
+  const [showCreateWorker, setShowCreateWorker] = useState(false);
 
   return (
     <UniversalLayout>
@@ -121,6 +125,42 @@ export const Settings = () => {
                 </CardContent>
               </Card>
 
+              {/* System Management - Owner Only */}
+              {user?.role === "owner" && (
+                <Card className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-slide-in-right delay-200 rounded-2xl overflow-hidden">
+                  <CardHeader className="bg-black/20 border-b border-white/20">
+                    <CardTitle className="text-white text-2xl font-bold flex items-center gap-3">
+                      <TestTube className="h-6 w-6 text-green-400" />
+                      System Management
+                    </CardTitle>
+                    <CardDescription className="text-gray-300 text-lg">
+                      Database testing and worker account management
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-8 space-y-6">
+                    <div className="space-y-4">
+                      <div>
+                        <h4 className="text-white font-bold text-lg mb-2">Database Connection</h4>
+                        <p className="text-gray-400 mb-4">Test Firebase connectivity and database access</p>
+                        <FirebaseTestButton />
+                      </div>
+                      
+                      <div>
+                        <h4 className="text-white font-bold text-lg mb-2">Worker Management</h4>
+                        <p className="text-gray-400 mb-4">Create new worker accounts for your business</p>
+                        <Button
+                          onClick={() => setShowCreateWorker(true)}
+                          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
+                        >
+                          <Plus className="h-5 w-5 mr-2" />
+                          Add Worker Account
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
               {/* Account Actions */}
               <Card className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-slide-in-right delay-300 rounded-2xl overflow-hidden">
                 <CardHeader className="bg-black/20 border-b border-white/20">
@@ -164,6 +204,11 @@ export const Settings = () => {
           </Card>
         </div>
       </div>
+      
+      {/* Create Worker Modal */}
+      {showCreateWorker && (
+        <CreateWorkerAccount onClose={() => setShowCreateWorker(false)} />
+      )}
     </UniversalLayout>
   );
 };
