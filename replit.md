@@ -25,11 +25,12 @@ Sari POS is a complete Point of Sale solution designed for small businesses and 
 - **Development**: Hot reloading with Vite middleware integration
 
 ### Database Design
-- **Primary Database**: Firebase Firestore (user's permanent database)
-- **Backup Database**: Supabase (user's secondary option)
+- **Authentication**: Firebase Authentication (user login/registration)
+- **Primary Database**: Supabase PostgreSQL (user's permanent database)
+- **Backup Database**: Replit PostgreSQL (fallback option)
 - **Local Fallback**: LocalStorage for offline mode
-- **Collections**: products, transactions, users, expenses
-- **Real-time Updates**: Firebase real-time listeners
+- **Tables**: users, products, sales, expenses (via Drizzle ORM)
+- **Real-time Updates**: Firebase real-time listeners for auth state
 - **Image Storage**: Firebase Storage for product images
 
 ## Key Components
@@ -193,6 +194,8 @@ Changelog:
 - July 04, 2025. Dashboard transformation: Replaced transaction lists with interactive charts (Bar, Area, Pie) for trading-style analytics
 - July 04, 2025. Added Analysis navigation item after Home, moved Settings to right side as requested
 - July 04, 2025. Fixed product upload functionality with proper Firebase Storage fallback to local storage for offline mode
+- July 04, 2025. Successfully migrated from Replit Agent to Replit environment with hybrid Firebase/Supabase architecture
+- July 04, 2025. Configured Firebase for authentication and Supabase for data storage using environment variables
 
 ## Deployment Guide
 
