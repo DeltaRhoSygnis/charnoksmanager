@@ -4,6 +4,17 @@ import { storage } from "./storage";
 import { insertUserSchema, insertProductSchema, insertSaleSchema, insertExpenseSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Health check endpoint
+  app.get("/api/health", async (req, res) => {
+    try {
+      // Test database connection
+      await storage.getProducts();
+      res.json({ status: "healthy", database: "connected" });
+    } catch (error: any) {
+      res.status(500).json({ status: "unhealthy", error: error.message });
+    }
+  });
+
   // User routes
   app.post("/api/users", async (req, res) => {
     try {

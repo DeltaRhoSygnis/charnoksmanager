@@ -27,7 +27,13 @@ export class LocalStorageDB {
 
   // Initialize with sample data for demo
   private static initializeDemoData() {
-    // Sample products
+    // Initialize with empty data arrays - no pre-populated demo data
+    this.saveProducts([]);
+    this.saveTransactions([]);
+    console.log("📱 Demo mode initialized with empty data");
+    return;
+    
+    // OLD CODE - keeping for reference but not executing
     const sampleProducts: Product[] = [
       {
         id: "demo-1",

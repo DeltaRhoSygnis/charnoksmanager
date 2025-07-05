@@ -44,14 +44,14 @@ function App() {
       
       window.addEventListener('unhandledrejection', handleUnhandledRejection);
       
-      // Test Firebase access on app start
-      import("@/lib/firebaseTest").then(({ FirebaseTest }) => {
-        FirebaseTest.initialize().catch((error) => {
-          console.error("Firebase initialization error:", error);
-          // Silently continue with demo mode
+      // Test database connections in priority order
+      import("@/lib/databasePriority").then(({ DatabasePriority }) => {
+        DatabasePriority.initialize().catch((error) => {
+          console.error("Database initialization error:", error);
+          // Silently continue with local storage backup
         });
       }).catch((error) => {
-        console.error("Error importing FirebaseTest:", error);
+        console.error("Error importing DatabasePriority:", error);
       });
       
       // Cleanup
