@@ -17,7 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
 import { Plus, Receipt, DollarSign } from 'lucide-react';
-import { ResponsiveLayout } from '@/components/dashboard/ResponsiveLayout';
+
 
 const expenseSchema = z.object({
   description: z.string().min(1, 'Description is required'),
@@ -195,8 +195,7 @@ export const RecordExpense = () => {
   };
 
   return (
-    <ResponsiveLayout>
-      <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-white">Record Expense</h1>
           <Badge variant="secondary" className="bg-white/10 text-white border-white/20">
@@ -368,7 +367,6 @@ export const RecordExpense = () => {
             </Card>
           </div>
         </div>
-      </div>
-    </ResponsiveLayout>
+    </div>
   );
 };

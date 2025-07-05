@@ -105,7 +105,7 @@ export const OptimizedLayout: React.FC<OptimizedLayoutProps> = ({ children }) =>
                 <img 
                   src={charnofsLogo} 
                   alt="Charnoks" 
-                  className="h-6 w-6 object-contain"
+                  className="h-8 w-8 object-contain animate-pulse-glow"
                 />
                 <div>
                   <h1 className="text-xs font-bold charnoks-text">Charnoks</h1>
@@ -207,7 +207,7 @@ export const OptimizedLayout: React.FC<OptimizedLayoutProps> = ({ children }) =>
               <img 
                 src={charnofsLogo} 
                 alt="Charnoks" 
-                className="h-12 w-12 object-contain animate-pulse-glow"
+                className="h-16 w-16 object-contain animate-pulse-glow"
               />
               <div>
                 <h1 className="text-2xl font-bold charnoks-text">Charnoks POS</h1>

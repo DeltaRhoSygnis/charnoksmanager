@@ -1,7 +1,7 @@
 import { useAuth } from "@/hooks/useAuth";
 import { RecordSale } from "@/components/sales/RecordSale";
 import { SalesHistory } from "@/components/sales/SalesHistory";
-import { EnhancedSalesInterface } from "@/components/sales/EnhancedSalesInterface";
+import { StreamlinedSalesInterface } from "@/components/sales/StreamlinedSalesInterface";
 import { OptimizedLayout } from "@/components/layout/OptimizedLayout";
 import { ShoppingCart, Star, TrendingUp } from "lucide-react";
 
@@ -21,16 +21,16 @@ export const Sales = () => {
                 </div>
               </div>
               <h1 className="text-5xl font-bold charnoks-text animate-slide-in-left">
-                Quick Sales
+                Quick Sales Terminal
               </h1>
               <p className="text-xl text-white font-medium animate-slide-in-right">
-                Tap products to sell or use voice input for faster transactions
+                Streamlined sales recording without shopping cart
               </p>
             </div>
 
-            {/* Enhanced Sales Interface */}
+            {/* Streamlined Sales Interface */}
             <div className="animate-slide-in-left delay-300">
-              <EnhancedSalesInterface />
+              <StreamlinedSalesInterface />
             </div>
           </div>
         </div>

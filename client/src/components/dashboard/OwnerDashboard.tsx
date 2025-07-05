@@ -330,11 +330,11 @@ export const OwnerDashboard = () => {
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 animate-slide-in-left">
-              <div className="w-12 h-12 bg-black/20 rounded-2xl p-2 border border-white/20">
+              <div className="w-16 h-16 bg-black/20 rounded-2xl p-2 border border-white/20">
                 <img 
                   src={charnofsLogo} 
                   alt="Charnoks Special Fried Chicken" 
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-contain animate-pulse-glow"
                 />
               </div>
               <div>
