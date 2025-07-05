@@ -585,7 +585,7 @@ export const OwnerDashboard = () => {
                 <img 
                   src="/lovable-uploads/389a9fc0-9ada-493a-a167-71ea82a7aabb.png" 
                   alt="Charnoks" 
-                  className="h-10 w-10 object-contain"
+                  className="h-16 w-16 object-contain animate-pulse-glow"
                 />
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-transparent">
                   Charnoks POS
