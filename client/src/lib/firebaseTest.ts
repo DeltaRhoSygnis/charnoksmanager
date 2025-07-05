@@ -66,6 +66,6 @@ export class FirebaseTest {
       console.log("📱 Using demo mode with local storage.");
     }
 
-    return hasAccess;
+    return hasAccess;n hasAccess;
   }
 }

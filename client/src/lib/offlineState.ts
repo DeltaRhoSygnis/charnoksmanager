@@ -82,6 +82,22 @@ export class OfflineState {
 }
 
 // Monitor network status
+  static initializeNetworkMonitoring() {
+    // Listen for online/offline events
+    window.addEventListener('online', () => {
+      console.log('Network connection restored');
+      this.setOnlineStatus(true);
+    });
+
+    window.addEventListener('offline', () => {
+      console.log('Network connection lost');
+      this.setOnlineStatus(false);
+    });
+
+    // Set initial status
+    this.setOnlineStatus(navigator.onLine);
+  }
+}
 if (typeof window !== "undefined") {
   window.addEventListener("online", () => OfflineState.setOnlineStatus(true));
   window.addEventListener("offline", () => OfflineState.setOnlineStatus(false));
