@@ -63,8 +63,9 @@ export const Transactions = () => {
   const loadWorkersData = async () => {
     try {
       setLoading(true);
-      const transactions = LocalStorageDB.getTransactions();
-      const users = LocalStorageDB.getUsers();
+      const { DataService } = await import("@/lib/dataService");
+      const transactions = await DataService.getTransactions();
+      const users = LocalStorageDB.getUsers(); // Keep users local for now
       
       // Group transactions by worker
       const workerMap = new Map<string, WorkerSummary>();

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
 import { 
   BarChart, 
   Bar, 
@@ -49,7 +50,8 @@ import {
   Zap,
   GitCompare,
   User,
-  Settings
+  Settings,
+  DollarSign
 } from "lucide-react";
 import { LocalStorageDB } from "@/lib/localStorageDB";
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subDays, subWeeks, subMonths } from "date-fns";
@@ -97,8 +99,9 @@ export const DataAnalysis = () => {
   const loadAnalysisData = async () => {
     try {
       setLoading(true);
-      const transactions = LocalStorageDB.getTransactions();
-      const users = LocalStorageDB.getUsers();
+      const { DataService } = await import("@/lib/dataService");
+      const transactions = await DataService.getTransactions();
+      const users = LocalStorageDB.getUsers(); // Keep users local for now
       
       // Filter transactions based on duration
       const filteredTransactions = filterTransactionsByDuration(transactions);

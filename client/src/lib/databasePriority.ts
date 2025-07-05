@@ -107,10 +107,16 @@ export class DatabasePriority {
     // Clear all existing demo data
     LocalStorageDB.clearDemoData();
     
+    // Clear any cached data to ensure fresh start
+    localStorage.removeItem('charnoks_demo_products');
+    localStorage.removeItem('charnoks_demo_transactions');
+    localStorage.removeItem('charnoks_demo_users');
+    
     // Enable demo mode but don't initialize with sample data
     LocalStorageDB.enableDemoMode();
     
     console.log("📱 Clean demo mode activated - no sample data loaded");
+    console.log("📊 Charts and graphs will show empty data until real transactions are added");
   }
 
   static getActiveDatabase(): string {
