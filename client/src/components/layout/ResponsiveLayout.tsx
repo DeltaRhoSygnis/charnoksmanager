@@ -113,37 +113,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
 
   const MobileLayout = () => (
     <div className="min-h-screen w-full galaxy-animated cosmic-overlay">
-      {/* Mobile Header - Ultra Compact */}
-      <div className="bg-black/50 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
-        <div className="px-3 py-2 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsSidebarOpen(true)}
-              className="text-white hover:bg-white/10 p-1 h-8 w-8"
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-            <img 
-              src={charnofsLogo} 
-              alt="Charnoks" 
-              className="h-6 w-6 object-contain"
-            />
-            <span className="text-sm font-bold text-white">Charnoks</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Badge className={cn(
-              "text-xs px-2 py-0.5",
-              isOwner 
-                ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0"
-                : "bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0"
-            )}>
-              {isOwner ? 'Owner' : 'Worker'}
-            </Badge>
-          </div>
-        </div>
-      </div>
+      
 
       {/* Mobile Sidebar - Improved */}
       {isSidebarOpen && (
