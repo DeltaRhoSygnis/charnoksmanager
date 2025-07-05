@@ -2,7 +2,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { RecordSale } from "@/components/sales/RecordSale";
 import { SalesHistory } from "@/components/sales/SalesHistory";
 import { EnhancedSalesInterface } from "@/components/sales/EnhancedSalesInterface";
-import { UniversalLayout } from "@/components/layout/UniversalLayout";
+import { OptimizedLayout } from "@/components/layout/OptimizedLayout";
 import { ShoppingCart, Star, TrendingUp } from "lucide-react";
 
 export const Sales = () => {
@@ -10,7 +10,7 @@ export const Sales = () => {
 
   if (user?.role === "worker") {
     return (
-      <UniversalLayout>
+      <OptimizedLayout>
         <div className="min-h-screen p-6">
           <div className="max-w-7xl mx-auto space-y-8">
             {/* Header Section */}
@@ -34,12 +34,12 @@ export const Sales = () => {
             </div>
           </div>
         </div>
-      </UniversalLayout>
+      </OptimizedLayout>
     );
   }
 
   return (
-    <UniversalLayout>
+    <OptimizedLayout>
       <div className="min-h-screen p-6">
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Header Section */}
@@ -63,6 +63,6 @@ export const Sales = () => {
           </div>
         </div>
       </div>
-    </UniversalLayout>
+    </OptimizedLayout>
   );
 };
