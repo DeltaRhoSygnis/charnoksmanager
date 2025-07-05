@@ -10,8 +10,9 @@ import { ShoppingCart, TrendingUp } from 'lucide-react';
 
 interface Sale {
   id: string;
-  items: Array<{ name: string; quantity: number; price: number; total: number }>;
-  total: number;
+  items: Array<{ name?: string; productName?: string; quantity: number; price: number; total: number }>;
+  total?: number;
+  totalAmount?: number;
   timestamp: Date;
   workerEmail: string;
   workerId: string;
@@ -43,7 +44,7 @@ export const SalesHistory = () => {
       
       setSales(salesData);
       
-      const total = salesData.reduce((sum, sale) => sum + sale.total, 0);
+      const total = salesData.reduce((sum, sale) => sum + (sale.total || sale.totalAmount || 0), 0);
       setTotalRevenue(total);
     } catch (error) {
       console.error('Error fetching sales:', error);
@@ -100,7 +101,7 @@ export const SalesHistory = () => {
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <p className="font-semibold text-green-400 text-lg">
-                        ₱{sale.total.toFixed(2)}
+                        ₱{(sale.total || sale.totalAmount || 0).toFixed(2)}
                       </p>
                       <p className="text-xs text-white/60">
                         {formatDate(sale.timestamp)}
@@ -113,7 +114,7 @@ export const SalesHistory = () => {
                   <div className="space-y-1">
                     {sale.items.map((item, index) => (
                       <div key={index} className="text-sm text-white/70">
-                        {item.quantity}x {item.name} - ₱{item.total.toFixed(2)}
+                        {item.quantity}x {item.name || item.productName || 'Unknown Item'} - ₱{(item.total || 0).toFixed(2)}
                       </div>
                     ))}
                   </div>
@@ -176,13 +177,13 @@ export const SalesHistory = () => {
                       <div className="space-y-1">
                         {sale.items.map((item, index) => (
                           <div key={index} className="text-sm text-white/70">
-                            {item.quantity}x {item.name} - ₱{item.total.toFixed(2)}
+                            {item.quantity}x {item.name || item.productName || 'Unknown Item'} - ₱{(item.total || 0).toFixed(2)}
                           </div>
                         ))}
                       </div>
                     </TableCell>
                     <TableCell className="font-semibold text-green-400">
-                      ₱{sale.total.toFixed(2)}
+                      ₱{(sale.total || sale.totalAmount || 0).toFixed(2)}
                     </TableCell>
                   </TableRow>
                 ))}
