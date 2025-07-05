@@ -214,13 +214,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Create a temporary app instance for worker creation
       const tempApp = initializeApp(
         {
-          apiKey: "AIzaSyAPPca8x5cdT_nTHClFlmsGIV3PE7Abdv4",
-          authDomain: "mystoreapp-dcc31.firebaseapp.com",
-          projectId: "mystoreapp-dcc31",
-          storageBucket: "mystoreapp-dcc31.firebasestorage.app",
-          messagingSenderId: "438314522218",
-          appId: "1:438314522218:web:900ba71959d6fcd5cd1c13",
-          measurementId: "G-H2XHWKZD3C",
+          apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+          authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`,
+          projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+          storageBucket: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebasestorage.app`,
+          appId: import.meta.env.VITE_FIREBASE_APP_ID,
         },
         "temp-worker-creation",
       );
