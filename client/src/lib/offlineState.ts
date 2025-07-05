@@ -79,9 +79,8 @@ export class OfflineState {
   static getDemoStats() {
     return LocalStorageDB.calculateStats();
   }
-}
+};
 
-// Monitor network status
   static initializeNetworkMonitoring() {
     // Listen for online/offline events
     window.addEventListener('online', () => {
