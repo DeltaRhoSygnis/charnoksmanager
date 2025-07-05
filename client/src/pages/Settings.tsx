@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { UniversalLayout } from "@/components/layout/UniversalLayout";
+import { OptimizedLayout } from "@/components/layout/OptimizedLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +13,7 @@ export const Settings = () => {
   const [showCreateWorker, setShowCreateWorker] = useState(false);
 
   return (
-    <UniversalLayout>
+    <OptimizedLayout>
       <div className="min-h-screen p-6">
         <div className="max-w-5xl mx-auto space-y-8">
           {/* Header Section */}
@@ -209,6 +209,6 @@ export const Settings = () => {
       {showCreateWorker && (
         <CreateWorkerAccount onClose={() => setShowCreateWorker(false)} />
       )}
-    </UniversalLayout>
+    </OptimizedLayout>
   );
 };

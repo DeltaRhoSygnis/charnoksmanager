@@ -87,15 +87,18 @@ export const OwnerDashboard = () => {
       return;
     }
 
-    // Check Firebase access first to prevent fetch errors
-    if (!OfflineState.hasFirebaseAccess()) {
-      console.log("Using local storage transactions (Firebase disabled)");
-      const localTransactions = LocalStorageDB.getTransactions()
+    try {
+      // Use DataService to get real database data
+      const { DataService } = await import("@/lib/dataService");
+      const allTransactions = await DataService.getTransactions();
+      
+      // Convert to dashboard format and take recent 10
+      const dashboardTransactions = allTransactions
         .slice(0, 10)
         .map((t) => ({
           id: t.id,
-          type: "sale" as const,
-          amount: t.totalAmount || 0,
+          type: (t.type || "sale") as "sale" | "expense",
+          amount: t.totalAmount || t.amount || 0,
           workerEmail: t.workerEmail,
           items: t.items?.map(item => ({
             name: item.productName,
@@ -104,8 +107,12 @@ export const OwnerDashboard = () => {
           })) || [],
           timestamp: t.timestamp,
         }));
-      setTransactions(localTransactions);
-      return;
+      
+      setTransactions(dashboardTransactions);
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+      // Fallback to empty array instead of demo data
+      setTransactions([]);
     }
 
     try {
@@ -188,17 +195,56 @@ export const OwnerDashboard = () => {
       return;
     }
 
-    // Check Firebase access first to prevent fetch errors
-    if (!OfflineState.hasFirebaseAccess()) {
-      console.log("Using local storage stats (Firebase disabled)");
-      const localStats = LocalStorageDB.calculateStats();
-      setStats({
-        totalSales: localStats.totalSales,
-        totalExpenses: localStats.totalExpenses,
-        totalWorkers: localStats.totalWorkers,
-        todaysRevenue: localStats.todaysRevenue,
+    try {
+      // Use DataService to get real database data
+      const { DataService } = await import("@/lib/dataService");
+      const allTransactions = await DataService.getTransactions();
+      
+      // Calculate real stats from database
+      let totalSales = 0;
+      let totalExpenses = 0;
+      let todaysRevenue = 0;
+      
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      allTransactions.forEach(transaction => {
+        const amount = transaction.totalAmount || transaction.amount || 0;
+        
+        if (transaction.type === 'sale') {
+          totalSales += amount;
+          
+          // Check if transaction is from today
+          const transactionDate = new Date(transaction.timestamp);
+          transactionDate.setHours(0, 0, 0, 0);
+          if (transactionDate.getTime() === today.getTime()) {
+            todaysRevenue += amount;
+          }
+        } else if (transaction.type === 'expense') {
+          totalExpenses += amount;
+        }
       });
-      return;
+      
+      // Count unique workers
+      const uniqueWorkers = new Set(
+        allTransactions.map(t => t.workerId).filter(Boolean)
+      );
+      
+      setStats({
+        totalSales,
+        totalExpenses,
+        totalWorkers: uniqueWorkers.size,
+        todaysRevenue,
+      });
+    } catch (error) {
+      console.error("Error calculating stats:", error);
+      // Set empty stats instead of demo data
+      setStats({
+        totalSales: 0,
+        totalExpenses: 0,
+        totalWorkers: 0,
+        todaysRevenue: 0,
+      });
     }
 
     try {

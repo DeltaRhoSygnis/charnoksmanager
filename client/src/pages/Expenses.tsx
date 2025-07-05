@@ -1,7 +1,7 @@
 import { useAuth } from '@/hooks/useAuth';
 import { RecordExpense } from '@/components/expenses/RecordExpense';
 import { ExpensesHistory } from '@/components/expenses/ExpensesHistory';
-import { UniversalLayout } from '@/components/layout/UniversalLayout';
+import { OptimizedLayout } from '@/components/layout/OptimizedLayout';
 import { Receipt, DollarSign, TrendingDown } from 'lucide-react';
 
 export const Expenses = () => {
@@ -9,7 +9,7 @@ export const Expenses = () => {
 
   if (user?.role === 'worker') {
     return (
-      <UniversalLayout>
+      <OptimizedLayout>
         <div className="min-h-screen p-6">
           <div className="max-w-7xl mx-auto space-y-8">
             {/* Header Section */}
@@ -33,12 +33,12 @@ export const Expenses = () => {
             </div>
           </div>
         </div>
-      </UniversalLayout>
+      </OptimizedLayout>
     );
   }
 
   return (
-    <UniversalLayout>
+    <OptimizedLayout>
       <div className="min-h-screen p-6">
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Header Section */}
@@ -62,6 +62,6 @@ export const Expenses = () => {
           </div>
         </div>
       </div>
-    </UniversalLayout>
+    </OptimizedLayout>
   );
 };

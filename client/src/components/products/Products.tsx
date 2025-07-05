@@ -399,6 +399,7 @@ export const Products = () => {
                 <Table>
                   <TableHeader>
                     <TableRow className="border-white/20 hover:bg-white/5">
+                      <TableHead className="text-white font-bold text-lg">Image</TableHead>
                       <TableHead className="text-white font-bold text-lg">Name</TableHead>
                       <TableHead className="text-white font-bold text-lg">Category</TableHead>
                       <TableHead className="text-white font-bold text-lg">Price</TableHead>
@@ -413,6 +414,22 @@ export const Products = () => {
                         key={product.id} 
                         className="border-white/20 hover:bg-white/5 transition-colors duration-200"
                       >
+                        <TableCell className="p-3">
+                          <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-red-100 rounded-lg flex items-center justify-center overflow-hidden">
+                            {product.imageUrl ? (
+                              <img
+                                src={product.imageUrl}
+                                alt={product.name}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).style.display = "none";
+                                }}
+                              />
+                            ) : (
+                              <Package className="h-8 w-8 text-orange-500" />
+                            )}
+                          </div>
+                        </TableCell>
                         <TableCell className="text-white font-medium text-lg">
                           {product.name}
                         </TableCell>

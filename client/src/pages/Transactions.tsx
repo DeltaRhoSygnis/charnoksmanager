@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { UniversalLayout } from "@/components/layout/UniversalLayout";
+import { OptimizedLayout } from "@/components/layout/OptimizedLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -167,7 +167,7 @@ export const Transactions = () => {
 
   if (loading) {
     return (
-      <UniversalLayout>
+      <OptimizedLayout>
         <div className="container mx-auto p-6">
           <div className="text-center py-16">
             <Activity className="h-24 w-24 text-gray-500 mx-auto mb-6 opacity-50 animate-pulse" />
@@ -175,14 +175,14 @@ export const Transactions = () => {
             <p className="text-gray-300 text-lg">Please wait while we analyze worker data</p>
           </div>
         </div>
-      </UniversalLayout>
+      </OptimizedLayout>
     );
   }
 
   // Workers Overview
   if (viewMode === 'workers') {
     return (
-      <UniversalLayout>
+      <OptimizedLayout>
         <div className="container mx-auto p-6 space-y-8">
           {/* Header */}
           <div className="flex justify-between items-center">
@@ -310,7 +310,7 @@ export const Transactions = () => {
             </Card>
           )}
         </div>
-      </UniversalLayout>
+      </OptimizedLayout>
     );
   }
 
@@ -319,7 +319,7 @@ export const Transactions = () => {
     const dates = Object.keys(selectedWorker.dailyData).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
     
     return (
-      <UniversalLayout>
+      <OptimizedLayout>
         <div className="container mx-auto p-6 space-y-8">
           {/* Header */}
           <div className="flex items-center gap-4">
@@ -453,7 +453,7 @@ export const Transactions = () => {
             </CardContent>
           </Card>
         </div>
-      </UniversalLayout>
+      </OptimizedLayout>
     );
   }
 
@@ -462,7 +462,7 @@ export const Transactions = () => {
     const transactions = transactionsByDate[selectedDate] || [];
     
     return (
-      <UniversalLayout>
+      <OptimizedLayout>
         <div className="container mx-auto p-6 space-y-8">
           {/* Header */}
           <div className="flex items-center gap-4">
@@ -556,7 +556,7 @@ export const Transactions = () => {
             </Card>
           )}
         </div>
-      </UniversalLayout>
+      </OptimizedLayout>
     );
   }
 

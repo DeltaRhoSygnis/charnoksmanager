@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { UniversalLayout } from "@/components/layout/UniversalLayout";
+import { OptimizedLayout } from "@/components/layout/OptimizedLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -368,7 +368,7 @@ export const DataAnalysis = () => {
 
   if (loading) {
     return (
-      <UniversalLayout>
+      <OptimizedLayout>
         <div className="container mx-auto p-6">
           <div className="text-center py-16">
             <BarChart3 className="h-24 w-24 text-gray-500 mx-auto mb-6 opacity-50 animate-pulse" />
@@ -376,14 +376,14 @@ export const DataAnalysis = () => {
             <p className="text-gray-300 text-lg">Please wait while we process your analytics</p>
           </div>
         </div>
-      </UniversalLayout>
+      </OptimizedLayout>
     );
   }
 
   // Analysis Overview - First Page
   if (analysisMode === 'overview') {
     return (
-      <UniversalLayout>
+      <OptimizedLayout>
         <div className="container mx-auto p-6 space-y-8">
           {/* Header */}
           <div className="text-center space-y-4">
@@ -523,14 +523,14 @@ export const DataAnalysis = () => {
             </Card>
           </div>
         </div>
-      </UniversalLayout>
+      </OptimizedLayout>
     );
   }
 
   // All Workers Data Analysis
   if (analysisMode === 'all-workers') {
     return (
-      <UniversalLayout>
+      <OptimizedLayout>
         <div className="container mx-auto p-6 space-y-8">
           {/* Header */}
           <div className="flex items-center gap-4">
@@ -686,14 +686,14 @@ export const DataAnalysis = () => {
             </CardContent>
           </Card>
         </div>
-      </UniversalLayout>
+      </OptimizedLayout>
     );
   }
 
   // Compare Workers Mode
   if (analysisMode === 'compare-workers') {
     return (
-      <UniversalLayout>
+      <OptimizedLayout>
         <div className="container mx-auto p-6 space-y-8">
           {/* Header */}
           <div className="flex items-center gap-4">
@@ -770,7 +770,7 @@ export const DataAnalysis = () => {
             </Card>
           )}
         </div>
-      </UniversalLayout>
+      </OptimizedLayout>
     );
   }
 
@@ -779,7 +779,7 @@ export const DataAnalysis = () => {
     const worker = workerAnalysis.find(w => w.workerId === selectedWorker);
     
     return (
-      <UniversalLayout>
+      <OptimizedLayout>
         <div className="container mx-auto p-6 space-y-8">
           {/* Header */}
           <div className="flex items-center gap-4">
@@ -884,7 +884,7 @@ export const DataAnalysis = () => {
             </>
           )}
         </div>
-      </UniversalLayout>
+      </OptimizedLayout>
     );
   }
 
