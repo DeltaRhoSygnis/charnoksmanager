@@ -1,6 +1,7 @@
 
 import { StorageManager, STORAGE_STRATEGY } from './storageStrategy';
 import { LocalStorageDB } from './localStorageDB';
+import { supabase, isSupabaseConfigured } from './supabase';
 
 export class HybridStorage {
   private static isOnline(): boolean {
@@ -90,17 +91,74 @@ export class HybridStorage {
     }
   }
 
-  // Placeholder for Supabase operations (implement when you have credentials)
+  // Supabase operations
   private static async saveToSupabase(dataType: string, data: any) {
-    // TODO: Implement Supabase operations when credentials are available
-    console.log(`Would save ${dataType} to Supabase:`, data);
-    throw new Error('Supabase not configured yet');
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase not configured - missing environment variables');
+    }
+
+    switch (dataType) {
+      case 'products':
+        if (Array.isArray(data)) {
+          const { error } = await supabase.from('products').upsert(data);
+          if (error) throw error;
+        } else {
+          const { error } = await supabase.from('products').upsert(data);
+          if (error) throw error;
+        }
+        break;
+      
+      case 'transactions':
+        const { error } = await supabase.from('transactions').insert(data);
+        if (error) throw error;
+        break;
+      
+      case 'auth':
+        // Handle authentication data
+        if (data.email && data.password) {
+          const { error } = await supabase.auth.signUp({
+            email: data.email,
+            password: data.password
+          });
+          if (error) throw error;
+        }
+        break;
+      
+      default:
+        console.warn(`No Supabase handler for dataType: ${dataType}`);
+    }
   }
 
   private static async getFromSupabase(dataType: string) {
-    // TODO: Implement Supabase operations when credentials are available
-    console.log(`Would get ${dataType} from Supabase`);
-    throw new Error('Supabase not configured yet');
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase not configured - missing environment variables');
+    }
+
+    switch (dataType) {
+      case 'products':
+        const { data: products, error: productsError } = await supabase
+          .from('products')
+          .select('*')
+          .eq('isActive', true);
+        if (productsError) throw productsError;
+        return products;
+      
+      case 'transactions':
+        const { data: transactions, error: transactionsError } = await supabase
+          .from('transactions')
+          .select('*')
+          .order('timestamp', { ascending: false });
+        if (transactionsError) throw transactionsError;
+        return transactions;
+      
+      case 'auth':
+        const { data: { user } } = await supabase.auth.getUser();
+        return user;
+      
+      default:
+        console.warn(`No Supabase handler for dataType: ${dataType}`);
+        return null;
+    }
   }
 
   // Sync queue for offline operations
