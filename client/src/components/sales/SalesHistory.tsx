@@ -71,18 +71,18 @@ export const SalesHistory = () => {
   }
 
   const MobileLayout = () => (
-    <div className="min-h-screen bg-gray-50 p-4 pb-20">
+    <div className="space-y-4 pb-4">
       <div className="mb-4">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Sales History</h1>
-        <Badge variant="secondary" className="text-sm px-3 py-1">
+        <h1 className="text-2xl font-bold text-white mb-2">Sales History</h1>
+        <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 text-sm px-3 py-1">
           <TrendingUp className="h-4 w-4 mr-1" />
           Total: ₱{totalRevenue.toFixed(2)}
         </Badge>
       </div>
 
-      <Card>
+      <Card className="bg-black/40 backdrop-blur-lg border-white/20">
         <CardHeader>
-          <CardTitle className="flex items-center text-lg">
+          <CardTitle className="flex items-center text-lg text-white">
             <ShoppingCart className="h-5 w-5 mr-2" />
             All Sales
           </CardTitle>
@@ -90,29 +90,29 @@ export const SalesHistory = () => {
         <CardContent>
           {sales.length === 0 ? (
             <div className="text-center py-8">
-              <ShoppingCart className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500">No sales recorded yet</p>
+              <ShoppingCart className="h-12 w-12 text-white/30 mx-auto mb-3" />
+              <p className="text-white/70">No sales recorded yet</p>
             </div>
           ) : (
             <div className="space-y-4">
               {sales.map((sale) => (
-                <div key={sale.id} className="border rounded-lg p-4 bg-white">
+                <div key={sale.id} className="border border-white/20 rounded-lg p-4 bg-white/5 backdrop-blur-sm">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <p className="font-semibold text-green-600 text-lg">
+                      <p className="font-semibold text-green-400 text-lg">
                         ₱{sale.total.toFixed(2)}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-white/60">
                         {formatDate(sale.timestamp)}
                       </p>
                     </div>
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs border-white/30 text-white/80">
                       {sale.workerEmail}
                     </Badge>
                   </div>
                   <div className="space-y-1">
                     {sale.items.map((item, index) => (
-                      <div key={index} className="text-sm text-gray-600">
+                      <div key={index} className="text-sm text-white/70">
                         {item.quantity}x {item.name} - ₱{item.total.toFixed(2)}
                       </div>
                     ))}
@@ -127,72 +127,70 @@ export const SalesHistory = () => {
   );
 
   const DesktopLayout = () => (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Sales History</h1>
-          <Badge variant="secondary" className="text-lg px-4 py-2">
-            <TrendingUp className="h-4 w-4 mr-2" />
-            Total Revenue: ₱{totalRevenue.toFixed(2)}
-          </Badge>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <ShoppingCart className="h-5 w-5 mr-2" />
-              All Sales Transactions
-            </CardTitle>
-            <CardDescription>
-              Complete history of all sales transactions
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {sales.length === 0 ? (
-              <div className="text-center py-12">
-                <ShoppingCart className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500 text-lg">No sales recorded yet</p>
-                <p className="text-gray-400">Sales will appear here once workers start recording transactions</p>
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date & Time</TableHead>
-                    <TableHead>Worker</TableHead>
-                    <TableHead>Items</TableHead>
-                    <TableHead>Total</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {sales.map((sale) => (
-                    <TableRow key={sale.id}>
-                      <TableCell>
-                        {formatDate(sale.timestamp)}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{sale.workerEmail}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
-                          {sale.items.map((item, index) => (
-                            <div key={index} className="text-sm">
-                              {item.quantity}x {item.name} - ₱{item.total.toFixed(2)}
-                            </div>
-                          ))}
-                        </div>
-                      </TableCell>
-                      <TableCell className="font-semibold text-green-600">
-                        ₱{sale.total.toFixed(2)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-white">Sales History</h1>
+        <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 text-lg px-4 py-2">
+          <TrendingUp className="h-4 w-4 mr-2" />
+          Total Revenue: ₱{totalRevenue.toFixed(2)}
+        </Badge>
       </div>
+
+      <Card className="bg-black/40 backdrop-blur-lg border-white/20">
+        <CardHeader>
+          <CardTitle className="flex items-center text-white">
+            <ShoppingCart className="h-5 w-5 mr-2" />
+            All Sales Transactions
+          </CardTitle>
+          <CardDescription className="text-white/70">
+            Complete history of all sales transactions
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {sales.length === 0 ? (
+            <div className="text-center py-12">
+              <ShoppingCart className="h-16 w-16 text-white/30 mx-auto mb-4" />
+              <p className="text-white/70 text-lg">No sales recorded yet</p>
+              <p className="text-white/50">Sales will appear here once workers start recording transactions</p>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow className="border-white/20 hover:bg-white/5">
+                  <TableHead className="text-white/80">Date & Time</TableHead>
+                  <TableHead className="text-white/80">Worker</TableHead>
+                  <TableHead className="text-white/80">Items</TableHead>
+                  <TableHead className="text-white/80">Total</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {sales.map((sale) => (
+                  <TableRow key={sale.id} className="border-white/20 hover:bg-white/5">
+                    <TableCell className="text-white/80">
+                      {formatDate(sale.timestamp)}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="border-white/30 text-white/80">{sale.workerEmail}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-1">
+                        {sale.items.map((item, index) => (
+                          <div key={index} className="text-sm text-white/70">
+                            {item.quantity}x {item.name} - ₱{item.total.toFixed(2)}
+                          </div>
+                        ))}
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-semibold text-green-400">
+                      ₱{sale.total.toFixed(2)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 
