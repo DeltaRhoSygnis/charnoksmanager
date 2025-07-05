@@ -801,7 +801,7 @@ export const OwnerDashboard = () => {
   ];
 
   return (
-    <OptimizedLayout>
+    <div className="min-h-screen">
       <div className="p-4 md:p-6 space-y-6">
         {/* Stats Overview - Mobile Optimized */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">

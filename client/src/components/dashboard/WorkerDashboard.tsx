@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import { OptimizedLayout } from "@/components/layout/OptimizedLayout";
+
 import {
   ShoppingCart,
   Receipt,
@@ -331,7 +331,7 @@ export const WorkerDashboard = () => {
   );
 
   return (
-    <OptimizedLayout>
+    <div className="min-h-screen">
       <div className="p-4 md:p-6 space-y-6">
         {/* Stats Overview - Mobile Optimized */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
@@ -435,6 +435,6 @@ export const WorkerDashboard = () => {
           </CardContent>
         </Card>
       </div>
-    </OptimizedLayout>
+    </div>
   );
 };
