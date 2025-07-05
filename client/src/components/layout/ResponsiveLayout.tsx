@@ -116,34 +116,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
       {/* Mobile Header - Ultra Compact */}
       <div className="bg-black/50 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
         <div className="px-3 py-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="text-white p-1 h-8 w-8"
-              >
-                {isSidebarOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-              </Button>
-              <div className="flex items-center space-x-2">
-                <img 
-                  src={charnofsLogo} 
-                  alt="Charnoks" 
-                  className="h-7 w-7 object-contain"
-                />
-                <div>
-                  <h1 className="text-sm font-bold charnoks-text">Charnoks POS</h1>
-                  <p className="text-xs text-white/70">{isOwner ? 'Owner' : 'Worker'}</p>
-                </div>
-              </div>
-            </div>
-            <Link to="/settings">
-              <Button variant="ghost" size="sm" className="text-white p-1 h-8 w-8">
-                <Settings className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
+
         </div>
       </div>
 
