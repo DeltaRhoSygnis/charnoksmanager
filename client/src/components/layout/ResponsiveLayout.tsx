@@ -113,36 +113,6 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
 
   const MobileLayout = () => (
     <div className="min-h-screen w-full galaxy-animated cosmic-overlay">
-      {/* Mobile Header with Menu Button */}
-      <div className="fixed top-0 left-0 right-0 bg-black/70 backdrop-blur-xl border-b border-white/20 z-50 p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsSidebarOpen(true)}
-              className="text-white hover:bg-white/10 md:hidden"
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-            <img 
-              src={charnofsLogo} 
-              alt="Charnoks" 
-              className="h-8 w-8 object-contain"
-            />
-            <h1 className="text-lg font-bold charnoks-text">Charnoks POS</h1>
-          </div>
-          <Badge className={cn(
-            "text-xs",
-            isOwner 
-              ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0"
-              : "bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0"
-          )}>
-            {isOwner ? 'Owner' : 'Worker'}
-          </Badge>
-        </div>
-      </div>
-
       {/* Mobile Sidebar - Only when explicitly opened */}
       {isSidebarOpen && (
         <div className="fixed inset-0 z-40 flex">
@@ -222,7 +192,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
       )}
 
       {/* Mobile Content with Padding */}
-      <div className="pb-16 px-2 pt-20">
+      <div className="pb-16 px-2 pt-2">
         <div className="mobile-optimized">
           {children}
         </div>
