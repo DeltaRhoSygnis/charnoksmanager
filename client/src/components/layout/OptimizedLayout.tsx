@@ -93,14 +93,6 @@ export const OptimizedLayout: React.FC<OptimizedLayoutProps> = ({ children }) =>
         <div className="px-2 py-1.5">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-1.5">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="text-white p-0.5 h-7 w-7"
-              >
-                {isSidebarOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-              </Button>
               <div className="flex items-center space-x-1.5">
                 <img 
                   src={charnofsLogo} 
