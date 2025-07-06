@@ -30,7 +30,7 @@ export const OptimizedLayout: React.FC<OptimizedLayoutProps> = ({ children }) =>
   const location = useLocation();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+  
   
   const isOwner = user?.role === 'owner';
 
@@ -114,52 +114,7 @@ export const OptimizedLayout: React.FC<OptimizedLayoutProps> = ({ children }) =>
         </div>
       </div>
 
-      {/* Mobile Sidebar - Compact */}
-      {isSidebarOpen && (
-        <div className="fixed inset-0 z-40 flex">
-          <div className="fixed inset-0 bg-black/50" onClick={() => setIsSidebarOpen(false)} />
-          <div className="relative flex-1 flex flex-col max-w-[240px] w-full bg-black/80 backdrop-blur-xl">
-            <div className="flex-1 h-0 pt-3 pb-2 overflow-y-auto">
-              <nav className="mt-2 px-1.5 space-y-0.5">
-                {filteredNavItems.map((item) => (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    onClick={() => setIsSidebarOpen(false)}
-                    className={cn(
-                      "group flex items-center px-2 py-1.5 text-xs font-medium rounded-lg transition-all duration-200",
-                      location.pathname === item.path
-                        ? "bg-white/20 text-white"
-                        : "text-white/70 hover:bg-white/10 hover:text-white"
-                    )}
-                  >
-                    <span className="text-sm mr-1.5">{item.emoji}</span>
-                    <span className="ml-1">{item.label}</span>
-                  </Link>
-                ))}
-              </nav>
-            </div>
-            <div className="flex-shrink-0 flex border-t border-white/20 p-2">
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center">
-                  <div className="ml-1.5">
-                    <p className="text-xs font-medium text-white">{user?.email?.split('@')[0]}</p>
-                    <p className="text-[10px] text-white/70">{user?.role}</p>
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleLogout}
-                  className="text-red-400 hover:text-red-300 p-0.5 h-6 w-6"
-                >
-                  <LogOut className="h-3.5 w-3.5" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      
 
       {/* Mobile Content - Compact */}
       <div className="pb-12">
