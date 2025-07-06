@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom Progress Bar Styles */
+@layer components {
+  .progress {
+    @apply relative h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-800;
+  }
+  
+  .progress-bar {
+    @apply h-full w-full flex-1 bg-primary transition-all;
+  }
+}
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */
