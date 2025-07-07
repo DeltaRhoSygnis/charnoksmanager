@@ -1,3 +1,4 @@
+
 import {
   useState,
   useEffect,
@@ -35,101 +36,93 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    try {
-      const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-        try {
-          if (firebaseUser) {
-            console.log("Firebase user authenticated:", firebaseUser.uid);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      try {
+        if (firebaseUser) {
+          console.log("Firebase user authenticated:", firebaseUser.uid);
 
-            // Initialize user with default owner role first
-            let userRole: 'owner' | 'worker' = 'owner';
+          // Initialize user with default owner role first
+          let userRole: 'owner' | 'worker' = 'owner';
 
-            try {
-              // Try to get user data from Firestore with extended timeout
-              const userDocPromise = getDoc(doc(db, "users", firebaseUser.uid));
-              const timeoutPromise = new Promise<never>((_, reject) =>
-                setTimeout(() => reject(new Error("Firestore timeout")), 8000)
-              );
+          try {
+            // Try to get user data from Firestore with extended timeout
+            const userDocPromise = getDoc(doc(db, "users", firebaseUser.uid));
+            const timeoutPromise = new Promise<never>((_, reject) =>
+              setTimeout(() => reject(new Error("Firestore timeout")), 8000)
+            );
 
-              const userDoc = await Promise.race([userDocPromise, timeoutPromise]) as any;
-              const userData = userDoc.data();
+            const userDoc = await Promise.race([userDocPromise, timeoutPromise]) as any;
+            const userData = userDoc.data();
 
-              console.log("User data from Firestore:", userData);
+            console.log("User data from Firestore:", userData);
 
-              if (userData?.role) {
-                userRole = userData.role;
-                console.log("User role from Firestore:", userRole);
-              } else {
-                console.log("No role found in Firestore, checking localStorage backup");
-
-                // Check if we have a backup role in localStorage
-                const backupRole = localStorage.getItem(`user_role_${firebaseUser.uid}`);
-                if (backupRole === 'worker' || backupRole === 'owner') {
-                  userRole = backupRole as 'owner' | 'worker';
-                  console.log("Using backup role from localStorage:", userRole);
-                }
-              }
-            } catch (firestoreError: any) {
-              console.error("Firestore error:", firestoreError);
-
-              // Try to get role from localStorage as backup
+            if (userData?.role) {
+              userRole = userData.role;
+              console.log("User role from Firestore:", userRole);
+            } else {
+              console.log("No role found in Firestore, checking localStorage backup");
+              
+              // Check if we have a backup role in localStorage
               const backupRole = localStorage.getItem(`user_role_${firebaseUser.uid}`);
               if (backupRole === 'worker' || backupRole === 'owner') {
                 userRole = backupRole as 'owner' | 'worker';
-                console.log("Using backup role from localStorage due to Firestore error:", userRole);
-              } else {
-                console.warn("No backup role found, defaulting to owner");
-              }
-
-              // Show helpful error message for network issues
-              if (firestoreError.code === "permission-denied") {
-                console.warn("Firestore access denied. Using offline mode.");
-              } else if (
-                firestoreError.message?.includes("network") ||
-                firestoreError.message?.includes("fetch") ||
-                firestoreError.message?.includes("timeout")
-              ) {
-                console.warn("Network connectivity issue. Using offline mode.");
+                console.log("Using backup role from localStorage:", userRole);
               }
             }
+          } catch (firestoreError: any) {
+            console.error("Firestore error:", firestoreError);
+            
+            // Try to get role from localStorage as backup
+            const backupRole = localStorage.getItem(`user_role_${firebaseUser.uid}`);
+            if (backupRole === 'worker' || backupRole === 'owner') {
+              userRole = backupRole as 'owner' | 'worker';
+              console.log("Using backup role from localStorage due to Firestore error:", userRole);
+            } else {
+              console.warn("No backup role found, defaulting to owner");
+            }
 
-            // Store role in localStorage as backup
-            localStorage.setItem(`user_role_${firebaseUser.uid}`, userRole);
-
-            setUser({
-              uid: firebaseUser.uid,
-              email: firebaseUser.email || "",
-              role: userRole,
-            });
-            setError(null);
-          } else {
-            console.log("No Firebase user - user not authenticated");
-            setUser(null);
-            setError(null);
+            // Show helpful error message for network issues
+            if (firestoreError.code === "permission-denied") {
+              console.warn("Firestore access denied. Using offline mode.");
+            } else if (
+              firestoreError.message?.includes("network") ||
+              firestoreError.message?.includes("fetch") ||
+              firestoreError.message?.includes("timeout")
+            ) {
+              console.warn("Network connectivity issue. Using offline mode.");
+            }
           }
-        } catch (authError: any) {
-          console.error("Auth state change error:", authError);
+
+          // Store role in localStorage as backup
+          localStorage.setItem(`user_role_${firebaseUser.uid}`, userRole);
+
+          setUser({
+            uid: firebaseUser.uid,
+            email: firebaseUser.email || "",
+            role: userRole,
+          });
+          setError(null);
+        } else {
+          console.log("No Firebase user");
           setUser(null);
-          if (authError.code === "auth/network-request-failed") {
-            setError(
-              "Network connection error. Please check your internet connection.",
-            );
-          } else {
-            setError("Authentication error occurred");
-          }
-        } finally {
-          setLoading(false);
+          setError(null);
         }
-      }, (error) => {
-        console.error("Auth state change error:", error);
+      } catch (authError: any) {
+        console.error("Auth state change error:", authError);
+        setUser(null);
+        if (authError.code === "auth/network-request-failed") {
+          setError(
+            "Network connection error. Please check your internet connection.",
+          );
+        } else {
+          setError("Authentication error occurred");
+        }
+      } finally {
         setLoading(false);
-      });
+      }
+    });
 
-      return unsubscribe;
-    } catch (error) {
-      console.error("Error setting up auth listener:", error);
-      setLoading(false);
-    }
+    return unsubscribe;
   }, []);
 
   const login = async (email: string, password: string) => {
@@ -175,14 +168,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setTimeout(() => reject(new Error("Firestore timeout")), 5000),
           ),
         ]);
-
+        
         // Store role in localStorage as backup
         localStorage.setItem(`user_role_${result.user.uid}`, 'owner');
       } catch (firestoreError: any) {
         console.error("Failed to save user data to Firestore:", firestoreError);
         // Store role in localStorage as backup even if Firestore fails
         localStorage.setItem(`user_role_${result.user.uid}`, 'owner');
-
+        
         if (firestoreError.code === "permission-denied") {
           console.warn(
             "Firestore write permission denied. User registered successfully but data not saved to database.",

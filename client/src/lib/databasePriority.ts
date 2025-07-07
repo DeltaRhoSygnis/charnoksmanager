@@ -6,7 +6,6 @@ import { LocalStorageDB } from "./localStorageDB";
 
 export class DatabasePriority {
   private static readonly TIMEOUT_MS = 5000;
-  private static activeDatabase: 'supabase' | 'firebase' | 'neon' | 'local' = 'local';
 
   static async initialize(): Promise<void> {
     console.log("🔄 Testing database connections in priority order...");
@@ -41,7 +40,7 @@ export class DatabasePriority {
   private static async testSupabase(): Promise<boolean> {
     try {
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Supabase timeout")), this.TIMEOUT_MS)_MS)
+        setTimeout(() => reject(new Error("Supabase timeout")), this.TIMEOUT_MS)
       );
 
       const testQuery = supabase.from('users').select('count').limit(1);
@@ -57,53 +56,6 @@ export class DatabasePriority {
   private static async testFirebase(): Promise<boolean> {
     try {
       const timeoutPromise = new Promise((_, reject) =>
-
-
-  private static setActiveDatabase(db: 'supabase' | 'firebase' | 'neon' | 'local') {
-    this.activeDatabase = db;
-  }
-
-  static getActiveDatabase() {
-    return this.activeDatabase;
-  }
-
-  private static async testFirebase(): Promise<boolean> {
-    try {
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Firebase timeout")), this.TIMEOUT_MS)
-      );
-
-      const testPromise = getDocs(collection(db, "test"));
-      await Promise.race([testPromise, timeoutPromise]);
-      return true;
-    } catch (error) {
-      console.warn("Firebase test failed:", error);
-      return false;
-    }
-  }
-
-  private static async testNeon(): Promise<boolean> {
-    try {
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Neon timeout")), this.TIMEOUT_MS)
-      );
-
-      // Test the API endpoint
-      const testPromise = fetch('/api/health');
-      const response = await Promise.race([testPromise, timeoutPromise]);
-      return response instanceof Response && response.ok;
-    } catch (error) {
-      console.warn("Neon test failed:", error);
-      return false;
-    }
-  }
-
-  private static setupCleanDemoMode() {
-    OfflineState.setFirebaseAccess(false);
-    LocalStorageDB.enableDemoMode();
-    console.log("🔄 Demo mode activated with clean local storage");
-  }
-
         setTimeout(() => reject(new Error("Firebase timeout")), this.TIMEOUT_MS)
       );
 

@@ -30,8 +30,8 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
   const location = useLocation();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-
-
+  
+  
   const isOwner = user?.role === 'owner';
 
   // Enhanced navigation with strict role-based filtering
@@ -113,7 +113,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
 
   const MobileLayout = () => (
     <div className="min-h-screen w-full galaxy-animated cosmic-overlay">
-
+      
 
       {/* Mobile Content with Enhanced Spacing */}
       <div className="pb-20 px-4 pt-4">
