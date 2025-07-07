@@ -357,43 +357,43 @@ export const OwnerDashboard = () => {
         <div className="grid grid-cols-2 gap-4 animate-bounce-in animation-resistant">
           {/* Total Sales */}
           <Card className="card-reference text-white aspect-square hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-6 h-full flex flex-col justify-center">
-              <div className="text-left space-y-2">
+            <CardContent className="p-3 h-full flex flex-col justify-center">
+              <div className="text-left space-y-1">
                 <p className="reference-title text-solid opacity-80">Total</p>
                 <p className="reference-title text-solid opacity-80">Sales 📈</p>
-                <p className="reference-value text-solid mt-4">₱{stats.totalSales.toLocaleString()}</p>
+                <p className="reference-value text-solid mt-2">₱{stats.totalSales.toLocaleString()}</p>
               </div>
             </CardContent>
           </Card>
 
           {/* Total Expenses */}
           <Card className="card-reference text-white aspect-square hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-6 h-full flex flex-col justify-center">
-              <div className="text-left space-y-2">
+            <CardContent className="p-3 h-full flex flex-col justify-center">
+              <div className="text-left space-y-1">
                 <p className="reference-title text-solid opacity-80">Total</p>
                 <p className="reference-title text-solid opacity-80">Expenses 📊</p>
-                <p className="reference-value text-solid mt-4">₱{stats.totalExpenses.toLocaleString()}</p>
+                <p className="reference-value text-solid mt-2">₱{stats.totalExpenses.toLocaleString()}</p>
               </div>
             </CardContent>
           </Card>
 
           {/* Net Profit */}
           <Card className="card-reference text-white aspect-square hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-6 h-full flex flex-col justify-center">
-              <div className="text-left space-y-2">
+            <CardContent className="p-3 h-full flex flex-col justify-center">
+              <div className="text-left space-y-1">
                 <p className="reference-title text-solid opacity-80">Net Profit 📊</p>
-                <p className="reference-value text-solid mt-4">₱{(stats.totalSales - stats.totalExpenses).toLocaleString()}</p>
+                <p className="reference-value text-solid mt-2">₱{(stats.totalSales - stats.totalExpenses).toLocaleString()}</p>
               </div>
             </CardContent>
           </Card>
 
           {/* Today's Revenue */}
           <Card className="card-reference text-white aspect-square hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-6 h-full flex flex-col justify-center">
-              <div className="text-left space-y-2">
+            <CardContent className="p-3 h-full flex flex-col justify-center">
+              <div className="text-left space-y-1">
                 <p className="reference-title text-solid opacity-80">Today's</p>
                 <p className="reference-title text-solid opacity-80">Revenue 💰</p>
-                <p className="reference-value text-solid mt-4">₱0</p>
+                <p className="reference-value text-solid mt-2">₱0</p>
               </div>
             </CardContent>
           </Card>
@@ -402,32 +402,32 @@ export const OwnerDashboard = () => {
         {/* Weekly Performance Chart - Reference Style */}
         <div className="animate-bounce-in animation-resistant delay-200">
           <Card className="card-reference text-white">
-            <CardContent className="p-6">
-              <div className="mb-6">
+            <CardContent className="p-3">
+              <div className="mb-3">
                 <h3 className="reference-title text-solid opacity-80">📊 Weekly Performance</h3>
               </div>
-              <div className="h-48">
+              <div className="h-32">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={weeklyData}>
                     <XAxis 
                       dataKey="day" 
                       axisLine={false} 
                       tickLine={false}
-                      tick={{ fill: 'white', fontSize: 12 }}
+                      tick={{ fill: 'white', fontSize: 10 }}
                     />
                     <YAxis hide />
-                    <Bar dataKey="sales" fill="#22c55e" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="expenses" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="sales" fill="#22c55e" radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="expenses" fill="#ef4444" radius={[3, 3, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <div className="flex justify-center gap-4 mt-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-green-500 rounded"></div>
+              <div className="flex justify-center gap-3 mt-2">
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-green-500 rounded"></div>
                   <span className="reference-title text-solid opacity-80">Sales</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-red-500 rounded"></div>
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-red-500 rounded"></div>
                   <span className="reference-title text-solid opacity-80">Expenses</span>
                 </div>
               </div>
