@@ -144,19 +144,19 @@ export const OptimizedLayout: React.FC<OptimizedLayoutProps> = ({ children }) =>
   );
 
   const DesktopLayout = () => (
-    <div className="min-h-screen flex galaxy-animated cosmic-overlay">
-      {/* Desktop Sidebar */}
-      <div className="w-64 bg-black/40 backdrop-blur-xl border-r border-white/20">
-        <div className="flex flex-col h-full">
-          <div className="p-6">
-            <div className="flex items-center space-x-3">
+    <div className="min-h-screen w-full galaxy-animated cosmic-overlay">
+      {/* Desktop Header */}
+      <div className="bg-black/40 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
               <img 
                 src={charnofsLogo} 
                 alt="Charnoks" 
-                className="h-16 w-16 object-contain animate-pulse-glow"
+                className="h-12 w-12 object-contain animate-pulse-glow"
               />
               <div>
-                <h1 className="text-2xl font-bold charnoks-text">Charnoks POS</h1>
+                <h1 className="text-xl font-bold charnoks-text">Charnoks POS</h1>
                 <Badge className={cn(
                   "text-xs",
                   isOwner 
@@ -167,63 +167,60 @@ export const OptimizedLayout: React.FC<OptimizedLayoutProps> = ({ children }) =>
                 </Badge>
               </div>
             </div>
-          </div>
 
-          <nav className="flex-1 px-4 pb-4 space-y-2">
-            {filteredNavItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={cn(
-                  "group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200",
-                  location.pathname === item.path
-                    ? "bg-gradient-to-r from-orange-500/20 to-red-500/20 text-white border border-orange-500/30"
-                    : "text-white/70 hover:bg-white/10 hover:text-white"
-                )}
-              >
-                <span className="text-xl mr-3">{item.emoji}</span>
-                {item.icon}
-                <span className="ml-3">{item.label}</span>
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                  <Users className="h-4 w-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-white">{user?.email?.split('@')[0]}</p>
+                  <p className="text-xs text-white/70">{user?.email}</p>
+                </div>
+              </div>
+              <Link to="/settings">
+                <Button variant="ghost" size="sm" className="text-white">
+                  <Settings className="h-4 w-4" />
+                </Button>
               </Link>
-            ))}
-          </nav>
-
-          <div className="p-4 border-t border-white/20">
-            <Link
-              to="/settings"
-              className="group flex items-center px-4 py-3 text-sm font-medium rounded-xl text-white/70 hover:bg-white/10 hover:text-white transition-all duration-200"
-            >
-              <span className="text-xl mr-3">⚙️</span>
-              <Settings className="h-4 w-4" />
-              <span className="ml-3">Settings</span>
-            </Link>
-            <Button
-              variant="ghost"
-              onClick={handleLogout}
-              className="w-full mt-2 justify-start text-red-400 hover:text-red-300 hover:bg-red-500/10"
-            >
-              <LogOut className="h-4 w-4 mr-3" />
-              Logout
-            </Button>
-          </div>
-
-          <div className="p-4 border-t border-white/20">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                <Users className="h-5 w-5 text-white" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-white">{user?.email?.split('@')[0]}</p>
-                <p className="text-xs text-white/70">{user?.email}</p>
-              </div>
+              <Button
+                variant="ghost"
+                onClick={handleLogout}
+                className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </div>
       </div>
 
       {/* Desktop Content */}
-      <div className="flex-1 overflow-auto">
+      <div className="w-full overflow-auto pb-16">
         {children}
+      </div>
+
+      {/* Desktop Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-black/60 backdrop-blur-xl border-t border-white/20 z-30">
+        <div className="flex justify-center">
+          <div className="flex space-x-2 px-6 py-3">
+            {filteredNavItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={cn(
+                  "flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200",
+                  location.pathname === item.path
+                    ? "bg-gradient-to-r from-orange-500/20 to-red-500/20 text-white border border-orange-500/30"
+                    : "text-white/70 hover:bg-white/10 hover:text-white"
+                )}
+              >
+                <span className="text-lg">{item.emoji}</span>
+                <span>{item.label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
