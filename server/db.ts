@@ -5,11 +5,12 @@ import * as schema from "@shared/schema";
 
 neonConfig.webSocketConstructor = ws;
 
-const databaseUrl = process.env.DATABASE_URL;
+// Check for Supabase database URL first, then fallback to Neon PostgreSQL
+const databaseUrl = process.env.SUPABASE_DATABASE_URL || process.env.DATABASE_URL;
 
 if (!databaseUrl) {
   throw new Error(
-    "DATABASE_URL must be set. Please check your .env file.",
+    "DATABASE_URL or SUPABASE_DATABASE_URL must be set. Please check your .env file.",
   );
 }
 

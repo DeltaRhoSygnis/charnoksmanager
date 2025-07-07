@@ -10,30 +10,30 @@ export class DatabasePriority {
   static async initialize(): Promise<void> {
     console.log("🔄 Testing database connections in priority order...");
     
-    // Priority 1: Neon (PostgreSQL) - Your preferred database
-    if (await this.testNeon()) {
-      console.log("✅ Using Neon PostgreSQL as primary database");
-      this.setActiveDatabase('neon');
-      return;
-    }
-
-    // Priority 2: Supabase
+    // Priority 1: Supabase
     if (await this.testSupabase()) {
       console.log("✅ Using Supabase as primary database");
       this.setActiveDatabase('supabase');
       return;
     }
 
-    // Priority 3: Firebase
+    // Priority 2: Firebase
     if (await this.testFirebase()) {
       console.log("✅ Using Firebase as primary database");
       this.setActiveDatabase('firebase');
       return;
     }
 
+    // Priority 3: Neon (PostgreSQL)
+    if (await this.testNeon()) {
+      console.log("✅ Using Neon PostgreSQL as primary database");
+      this.setActiveDatabase('neon');
+      return;
+    }
+
     // No fallback to demo mode - require actual database connection
     console.error("❌ No database connections available. Please check your database configuration.");
-    throw new Error("Database connection required. Please ensure your Neon or Supabase configuration is correct.");
+    throw new Error("Database connection required. Please ensure your Supabase or Firebase configuration is correct.");
   }
 
   private static async testSupabase(): Promise<boolean> {
