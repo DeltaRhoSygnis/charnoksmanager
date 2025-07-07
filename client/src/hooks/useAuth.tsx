@@ -36,8 +36,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Add timeout to prevent infinite loading
+    const loadingTimeout = setTimeout(() => {
+      console.log("Auth loading timeout reached, setting loading to false");
+      setLoading(false);
+    }, 5000);
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       try {
+        // Clear the loading timeout since we got a response
+        clearTimeout(loadingTimeout);
+        
         if (firebaseUser) {
           console.log("Firebase user authenticated:", firebaseUser.uid);
 
@@ -122,7 +131,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     });
 
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+      clearTimeout(loadingTimeout);
+    };
   }, []);
 
   const login = async (email: string, password: string) => {
