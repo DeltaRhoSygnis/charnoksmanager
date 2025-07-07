@@ -36,21 +36,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Add timeout to prevent infinite loading and activate demo mode
-    const loadingTimeout = setTimeout(() => {
-      console.log("Auth loading timeout reached, activating demo mode");
-      // Import and activate demo mode
-      import("@/lib/localStorageDB").then(({ LocalStorageDB }) => {
-        LocalStorageDB.enableDemoMode();
-      });
+    // Add a safety timeout to ensure loading state resolves
+    const safetyTimeout = setTimeout(() => {
+      console.log("Auth safety timeout - ensuring loading state resolves");
       setLoading(false);
-    }, 3000);
+    }, 5000);
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       try {
-        // Clear the loading timeout since we got a response
-        clearTimeout(loadingTimeout);
-        
+        clearTimeout(safetyTimeout);
         if (firebaseUser) {
           console.log("Firebase user authenticated:", firebaseUser.uid);
 
@@ -117,19 +111,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setError(null);
         } else {
           console.log("No Firebase user");
-          
-          // Check if we should use demo mode
-          const { LocalStorageDB } = await import("@/lib/localStorageDB");
-          if (LocalStorageDB.isDemoMode()) {
-            console.log("Using demo mode - creating demo user");
-            setUser({
-              uid: "demo-user",
-              email: "demo@charnoks.com",
-              role: "owner",
-            });
-          } else {
-            setUser(null);
-          }
+          setUser(null);
           setError(null);
         }
       } catch (authError: any) {
@@ -149,7 +131,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     return () => {
       unsubscribe();
-      clearTimeout(loadingTimeout);
+      clearTimeout(safetyTimeout);
     };
   }, []);
 
