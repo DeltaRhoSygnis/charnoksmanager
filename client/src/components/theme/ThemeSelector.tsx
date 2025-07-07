@@ -48,7 +48,7 @@ export const ThemeSelector = ({ showTitle = true, compact = false }: ThemeSelect
         </Button>
         
         <div className="flex space-x-1">
-          {themes.slice(0, 4).map((theme) => (
+          {themes.filter(t => ['charnoks', 'modernTeal', 'darkModern', 'navyProfessional']).map((theme) => (
             <Button
               key={theme.id}
               variant="ghost"
@@ -61,9 +61,10 @@ export const ThemeSelector = ({ showTitle = true, compact = false }: ThemeSelect
               style={{
                 background: theme.gradient,
               }}
+              title={theme.name}
             >
               {currentTheme.id === theme.id && (
-                <Check className="h-3 w-3 text-white" />
+                <Check className="h-3 w-3 text-white drop-shadow-lg" />
               )}
             </Button>
           ))}
@@ -110,7 +111,7 @@ export const ThemeSelector = ({ showTitle = true, compact = false }: ThemeSelect
             <span className="font-medium">Color Themes</span>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {themes.map((theme) => (
               <Button
                 key={theme.id}
@@ -125,11 +126,14 @@ export const ThemeSelector = ({ showTitle = true, compact = false }: ThemeSelect
               >
                 {/* Theme Preview */}
                 <div 
-                  className="w-12 h-12 rounded-full flex items-center justify-center relative overflow-hidden"
+                  className={cn(
+                    "w-14 h-14 rounded-xl flex items-center justify-center relative overflow-hidden shadow-lg",
+                    theme.isDark ? "shadow-black/50" : "shadow-gray-400/30"
+                  )}
                   style={{ background: theme.gradient }}
                 >
                   {currentTheme.id === theme.id && (
-                    <Check className="h-5 w-5 text-white" />
+                    <Check className="h-6 w-6 text-white drop-shadow-lg z-10" />
                   )}
                   {theme.isDark && (
                     <Moon className="absolute top-1 right-1 h-3 w-3 text-white/70" />
@@ -146,6 +150,18 @@ export const ThemeSelector = ({ showTitle = true, compact = false }: ThemeSelect
                     <Badge className="text-[10px] bg-orange-500/20 text-orange-400 border-orange-500/30 mt-1">
                       <Sparkles className="h-2 w-2 mr-1" />
                       Default
+                    </Badge>
+                  )}
+                  {theme.id === 'cyberpunk' && (
+                    <Badge className="text-[10px] bg-cyan-500/20 text-cyan-400 border-cyan-500/30 mt-1">
+                      <Sparkles className="h-2 w-2 mr-1" />
+                      New
+                    </Badge>
+                  )}
+                  {(theme.id === 'modernTeal' || theme.id === 'navyProfessional') && (
+                    <Badge className="text-[10px] bg-blue-500/20 text-blue-400 border-blue-500/30 mt-1">
+                      <Sparkles className="h-2 w-2 mr-1" />
+                      Pro
                     </Badge>
                   )}
                 </div>
