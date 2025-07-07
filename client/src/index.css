@@ -439,6 +439,76 @@ html, body, #root {
   ring-offset-color: rgba(0, 0, 0, 0.1);
 }
 
+/* Enhanced PWA Mobile Layout with Better Visibility */
+.mobile-optimized {
+  font-size: 16px; /* Larger base font for mobile PWA */
+  line-height: 1.6;
+  letter-spacing: 0.5px;
+  color: white; /* Ensure text is white */
+}
+
+/* Ensure all elements in mobile-optimized are visible */
+.mobile-optimized *, .mobile-optimized *::before, .mobile-optimized *::after {
+  color: inherit;
+}
+
+.mobile-optimized h1 {
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.mobile-optimized h2 {
+  font-size: clamp(1.25rem, 4vw, 2rem);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: white;
+}
+
+.mobile-optimized h3 {
+  font-size: clamp(1.125rem, 3.5vw, 1.5rem);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.mobile-optimized p {
+  font-size: clamp(1rem, 3vw, 1.125rem);
+  margin-bottom: 0.75rem;
+  color: white;
+}
+
+.mobile-optimized .btn, .mobile-optimized button {
+  min-height: 3rem; /* 48px minimum touch target */
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 0.75rem;
+  color: white;
+}
+
+.mobile-optimized .card {
+  padding: 1.5rem;
+  border-radius: 1rem;
+  margin-bottom: 1rem;
+  background-color: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Force better visibility for common problematic classes */
+.mobile-optimized .text-gray-600, .mobile-optimized .text-gray-500 {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.mobile-optimized .text-gray-400, .mobile-optimized .text-gray-300 {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.mobile-optimized .bg-gray-100, .mobile-optimized .bg-gray-200 {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+}
+
 /* Charnoks brand styling */
 .charnoks-gradient {
   background: linear-gradient(135deg, hsl(var(--charnoks-red)), hsl(var(--charnoks-orange)), hsl(var(--charnoks-yellow)));

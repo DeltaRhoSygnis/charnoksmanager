@@ -116,8 +116,8 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
       
 
       {/* Mobile Content with Enhanced Spacing */}
-      <div className="pb-20 px-4 pt-4">
-        <div className="mobile-optimized">
+      <div className="pb-20 px-3 md:px-4 pt-3 md:pt-4">
+        <div className="mobile-optimized text-white">
           {children}
         </div>
       </div>

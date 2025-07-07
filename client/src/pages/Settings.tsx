@@ -15,8 +15,8 @@ export const Settings = () => {
 
   return (
     <OptimizedLayout>
-      <div className="min-h-screen p-6">
-        <div className="max-w-5xl mx-auto space-y-8">
+      <div className="min-h-screen p-3 md:p-6">
+        <div className="max-w-5xl mx-auto space-y-6 md:space-y-8">
           {/* Header Section */}
           <div className="text-center space-y-4 animate-bounce-in">
             <div className="flex items-center justify-center gap-3 mb-6">
@@ -24,10 +24,10 @@ export const Settings = () => {
                 <SettingsIcon className="w-full h-full text-purple-400" />
               </div>
             </div>
-            <h1 className="text-5xl font-bold charnoks-text animate-slide-in-left">
+            <h1 className="text-3xl md:text-5xl font-bold charnoks-text animate-slide-in-left">
               Account Settings
             </h1>
-            <p className="text-xl text-white font-medium animate-slide-in-right">
+            <p className="text-lg md:text-xl text-white font-medium animate-slide-in-right">
               Manage your profile and system preferences
             </p>
             <div className="flex justify-center animate-bounce-in delay-300">
@@ -114,14 +114,22 @@ export const Settings = () => {
                     </Badge>
                   </div>
                   
-                  <div className="flex items-center justify-between p-4 bg-white/10 rounded-xl border border-white/20">
-                    <div>
-                      <p className="text-white font-bold text-lg">Theme Settings</p>
-                      <p className="text-gray-400">Customize your visual experience</p>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-white/10 rounded-xl border border-white/20">
+                      <div>
+                        <p className="text-white font-bold text-lg flex items-center gap-2">
+                          <Palette className="h-5 w-5 text-purple-400" />
+                          Theme Settings
+                        </p>
+                        <p className="text-gray-400">Customize your visual experience</p>
+                      </div>
+                      <Badge className="bg-purple-600 text-white font-bold px-4 py-2">
+                        Active
+                      </Badge>
                     </div>
-                    <Badge className="bg-purple-600 text-white font-bold px-4 py-2">
-                      Enabled
-                    </Badge>
+                    <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+                      <ThemeSelector showTitle={false} compact={false} />
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -183,10 +191,7 @@ export const Settings = () => {
             </div>
           </div>
 
-          {/* Theme Settings Section */}
-          <div className="mt-8">
-            <ThemeSelector showTitle={true} />
-          </div>
+
 
           {/* Additional Info Section */}
           <Card className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-bounce-in delay-500 rounded-2xl overflow-hidden">

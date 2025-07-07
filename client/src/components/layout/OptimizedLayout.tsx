@@ -18,7 +18,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import { ThemeSelector } from '@/components/theme/ThemeSelector';
+
 
 const charnofsLogo = "/lovable-uploads/389a9fc0-9ada-493a-a167-71ea82a7aabb.png";
 
@@ -99,7 +99,7 @@ export const OptimizedLayout: React.FC<OptimizedLayoutProps> = ({ children }) =>
                 className="h-10 w-10 object-contain animate-pulse-glow"
               />
               <div>
-                <h1 className="text-lg font-bold charnoks-text">Charnoks POS</h1>
+                <h1 className="text-base md:text-lg font-bold charnoks-text">Charnoks POS</h1>
                 <Badge className={cn(
                   "text-xs",
                   isOwner 
@@ -111,9 +111,9 @@ export const OptimizedLayout: React.FC<OptimizedLayoutProps> = ({ children }) =>
               </div>
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1 md:space-x-2">
               <div className="flex items-center space-x-2">
-                <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                <div className="w-5 md:w-6 h-5 md:h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
                   <Users className="h-3 w-3 text-white" />
                 </div>
                 <div className="hidden sm:block">
@@ -121,18 +121,17 @@ export const OptimizedLayout: React.FC<OptimizedLayoutProps> = ({ children }) =>
                   <p className="text-[10px] text-white/70">{user?.email}</p>
                 </div>
               </div>
-              <ThemeSelector compact={true} showTitle={false} />
               <Link to="/settings">
-                <Button variant="ghost" size="sm" className="text-white">
-                  <Settings className="h-3 w-3" />
+                <Button variant="ghost" size="sm" className="text-white hover:bg-white/10 p-2">
+                  <Settings className="h-4 w-4" />
                 </Button>
               </Link>
               <Button
                 variant="ghost"
                 onClick={handleLogout}
-                className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                className="text-red-400 hover:text-red-300 hover:bg-red-500/10 p-2"
               >
-                <LogOut className="h-3 w-3" />
+                <LogOut className="h-3 md:h-4 w-3 md:w-4" />
               </Button>
             </div>
           </div>
