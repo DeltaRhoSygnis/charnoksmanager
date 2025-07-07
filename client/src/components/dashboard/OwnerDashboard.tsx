@@ -351,49 +351,49 @@ export const OwnerDashboard = () => {
         </div>
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="p-2 space-y-3">
 
         {/* 2x2 Grid Cards - Reference Layout */}
-        <div className="grid grid-cols-2 gap-4 animate-bounce-in animation-resistant">
+        <div className="grid grid-cols-2 gap-2 animate-bounce-in animation-resistant">
           {/* Total Sales */}
           <Card className="card-reference text-white aspect-square hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-3 h-full flex flex-col justify-center">
-              <div className="text-left space-y-1">
+            <CardContent className="p-2 h-full flex flex-col justify-center">
+              <div className="text-left space-y-0.5">
                 <p className="reference-title text-solid opacity-80">Total</p>
                 <p className="reference-title text-solid opacity-80">Sales 📈</p>
-                <p className="reference-value text-solid mt-2">₱{stats.totalSales.toLocaleString()}</p>
+                <p className="reference-value text-solid mt-1">₱{stats.totalSales.toLocaleString()}</p>
               </div>
             </CardContent>
           </Card>
 
           {/* Total Expenses */}
           <Card className="card-reference text-white aspect-square hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-3 h-full flex flex-col justify-center">
-              <div className="text-left space-y-1">
+            <CardContent className="p-2 h-full flex flex-col justify-center">
+              <div className="text-left space-y-0.5">
                 <p className="reference-title text-solid opacity-80">Total</p>
                 <p className="reference-title text-solid opacity-80">Expenses 📊</p>
-                <p className="reference-value text-solid mt-2">₱{stats.totalExpenses.toLocaleString()}</p>
+                <p className="reference-value text-solid mt-1">₱{stats.totalExpenses.toLocaleString()}</p>
               </div>
             </CardContent>
           </Card>
 
           {/* Net Profit */}
           <Card className="card-reference text-white aspect-square hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-3 h-full flex flex-col justify-center">
-              <div className="text-left space-y-1">
+            <CardContent className="p-2 h-full flex flex-col justify-center">
+              <div className="text-left space-y-0.5">
                 <p className="reference-title text-solid opacity-80">Net Profit 📊</p>
-                <p className="reference-value text-solid mt-2">₱{(stats.totalSales - stats.totalExpenses).toLocaleString()}</p>
+                <p className="reference-value text-solid mt-1">₱{(stats.totalSales - stats.totalExpenses).toLocaleString()}</p>
               </div>
             </CardContent>
           </Card>
 
           {/* Today's Revenue */}
           <Card className="card-reference text-white aspect-square hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-3 h-full flex flex-col justify-center">
-              <div className="text-left space-y-1">
+            <CardContent className="p-2 h-full flex flex-col justify-center">
+              <div className="text-left space-y-0.5">
                 <p className="reference-title text-solid opacity-80">Today's</p>
                 <p className="reference-title text-solid opacity-80">Revenue 💰</p>
-                <p className="reference-value text-solid mt-2">₱0</p>
+                <p className="reference-value text-solid mt-1">₱0</p>
               </div>
             </CardContent>
           </Card>
@@ -402,11 +402,11 @@ export const OwnerDashboard = () => {
         {/* Weekly Performance Chart - Reference Style */}
         <div className="animate-bounce-in animation-resistant delay-200">
           <Card className="card-reference text-white">
-            <CardContent className="p-3">
-              <div className="mb-3">
+            <CardContent className="p-2">
+              <div className="mb-2">
                 <h3 className="reference-title text-solid opacity-80">📊 Weekly Performance</h3>
               </div>
-              <div className="h-32">
+              <div className="h-24">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={weeklyData}>
                     <XAxis 

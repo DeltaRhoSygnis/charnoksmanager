@@ -519,15 +519,15 @@ html, body, #root {
 
 /* Reference-style cards - BLACK and compact like zoomed-out image */
 .card-reference {
-  background: rgba(0, 0, 0, 0.9) !important; /* BLACK cards like reference */
-  backdrop-filter: blur(15px);
+  background: rgba(0, 0, 0, 0.95) !important; /* Solid BLACK cards like reference */
+  backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
-  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
   position: relative;
   z-index: 15;
   transition: all 0.3s ease;
-  min-height: 80px; /* Smaller compact height */
+  min-height: 60px; /* Much smaller height like zoomed-out */
 }
 
 .card-reference:hover {
@@ -541,16 +541,16 @@ html, body, #root {
   aspect-ratio: 1 / 1;
 }
 
-/* Consistent text sizing for reference layout - SMALLER like zoomed-out */
+/* Consistent text sizing for reference layout - MUCH SMALLER like zoomed-out */
 .reference-title {
-  font-size: 0.75rem !important; /* 12px - smaller text */
-  line-height: 1.2 !important;
+  font-size: 0.6rem !important; /* 10px - much smaller text */
+  line-height: 1.1 !important;
   font-weight: 400 !important;
 }
 
 .reference-value {
-  font-size: 1.5rem !important; /* 24px - smaller values */
-  line-height: 1.1 !important;
+  font-size: 1.2rem !important; /* 19px - much smaller values */
+  line-height: 1.0 !important;
   font-weight: 700 !important;
 }
 
