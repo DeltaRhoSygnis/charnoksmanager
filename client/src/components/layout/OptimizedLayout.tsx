@@ -120,6 +120,7 @@ export const OptimizedLayout: React.FC<OptimizedLayoutProps> = ({ children }) =>
                   <p className="text-[10px] text-white/70">{user?.email}</p>
                 </div>
               </div>
+              <ThemeSelector compact={true} showTitle={false} />
               <Link to="/settings">
                 <Button variant="ghost" size="sm" className="text-white">
                   <Settings className="h-3 w-3" />

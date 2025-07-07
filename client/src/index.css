@@ -26,14 +26,32 @@ All colors MUST be HSL.
   background-repeat: no-repeat;
 }
 
-/* Dynamic Galaxy Animation */
+/* Dynamic Theme-Aware Background */
 .galaxy-animated {
-  background-image: url('/src/assets/1b8b082db8a7ccbfedfe5dec8ba19dcd_1751553895817.jpg');
+  background: var(--gradient-primary);
   background-size: 120% 120%;
   background-position: center;
   background-attachment: fixed;
   background-repeat: no-repeat;
   animation: galaxy-drift 60s ease-in-out infinite;
+  position: relative;
+}
+
+.galaxy-animated::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/src/assets/1b8b082db8a7ccbfedfe5dec8ba19dcd_1751553895817.jpg');
+  background-size: 120% 120%;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  opacity: 0.3;
+  mix-blend-mode: overlay;
+  pointer-events: none;
 }
 
 @keyframes galaxy-drift {
@@ -55,28 +73,23 @@ All colors MUST be HSL.
   }
 }
 
-/* Cosmic Overlay */
+/* Theme-Aware Cosmic Overlay */
 .cosmic-overlay {
   position: relative;
 }
 
-.cosmic-overlay::before {
+.cosmic-overlay::after {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 0, 0, 0.1) 0%,
-    rgba(255, 165, 0, 0.05) 25%,
-    rgba(255, 255, 0, 0.1) 50%,
-    rgba(0, 0, 255, 0.05) 75%,
-    rgba(128, 0, 128, 0.1) 100%
-  );
+  background: var(--gradient-primary);
+  opacity: 0.1;
   animation: cosmic-pulse 8s ease-in-out infinite;
   pointer-events: none;
+  z-index: 1;
 }
 
 @keyframes cosmic-pulse {
@@ -95,8 +108,24 @@ html, body, #root {
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Default theme colors - will be overridden by ThemeManager */
+    --color-primary: hsl(14, 100%, 50%);
+    --color-secondary: hsl(45, 100%, 50%);
+    --color-accent: hsl(0, 100%, 50%);
+    --color-background: hsl(222, 84%, 5%);
+    --color-surface: hsl(222, 84%, 10%);
+    --color-text: hsl(0, 0%, 98%);
+    --color-text-secondary: hsl(0, 0%, 70%);
+    --color-border: hsl(0, 0%, 20%);
+    --color-success: hsl(142, 76%, 36%);
+    --color-warning: hsl(38, 92%, 50%);
+    --color-error: hsl(0, 84%, 60%);
+    --color-info: hsl(199, 89%, 48%);
+    --gradient-primary: linear-gradient(135deg, hsl(0, 100%, 50%), hsl(14, 100%, 50%), hsl(45, 100%, 50%));
+
+    /* Shadcn compatibility */
+    --background: var(--color-background);
+    --foreground: var(--color-text);
 
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -416,10 +445,60 @@ html, body, #root {
 }
 
 .charnoks-text {
-  background: linear-gradient(135deg, hsl(var(--charnoks-red)), hsl(var(--charnoks-orange)));
+  background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  background-size: 200% 200%;
+  animation: gradient-flow 3s ease-in-out infinite;
+}
+
+/* Theme-based utility classes */
+.bg-theme-primary { background-color: var(--color-primary); }
+.bg-theme-secondary { background-color: var(--color-secondary); }
+.bg-theme-surface { background-color: var(--color-surface); }
+.bg-theme-background { background-color: var(--color-background); }
+
+.text-theme-primary { color: var(--color-primary); }
+.text-theme-secondary { color: var(--color-secondary); }
+.text-theme-text { color: var(--color-text); }
+.text-theme-text-secondary { color: var(--color-text-secondary); }
+
+.border-theme-primary { border-color: var(--color-primary); }
+.border-theme-border { border-color: var(--color-border); }
+
+/* Theme-aware component styles */
+.theme-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.theme-button-primary {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+}
+
+.theme-button-secondary {
+  background: var(--color-secondary);
+  color: var(--color-background);
+  border: none;
+}
+
+.theme-input {
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.theme-gradient-bg {
+  background: var(--gradient-primary);
+}
+
+@keyframes gradient-flow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 /* Cosmic Background Styles */

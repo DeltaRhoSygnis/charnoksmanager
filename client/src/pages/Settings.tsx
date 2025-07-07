@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FirebaseTestButton } from "@/components/ui/firebase-test-button";
 import { CreateWorkerAccount } from "@/components/worker/CreateWorkerAccount";
-import { Settings as SettingsIcon, User, LogOut, Crown, Shield, Star, Plus, TestTube } from "lucide-react";
+import { ThemeSelector } from "@/components/theme/ThemeSelector";
+import { Settings as SettingsIcon, User, LogOut, Crown, Shield, Star, Plus, TestTube, Palette } from "lucide-react";
 
 export const Settings = () => {
   const { user, logout } = useAuth();
@@ -115,8 +116,8 @@ export const Settings = () => {
                   
                   <div className="flex items-center justify-between p-4 bg-white/10 rounded-xl border border-white/20">
                     <div>
-                      <p className="text-white font-bold text-lg">Galaxy Theme</p>
-                      <p className="text-gray-400">Dynamic cosmic background</p>
+                      <p className="text-white font-bold text-lg">Theme Settings</p>
+                      <p className="text-gray-400">Customize your visual experience</p>
                     </div>
                     <Badge className="bg-purple-600 text-white font-bold px-4 py-2">
                       Enabled
@@ -180,6 +181,11 @@ export const Settings = () => {
                 </CardContent>
               </Card>
             </div>
+          </div>
+
+          {/* Theme Settings Section */}
+          <div className="mt-8">
+            <ThemeSelector showTitle={true} />
           </div>
 
           {/* Additional Info Section */}
