@@ -517,22 +517,41 @@ html, body, #root {
   z-index: 10;
 }
 
-/* Reference-style cards - solid and visible */
+/* Reference-style cards - solid and visible with consistent sizing */
 .card-reference {
   background: rgba(165, 42, 42, 0.95) !important; /* Brown-red like the reference */
   backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-  border-radius: 12px;
+  border-radius: 16px;
   position: relative;
   z-index: 15;
   transition: all 0.3s ease;
+  min-height: 120px; /* Consistent card height */
 }
 
 .card-reference:hover {
   background: rgba(165, 42, 42, 1) !important;
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
+}
+
+/* Aspect ratio utility for square cards */
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
+/* Consistent text sizing for reference layout */
+.reference-title {
+  font-size: 0.875rem !important; /* 14px */
+  line-height: 1.25 !important;
+  font-weight: 400 !important;
+}
+
+.reference-value {
+  font-size: 1.875rem !important; /* 30px */
+  line-height: 1.2 !important;
+  font-weight: 700 !important;
 }
 
 .glass-nav {

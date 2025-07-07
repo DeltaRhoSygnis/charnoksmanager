@@ -237,9 +237,9 @@ export const StreamlinedSalesInterface = () => {
           </div>
 
           {/* Products Grid/List */}
-          <Card className="card-visible">
+          <Card className="card-reference animation-resistant">
             <CardHeader className="pb-4">
-              <CardTitle className="text-white flex items-center gap-2">
+              <CardTitle className="text-solid flex items-center gap-2">
                 <Package className="h-5 w-5" />
                 Select Product ({filteredProducts.length} available)
               </CardTitle>

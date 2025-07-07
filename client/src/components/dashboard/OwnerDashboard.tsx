@@ -353,47 +353,47 @@ export const OwnerDashboard = () => {
 
       <div className="p-4 space-y-4">
 
-        {/* Trading-Style Analytics Cards */}
+        {/* 2x2 Grid Cards - Reference Layout */}
         <div className="grid grid-cols-2 gap-4 animate-bounce-in animation-resistant">
-          <Card className="card-reference text-white hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-4">
-              <div className="text-left">
-                <p className="text-sm text-solid opacity-80 mb-1">Total</p>
-                <p className="text-sm text-solid opacity-80">Sales 📈</p>
-                <p className="text-2xl font-bold text-solid mt-2">₱{stats.totalSales.toLocaleString()}</p>
+          {/* Total Sales */}
+          <Card className="card-reference text-white aspect-square hover:scale-105 transition-transform duration-300">
+            <CardContent className="p-6 h-full flex flex-col justify-center">
+              <div className="text-left space-y-2">
+                <p className="reference-title text-solid opacity-80">Total</p>
+                <p className="reference-title text-solid opacity-80">Sales 📈</p>
+                <p className="reference-value text-solid mt-4">₱{stats.totalSales.toLocaleString()}</p>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="card-reference text-white hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-4">
-              <div className="text-left">
-                <p className="text-sm text-solid opacity-80 mb-1">Total</p>
-                <p className="text-sm text-solid opacity-80">Expenses 📊</p>
-                <p className="text-2xl font-bold text-solid mt-2">₱{stats.totalExpenses.toLocaleString()}</p>
+          {/* Total Expenses */}
+          <Card className="card-reference text-white aspect-square hover:scale-105 transition-transform duration-300">
+            <CardContent className="p-6 h-full flex flex-col justify-center">
+              <div className="text-left space-y-2">
+                <p className="reference-title text-solid opacity-80">Total</p>
+                <p className="reference-title text-solid opacity-80">Expenses 📊</p>
+                <p className="reference-value text-solid mt-4">₱{stats.totalExpenses.toLocaleString()}</p>
               </div>
             </CardContent>
           </Card>
 
-        </div>
-
-        {/* Second Row - Net Profit and Today's Revenue */}
-        <div className="grid grid-cols-2 gap-4 animate-bounce-in animation-resistant delay-100">
-          <Card className="card-reference text-white hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-4">
-              <div className="text-left">
-                <p className="text-sm text-solid opacity-80">Net Profit 📊</p>
-                <p className="text-2xl font-bold text-solid mt-2">₱{(stats.totalSales - stats.totalExpenses).toLocaleString()}</p>
+          {/* Net Profit */}
+          <Card className="card-reference text-white aspect-square hover:scale-105 transition-transform duration-300">
+            <CardContent className="p-6 h-full flex flex-col justify-center">
+              <div className="text-left space-y-2">
+                <p className="reference-title text-solid opacity-80">Net Profit 📊</p>
+                <p className="reference-value text-solid mt-4">₱{(stats.totalSales - stats.totalExpenses).toLocaleString()}</p>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="card-reference text-white hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-4">
-              <div className="text-left">
-                <p className="text-sm text-solid opacity-80">Today's</p>
-                <p className="text-sm text-solid opacity-80">Revenue 💰</p>
-                <p className="text-2xl font-bold text-solid mt-2">₱0</p>
+          {/* Today's Revenue */}
+          <Card className="card-reference text-white aspect-square hover:scale-105 transition-transform duration-300">
+            <CardContent className="p-6 h-full flex flex-col justify-center">
+              <div className="text-left space-y-2">
+                <p className="reference-title text-solid opacity-80">Today's</p>
+                <p className="reference-title text-solid opacity-80">Revenue 💰</p>
+                <p className="reference-value text-solid mt-4">₱0</p>
               </div>
             </CardContent>
           </Card>
@@ -402,9 +402,9 @@ export const OwnerDashboard = () => {
         {/* Weekly Performance Chart - Reference Style */}
         <div className="animate-bounce-in animation-resistant delay-200">
           <Card className="card-reference text-white">
-            <CardContent className="p-4">
-              <div className="mb-4">
-                <h3 className="text-lg font-bold text-solid">📊 Weekly Performance</h3>
+            <CardContent className="p-6">
+              <div className="mb-6">
+                <h3 className="reference-title text-solid opacity-80">📊 Weekly Performance</h3>
               </div>
               <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
@@ -421,14 +421,14 @@ export const OwnerDashboard = () => {
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <div className="flex justify-center gap-4 mt-2">
+              <div className="flex justify-center gap-4 mt-4">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-green-500 rounded"></div>
-                  <span className="text-xs text-solid">Sales</span>
+                  <span className="reference-title text-solid opacity-80">Sales</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-red-500 rounded"></div>
-                  <span className="text-xs text-solid">Expenses</span>
+                  <span className="reference-title text-solid opacity-80">Expenses</span>
                 </div>
               </div>
             </CardContent>
