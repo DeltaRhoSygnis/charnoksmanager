@@ -758,7 +758,7 @@ export const DataAnalysis = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* All Workers Data Analysis */}
             <Card 
-              className="bg-black/40 backdrop-blur-xl border-white/20 hover:border-blue-500/50 transition-all duration-300 cursor-pointer group"
+              className="card-visible hover:border-blue-500/50 transition-all duration-300 cursor-pointer group"
               onClick={() => setAnalysisMode('all-workers')}
             >
               <CardHeader className="text-center pb-4">
@@ -786,7 +786,7 @@ export const DataAnalysis = () => {
 
             {/* Compare Workers Data */}
             <Card 
-              className="bg-black/40 backdrop-blur-xl border-white/20 hover:border-green-500/50 transition-all duration-300 cursor-pointer group"
+              className="card-visible hover:border-green-500/50 transition-all duration-300 cursor-pointer group"
               onClick={() => setAnalysisMode('compare-workers')}
             >
               <CardHeader className="text-center pb-4">
@@ -814,7 +814,7 @@ export const DataAnalysis = () => {
 
             {/* Individual Worker Analysis */}
             <Card 
-              className="bg-black/40 backdrop-blur-xl border-white/20 hover:border-purple-500/50 transition-all duration-300 cursor-pointer group"
+              className="card-visible hover:border-purple-500/50 transition-all duration-300 cursor-pointer group"
               onClick={() => setAnalysisMode('individual-worker')}
             >
               <CardHeader className="text-center pb-4">
@@ -842,7 +842,7 @@ export const DataAnalysis = () => {
             
             {/* Product Analysis */}
             <Card 
-              className="bg-black/40 backdrop-blur-xl border-white/20 hover:border-orange-500/50 transition-all duration-300 cursor-pointer group"
+              className="card-visible hover:border-orange-500/50 transition-all duration-300 cursor-pointer group"
               onClick={() => setAnalysisMode('products')}
             >
               <CardHeader className="text-center pb-4">
@@ -870,7 +870,7 @@ export const DataAnalysis = () => {
 
             {/* Time Patterns */}
             <Card 
-              className="bg-black/40 backdrop-blur-xl border-white/20 hover:border-cyan-500/50 transition-all duration-300 cursor-pointer group"
+              className="card-visible hover:border-cyan-500/50 transition-all duration-300 cursor-pointer group"
               onClick={() => setAnalysisMode('patterns')}
             >
               <CardHeader className="text-center pb-4">
@@ -898,7 +898,7 @@ export const DataAnalysis = () => {
 
             {/* Predictions & Insights */}
             <Card 
-              className="bg-black/40 backdrop-blur-xl border-white/20 hover:border-indigo-500/50 transition-all duration-300 cursor-pointer group"
+              className="card-visible hover:border-indigo-500/50 transition-all duration-300 cursor-pointer group"
               onClick={() => setAnalysisMode('predictions')}
             >
               <CardHeader className="text-center pb-4">
@@ -934,7 +934,7 @@ export const DataAnalysis = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="bg-black/40 backdrop-blur-xl border-white/20 hover:border-white/30 transition-all duration-300">
+                <Card className="card-visible hover:border-white/30 transition-all duration-300">
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="p-3 rounded-lg" style={{ backgroundColor: `${kpi.color}20` }}>
@@ -983,7 +983,7 @@ export const DataAnalysis = () => {
 
           {/* Top Products */}
           {productAnalysis.length > 0 && (
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Package className="h-5 w-5 text-orange-400" />
@@ -1025,7 +1025,7 @@ export const DataAnalysis = () => {
           )}
 
           {/* Worker Performance Leaderboard */}
-          <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+          <Card className="card-visible">
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <Award className="h-5 w-5 text-yellow-400" />
@@ -1102,7 +1102,7 @@ export const DataAnalysis = () => {
 
           {/* Controls */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardContent className="p-6">
                 <Label className="text-white mb-3 block">Chart Type</Label>
                 <Select value={chartType} onValueChange={(value: ChartType) => setChartType(value)}>
@@ -1121,7 +1121,7 @@ export const DataAnalysis = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardContent className="p-6">
                 <Label className="text-white mb-3 block">Duration</Label>
                 <Select value={duration} onValueChange={(value: DurationFilter) => setDuration(value)}>
@@ -1141,7 +1141,7 @@ export const DataAnalysis = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardContent className="p-6">
                 <Label className="text-white mb-3 block">Actions</Label>
                 <div className="flex gap-2">
@@ -1166,7 +1166,7 @@ export const DataAnalysis = () => {
           </div>
 
           {/* Main Chart */}
-          <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+          <Card className="card-visible">
             <CardHeader>
               <CardTitle className="text-white text-2xl flex items-center gap-3">
                 <BarChart3 className="h-6 w-6 text-blue-400" />
@@ -1179,7 +1179,7 @@ export const DataAnalysis = () => {
           </Card>
 
           {/* Worker Performance Table */}
-          <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+          <Card className="card-visible">
             <CardHeader>
               <CardTitle className="text-white text-2xl flex items-center gap-3">
                 <Users className="h-6 w-6 text-green-400" />
@@ -1264,7 +1264,7 @@ export const DataAnalysis = () => {
           </div>
 
           {/* Worker Selection */}
-          <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+          <Card className="card-visible">
             <CardHeader>
               <CardTitle className="text-white text-xl">Select Workers to Compare</CardTitle>
             </CardHeader>
@@ -1301,7 +1301,7 @@ export const DataAnalysis = () => {
 
           {/* Comparison Results */}
           {selectedWorkers.length > 1 && (
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardHeader>
                 <CardTitle className="text-white text-2xl flex items-center gap-3">
                   <GitCompare className="h-6 w-6 text-green-400" />
@@ -1350,7 +1350,7 @@ export const DataAnalysis = () => {
           </div>
 
           {/* Worker Selection */}
-          <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+          <Card className="card-visible">
             <CardContent className="p-6">
               <Label className="text-white mb-3 block">Select Worker</Label>
               <Select value={selectedWorker} onValueChange={setSelectedWorker}>
@@ -1373,7 +1373,7 @@ export const DataAnalysis = () => {
             <>
               {/* Worker Stats */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+                <Card className="card-visible">
                   <CardContent className="p-6 text-center">
                     <DollarSign className="h-8 w-8 text-green-400 mx-auto mb-2" />
                     <p className="text-gray-400 text-sm">Total Sales</p>
@@ -1383,7 +1383,7 @@ export const DataAnalysis = () => {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+                <Card className="card-visible">
                   <CardContent className="p-6 text-center">
                     <TrendingDown className="h-8 w-8 text-red-400 mx-auto mb-2" />
                     <p className="text-gray-400 text-sm">Total Expenses</p>
@@ -1393,7 +1393,7 @@ export const DataAnalysis = () => {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+                <Card className="card-visible">
                   <CardContent className="p-6 text-center">
                     <Target className="h-8 w-8 text-blue-400 mx-auto mb-2" />
                     <p className="text-gray-400 text-sm">Net Profit</p>
@@ -1403,7 +1403,7 @@ export const DataAnalysis = () => {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+                <Card className="card-visible">
                   <CardContent className="p-6 text-center">
                     <Activity className="h-8 w-8 text-purple-400 mx-auto mb-2" />
                     <p className="text-gray-400 text-sm">Avg. Transaction</p>
@@ -1415,7 +1415,7 @@ export const DataAnalysis = () => {
               </div>
 
               {/* Individual Performance Chart */}
-              <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+              <Card className="card-visible">
                 <CardHeader>
                   <CardTitle className="text-white text-2xl flex items-center gap-3">
                     <User className="h-6 w-6 text-purple-400" />
@@ -1484,7 +1484,7 @@ export const DataAnalysis = () => {
           {/* Product Performance Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Top Products Chart */}
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardHeader>
                 <CardTitle className="text-white text-xl flex items-center gap-2">
                   <Package className="h-5 w-5 text-orange-400" />
@@ -1508,7 +1508,7 @@ export const DataAnalysis = () => {
             </Card>
 
             {/* Product Quantity Distribution */}
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardHeader>
                 <CardTitle className="text-white text-xl flex items-center gap-2">
                   <ShoppingCart className="h-5 w-5 text-blue-400" />
@@ -1540,7 +1540,7 @@ export const DataAnalysis = () => {
           </div>
 
           {/* Product Table */}
-          <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+          <Card className="card-visible">
             <CardHeader>
               <CardTitle className="text-white text-xl">Product Performance Details</CardTitle>
             </CardHeader>
@@ -1618,7 +1618,7 @@ export const DataAnalysis = () => {
           </div>
 
           {/* Hourly Patterns */}
-          <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+          <Card className="card-visible">
             <CardHeader>
               <CardTitle className="text-white text-xl flex items-center gap-2">
                 <Clock className="h-5 w-5 text-cyan-400" />
@@ -1673,7 +1673,7 @@ export const DataAnalysis = () => {
 
           {/* Peak Hours Summary */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <Zap className="h-8 w-8 text-yellow-400" />
@@ -1694,7 +1694,7 @@ export const DataAnalysis = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <Activity className="h-8 w-8 text-green-400" />
@@ -1716,7 +1716,7 @@ export const DataAnalysis = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <Clock className="h-8 w-8 text-blue-400" />
@@ -1768,7 +1768,7 @@ export const DataAnalysis = () => {
           </div>
 
           {/* Sales Forecast */}
-          <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+          <Card className="card-visible">
             <CardHeader>
               <CardTitle className="text-white text-xl flex items-center gap-2">
                 <Brain className="h-5 w-5 text-indigo-400" />
@@ -1805,7 +1805,7 @@ export const DataAnalysis = () => {
 
           {/* AI Insights */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardHeader>
                 <CardTitle className="text-white text-xl flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-yellow-400" />
@@ -1854,7 +1854,7 @@ export const DataAnalysis = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardHeader>
                 <CardTitle className="text-white text-xl flex items-center gap-2">
                   <AlertCircle className="h-5 w-5 text-orange-400" />

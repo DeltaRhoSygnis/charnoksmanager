@@ -52,7 +52,7 @@ export const Settings = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Profile Section */}
-            <AnimatedCard className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-slide-in-left rounded-2xl overflow-hidden">
+            <AnimatedCard className="card-visible shadow-2xl animate-slide-in-left rounded-2xl overflow-hidden">
               <CardHeader className="bg-black/20 border-b border-white/20">
                 <CardTitle className="text-white text-2xl font-bold flex items-center gap-3">
                   <User className="h-6 w-6 text-blue-400" />
@@ -95,7 +95,7 @@ export const Settings = () => {
 
             {/* System Section */}
             <div className="space-y-8">
-              <AnimatedCard className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-slide-in-right rounded-2xl overflow-hidden">
+              <AnimatedCard className="card-visible shadow-2xl animate-slide-in-right rounded-2xl overflow-hidden">
                 <CardHeader className="bg-black/20 border-b border-white/20">
                   <CardTitle className="text-white text-2xl font-bold flex items-center gap-3">
                     <Star className="h-6 w-6 text-yellow-400" />
@@ -138,7 +138,7 @@ export const Settings = () => {
 
               {/* System Management - Owner Only */}
               {user?.role === "owner" && (
-                <AnimatedCard className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-slide-in-right delay-200 rounded-2xl overflow-hidden">
+                <AnimatedCard className="card-visible shadow-2xl animate-slide-in-right delay-200 rounded-2xl overflow-hidden">
                   <CardHeader className="bg-black/20 border-b border-white/20">
                     <CardTitle className="text-white text-2xl font-bold flex items-center gap-3">
                       <TestTube className="h-6 w-6 text-green-400" />
@@ -174,7 +174,7 @@ export const Settings = () => {
               )}
 
               {/* Account Actions */}
-              <AnimatedCard className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-slide-in-right delay-300 rounded-2xl overflow-hidden">
+              <AnimatedCard className="card-visible shadow-2xl animate-slide-in-right delay-300 rounded-2xl overflow-hidden">
                 <CardHeader className="bg-black/20 border-b border-white/20">
                   <CardTitle className="text-white text-2xl font-bold">Account Actions</CardTitle>
                   <CardDescription className="text-gray-300 text-lg">
@@ -198,7 +198,7 @@ export const Settings = () => {
 
 
           {/* Additional Info Section */}
-          <AnimatedCard className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-bounce-in delay-500 rounded-2xl overflow-hidden">
+          <AnimatedCard className="card-visible shadow-2xl animate-bounce-in delay-500 rounded-2xl overflow-hidden">
             <CardHeader className="bg-black/20 border-b border-white/20">
               <CardTitle className="text-white text-2xl font-bold text-center">
                 🌟 Charnoks Special Fried Chicken POS 🌟

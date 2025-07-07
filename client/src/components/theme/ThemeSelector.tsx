@@ -74,7 +74,7 @@ export const ThemeSelector = ({ showTitle = true, compact = false }: ThemeSelect
   }
 
   return (
-    <Card className="bg-black/40 backdrop-blur-lg border-white/20">
+    <Card className="card-enhanced">
       {showTitle && (
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center space-x-2 text-white">

@@ -355,7 +355,7 @@ export const OwnerDashboard = () => {
 
         {/* Trading-Style Analytics Cards */}
         <div className="grid grid-cols-3 gap-3 animate-bounce-in">
-          <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white hover:scale-105 transition-transform duration-300">
+          <Card className="card-enhanced text-white hover:scale-105 transition-transform duration-300">
             <CardContent className="p-3">
               <div className="text-center">
                 <BarChart3 className="h-6 w-6 mx-auto mb-2 text-green-400" />
@@ -365,7 +365,7 @@ export const OwnerDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white hover:scale-105 transition-transform duration-300">
+          <Card className="card-enhanced text-white hover:scale-105 transition-transform duration-300">
             <CardContent className="p-3">
               <div className="text-center">
                 <PieChart className="h-6 w-6 mx-auto mb-2 text-red-400" />
@@ -375,7 +375,7 @@ export const OwnerDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-black/40 backdrop-blur-lg border-white/20 text-white hover:scale-105 transition-transform duration-300">
+          <Card className="card-enhanced text-white hover:scale-105 transition-transform duration-300">
             <CardContent className="p-3">
               <div className="text-center">
                 <LineChart className="h-6 w-6 mx-auto mb-2 text-blue-400" />
@@ -851,7 +851,7 @@ export const OwnerDashboard = () => {
       <div className="p-4 md:p-6 space-y-6">
         {/* Stats Overview - Mobile Optimized */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-          <Card className="bg-black/40 backdrop-blur-lg border-white/20 hover:scale-105 transition-transform duration-300">
+          <Card className="card-enhanced hover:scale-105 transition-transform duration-300">
             <CardContent className="p-3 md:p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -865,7 +865,7 @@ export const OwnerDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-black/40 backdrop-blur-lg border-white/20 hover:scale-105 transition-transform duration-300">
+          <Card className="card-enhanced hover:scale-105 transition-transform duration-300">
             <CardContent className="p-3 md:p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -879,7 +879,7 @@ export const OwnerDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-black/40 backdrop-blur-lg border-white/20 hover:scale-105 transition-transform duration-300">
+          <Card className="card-enhanced hover:scale-105 transition-transform duration-300">
             <CardContent className="p-3 md:p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -893,7 +893,7 @@ export const OwnerDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-black/40 backdrop-blur-lg border-white/20 hover:scale-105 transition-transform duration-300">
+          <Card className="card-enhanced hover:scale-105 transition-transform duration-300">
             <CardContent className="p-3 md:p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -911,7 +911,7 @@ export const OwnerDashboard = () => {
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           {/* Sales vs Expenses Chart */}
-          <Card className="bg-black/40 backdrop-blur-lg border-white/20">
+          <Card className="card-enhanced">
             <CardHeader className="pb-2 md:pb-4">
               <CardTitle className="text-white text-base md:text-xl flex items-center gap-2">
                 <span className="text-xl md:text-2xl">📊</span>
@@ -934,7 +934,7 @@ export const OwnerDashboard = () => {
           </Card>
 
           {/* Profit Trend Chart */}
-          <Card className="bg-black/40 backdrop-blur-lg border-white/20">
+          <Card className="card-enhanced">
             <CardHeader className="pb-2 md:pb-4">
               <CardTitle className="text-white text-base md:text-xl flex items-center gap-2">
                 <span className="text-xl md:text-2xl">📈</span>
@@ -967,7 +967,7 @@ export const OwnerDashboard = () => {
           </Card>
 
           {/* Revenue Distribution Pie Chart */}
-          <Card className="bg-black/40 backdrop-blur-lg border-white/20">
+          <Card className="card-enhanced">
             <CardHeader className="pb-2 md:pb-4">
               <CardTitle className="text-white text-base md:text-xl flex items-center gap-2">
                 <span className="text-xl md:text-2xl">🥧</span>
@@ -998,7 +998,7 @@ export const OwnerDashboard = () => {
           </Card>
 
           {/* Quick Actions */}
-          <Card className="bg-black/40 backdrop-blur-lg border-white/20">
+          <Card className="card-enhanced">
             <CardHeader className="pb-2 md:pb-4">
               <CardTitle className="text-white text-base md:text-xl flex items-center gap-2">
                 <span className="text-xl md:text-2xl">⚡</span>

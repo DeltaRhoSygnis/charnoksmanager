@@ -207,7 +207,7 @@ export const Transactions = () => {
           </div>
 
           {/* Search and Filters */}
-          <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+          <Card className="card-visible">
             <CardContent className="p-6">
               <div className="flex gap-4">
                 <div className="flex-1">
@@ -245,7 +245,7 @@ export const Transactions = () => {
             {filteredWorkers.map((worker) => (
               <Card
                 key={worker.workerId}
-                className="bg-black/40 backdrop-blur-xl border-white/20 hover:border-white/40 transition-all duration-300 cursor-pointer group"
+                className="card-visible hover:border-white/40 transition-all duration-300 cursor-pointer group"
                 onClick={() => handleWorkerSelect(worker)}
               >
                 <CardHeader className="pb-4">
@@ -299,7 +299,7 @@ export const Transactions = () => {
           </div>
 
           {filteredWorkers.length === 0 && (
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardContent className="p-16 text-center">
                 <Users className="h-24 w-24 text-gray-500 mx-auto mb-6 opacity-50" />
                 <h3 className="text-2xl font-bold text-white mb-4">No Workers Found</h3>
@@ -341,7 +341,7 @@ export const Transactions = () => {
 
           {/* Worker Summary */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardContent className="p-6 text-center">
                 <DollarSign className="h-8 w-8 text-green-400 mx-auto mb-2" />
                 <p className="text-gray-400 text-sm">Total Sales</p>
@@ -351,7 +351,7 @@ export const Transactions = () => {
               </CardContent>
             </Card>
             
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardContent className="p-6 text-center">
                 <TrendingDown className="h-8 w-8 text-red-400 mx-auto mb-2" />
                 <p className="text-gray-400 text-sm">Total Expenses</p>
@@ -361,7 +361,7 @@ export const Transactions = () => {
               </CardContent>
             </Card>
             
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardContent className="p-6 text-center">
                 <Target className="h-8 w-8 text-blue-400 mx-auto mb-2" />
                 <p className="text-gray-400 text-sm">Net Amount</p>
@@ -371,7 +371,7 @@ export const Transactions = () => {
               </CardContent>
             </Card>
             
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardContent className="p-6 text-center">
                 <Activity className="h-8 w-8 text-purple-400 mx-auto mb-2" />
                 <p className="text-gray-400 text-sm">Total Transactions</p>
@@ -383,7 +383,7 @@ export const Transactions = () => {
           </div>
 
           {/* Daily Transactions */}
-          <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+          <Card className="card-visible">
             <CardHeader>
               <CardTitle className="text-white text-2xl flex items-center gap-3">
                 <Calendar className="h-6 w-6 text-blue-400" />
@@ -487,7 +487,7 @@ export const Transactions = () => {
           {/* Transactions List */}
           <div className="space-y-4">
             {transactions.map((transaction, index) => (
-              <Card key={index} className="bg-black/40 backdrop-blur-xl border-white/20">
+              <Card key={index} className="card-visible">
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
@@ -545,7 +545,7 @@ export const Transactions = () => {
           </div>
 
           {transactions.length === 0 && (
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardContent className="p-16 text-center">
                 <Calendar className="h-24 w-24 text-gray-500 mx-auto mb-6 opacity-50" />
                 <h3 className="text-2xl font-bold text-white mb-4">No Transactions</h3>

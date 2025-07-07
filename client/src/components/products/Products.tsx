@@ -369,7 +369,7 @@ export const Products = () => {
         </div>
 
         {/* Products Grid/Table */}
-        <Card className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-slide-in-left rounded-2xl overflow-hidden">
+        <Card className="card-visible shadow-2xl animate-slide-in-left rounded-2xl overflow-hidden">
           <CardHeader className="bg-black/20 border-b border-white/20">
             <CardTitle className="text-white text-2xl font-bold flex items-center gap-3">
               <TrendingUp className="h-6 w-6 text-green-400" />

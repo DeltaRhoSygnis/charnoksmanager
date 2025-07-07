@@ -210,7 +210,7 @@ export const ProductGrid = ({ onAddToCart, onVoiceTransaction }: ProductGridProp
         {filteredProducts.map((product) => (
           <Card
             key={product.id}
-            className="bg-black/40 backdrop-blur-lg border-white/20 hover:border-white/40 transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-2xl"
+            className="card-enhanced hover:border-white/40 transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-2xl"
             onClick={() => handleProductClick(product)}
           >
             <CardContent className="p-4">

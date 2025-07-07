@@ -81,7 +81,7 @@ export const SalesHistory = () => {
         </Badge>
       </div>
 
-      <Card className="bg-black/40 backdrop-blur-lg border-white/20">
+      <Card className="card-enhanced">
         <CardHeader>
           <CardTitle className="flex items-center text-lg text-white">
             <ShoppingCart className="h-5 w-5 mr-2" />
@@ -137,7 +137,7 @@ export const SalesHistory = () => {
         </Badge>
       </div>
 
-      <Card className="bg-black/40 backdrop-blur-lg border-white/20">
+      <Card className="card-enhanced">
         <CardHeader>
           <CardTitle className="flex items-center text-white">
             <ShoppingCart className="h-5 w-5 mr-2" />

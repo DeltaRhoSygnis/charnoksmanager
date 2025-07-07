@@ -86,7 +86,7 @@ export const Register = () => {
         </div>
 
         {/* Registration Form */}
-        <Card className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-bounce-in delay-300 rounded-2xl overflow-hidden">
+        <Card className="card-visible shadow-2xl animate-bounce-in delay-300 rounded-2xl overflow-hidden">
           <div className="absolute inset-x-0 top-0 h-1 charnoks-gradient"></div>
           
           <CardHeader className="text-center pb-6">

@@ -237,7 +237,7 @@ export const StreamlinedSalesInterface = () => {
           </div>
 
           {/* Products Grid/List */}
-          <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+          <Card className="card-visible">
             <CardHeader className="pb-4">
               <CardTitle className="text-white flex items-center gap-2">
                 <Package className="h-5 w-5" />
@@ -424,7 +424,7 @@ export const StreamlinedSalesInterface = () => {
               </CardContent>
             </Card>
           ) : (
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardContent className="p-8 text-center">
                 <DollarSign className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-white font-medium mb-2">No Product Selected</h3>

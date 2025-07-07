@@ -226,7 +226,7 @@ export const EnhancedSalesInterface = () => {
           
           {/* Product Grid Section */}
           <div className="lg:col-span-2">
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardHeader>
                 <CardTitle className="text-white text-2xl font-bold flex items-center gap-3">
                   <ShoppingCart className="h-6 w-6 text-orange-400" />
@@ -246,7 +246,7 @@ export const EnhancedSalesInterface = () => {
           <div className="space-y-6">
             
             {/* Cart Summary */}
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+            <Card className="card-visible">
               <CardHeader>
                 <CardTitle className="text-white text-xl font-bold flex items-center justify-between">
                   <span className="flex items-center gap-2">
@@ -325,7 +325,7 @@ export const EnhancedSalesInterface = () => {
 
             {/* Payment Section */}
             {cartItems.length > 0 && (
-              <Card className="bg-black/40 backdrop-blur-xl border-white/20">
+              <Card className="card-visible">
                 <CardHeader>
                   <CardTitle className="text-white text-xl font-bold flex items-center gap-2">
                     <CreditCard className="h-5 w-5 text-blue-400" />
