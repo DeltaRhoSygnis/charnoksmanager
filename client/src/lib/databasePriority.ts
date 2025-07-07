@@ -31,10 +31,9 @@ export class DatabasePriority {
       return;
     }
 
-    // Fallback: Local storage (clean demo mode)
-    console.log("⚠️ No database connections available, using local storage backup");
-    this.setActiveDatabase('local');
-    this.setupCleanDemoMode();
+    // No fallback to demo mode - require actual database connection
+    console.error("❌ No database connections available. Please check your database configuration.");
+    throw new Error("Database connection required. Please ensure your Supabase or Firebase configuration is correct.");
   }
 
   private static async testSupabase(): Promise<boolean> {
@@ -89,37 +88,15 @@ export class DatabasePriority {
     }
   }
 
-  private static setActiveDatabase(type: 'supabase' | 'firebase' | 'neon' | 'local') {
+  private static setActiveDatabase(type: 'supabase' | 'firebase' | 'neon') {
     localStorage.setItem('charnoks_active_database', type);
-    
-    if (type === 'local') {
-      OfflineState.setFirebaseAccess(false);
-      OfflineState.setOnlineStatus(false);
-    } else {
-      OfflineState.setFirebaseAccess(true);
-      OfflineState.setOnlineStatus(true);
-      // Clear demo mode when using real databases
-      LocalStorageDB.disableDemoMode();
-    }
-  }
-
-  private static setupCleanDemoMode() {
-    // Clear all existing demo data
-    LocalStorageDB.clearDemoData();
-    
-    // Clear any cached data to ensure fresh start
-    localStorage.removeItem('charnoks_demo_products');
-    localStorage.removeItem('charnoks_demo_transactions');
-    localStorage.removeItem('charnoks_demo_users');
-    
-    // Enable demo mode but don't initialize with sample data
-    LocalStorageDB.enableDemoMode();
-    
-    console.log("📱 Clean demo mode activated - no sample data loaded");
-    console.log("📊 Charts and graphs will show empty data until real transactions are added");
+    OfflineState.setFirebaseAccess(true);
+    OfflineState.setOnlineStatus(true);
+    // Always disable demo mode - we only use real databases
+    LocalStorageDB.disableDemoMode();
   }
 
   static getActiveDatabase(): string {
-    return localStorage.getItem('charnoks_active_database') || 'local';
+    return localStorage.getItem('charnoks_active_database') || 'supabase';
   }
 }

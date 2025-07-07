@@ -9,19 +9,17 @@ export class LocalStorageDB {
     DEMO_MODE: "charnoks_demo_mode",
   };
 
-  // Enable demo mode with sample data
+  // Demo mode completely removed - only use real databases
   static enableDemoMode() {
-    localStorage.setItem(this.KEYS.DEMO_MODE, "true");
-    this.initializeDemoData();
+    console.log("Demo mode disabled - using real databases only");
   }
 
   static isDemoMode(): boolean {
-    return localStorage.getItem(this.KEYS.DEMO_MODE) === "true";
+    return false; // Always false - no demo mode
   }
 
   // Disable demo mode and clear demo data
   static disableDemoMode() {
-    localStorage.removeItem(this.KEYS.DEMO_MODE);
     this.clearDemoData();
   }
 

@@ -9,84 +9,60 @@ export class DataService {
   static async getProducts(): Promise<Product[]> {
     const activeDb = DatabasePriority.getActiveDatabase();
     
-    try {
-      switch (activeDb) {
-        case 'supabase':
-          return await this.getProductsFromSupabase();
-        case 'firebase':
-          return await this.getProductsFromFirebase();
-        case 'neon':
-          return await this.getProductsFromNeon();
-        default:
-          return LocalStorageDB.getProducts();
-      }
-    } catch (error) {
-      console.error(`Error fetching products from ${activeDb}:`, error);
-      // Fallback to local storage
-      return LocalStorageDB.getProducts();
+    switch (activeDb) {
+      case 'supabase':
+        return await this.getProductsFromSupabase();
+      case 'firebase':
+        return await this.getProductsFromFirebase();
+      case 'neon':
+        return await this.getProductsFromNeon();
+      default:
+        throw new Error(`Invalid database type: ${activeDb}. Only real databases are supported.`);
     }
   }
 
   static async getTransactions(): Promise<Transaction[]> {
     const activeDb = DatabasePriority.getActiveDatabase();
     
-    try {
-      switch (activeDb) {
-        case 'supabase':
-          return await this.getTransactionsFromSupabase();
-        case 'firebase':
-          return await this.getTransactionsFromFirebase();
-        case 'neon':
-          return await this.getTransactionsFromNeon();
-        default:
-          return LocalStorageDB.getTransactions();
-      }
-    } catch (error) {
-      console.error(`Error fetching transactions from ${activeDb}:`, error);
-      // Fallback to local storage
-      return LocalStorageDB.getTransactions();
+    switch (activeDb) {
+      case 'supabase':
+        return await this.getTransactionsFromSupabase();
+      case 'firebase':
+        return await this.getTransactionsFromFirebase();
+      case 'neon':
+        return await this.getTransactionsFromNeon();
+      default:
+        throw new Error(`Invalid database type: ${activeDb}. Only real databases are supported.`);
     }
   }
 
   static async addProduct(product: Omit<Product, "id">): Promise<Product> {
     const activeDb = DatabasePriority.getActiveDatabase();
     
-    try {
-      switch (activeDb) {
-        case 'supabase':
-          return await this.addProductToSupabase(product);
-        case 'firebase':
-          return await this.addProductToFirebase(product);
-        case 'neon':
-          return await this.addProductToNeon(product);
-        default:
-          return LocalStorageDB.addProduct(product);
-      }
-    } catch (error) {
-      console.error(`Error adding product to ${activeDb}:`, error);
-      // Fallback to local storage
-      return LocalStorageDB.addProduct(product);
+    switch (activeDb) {
+      case 'supabase':
+        return await this.addProductToSupabase(product);
+      case 'firebase':
+        return await this.addProductToFirebase(product);
+      case 'neon':
+        return await this.addProductToNeon(product);
+      default:
+        throw new Error(`Invalid database type: ${activeDb}. Only real databases are supported.`);
     }
   }
 
   static async addTransaction(transaction: Omit<Transaction, "id">): Promise<Transaction> {
     const activeDb = DatabasePriority.getActiveDatabase();
     
-    try {
-      switch (activeDb) {
-        case 'supabase':
-          return await this.addTransactionToSupabase(transaction);
-        case 'firebase':
-          return await this.addTransactionToFirebase(transaction);
-        case 'neon':
-          return await this.addTransactionToNeon(transaction);
-        default:
-          return LocalStorageDB.addTransaction(transaction);
-      }
-    } catch (error) {
-      console.error(`Error adding transaction to ${activeDb}:`, error);
-      // Fallback to local storage
-      return LocalStorageDB.addTransaction(transaction);
+    switch (activeDb) {
+      case 'supabase':
+        return await this.addTransactionToSupabase(transaction);
+      case 'firebase':
+        return await this.addTransactionToFirebase(transaction);
+      case 'neon':
+        return await this.addTransactionToNeon(transaction);
+      default:
+        throw new Error(`Invalid database type: ${activeDb}. Only real databases are supported.`);
     }
   }
 
