@@ -115,17 +115,17 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
     <div className="min-h-screen w-full galaxy-animated cosmic-overlay">
       
 
-      {/* Mobile Content with Padding */}
-      <div className="pb-16 px-2 pt-2">
+      {/* Mobile Content with Enhanced Spacing */}
+      <div className="pb-20 px-4 pt-4">
         <div className="mobile-optimized">
           {children}
         </div>
       </div>
 
-      {/* Mobile Bottom Navigation - Compact */}
+      {/* Mobile Bottom Navigation - Enhanced */}
       <div className="fixed bottom-0 left-0 right-0 bg-black/70 backdrop-blur-xl border-t border-white/20 z-30">
         <div className={cn(
-          "grid h-14",
+          "grid h-16 px-2",
           navItems.length <= 3 ? "grid-cols-3" : navItems.length <= 4 ? "grid-cols-4" : "grid-cols-5"
         )}>
           {navItems.slice(0, 5).map((item) => (
@@ -133,14 +133,14 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
               key={item.path}
               to={item.path}
               className={cn(
-                "flex flex-col items-center justify-center space-y-1 text-xs transition-all duration-200",
+                "flex flex-col items-center justify-center space-y-1 text-xs transition-all duration-200 p-2 rounded-lg m-1",
                 location.pathname === item.path
-                  ? "text-orange-400 bg-orange-500/10"
-                  : "text-white/70 hover:text-white"
+                  ? "text-orange-400 bg-orange-500/20 border border-orange-500/30"
+                  : "text-white/70 hover:text-white hover:bg-white/10"
               )}
             >
-              <span className="text-base">{item.emoji}</span>
-              <span className="font-medium">{item.label}</span>
+              <span className="text-lg">{item.emoji}</span>
+              <span className="font-medium text-xs">{item.label}</span>
             </Link>
           ))}
         </div>

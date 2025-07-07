@@ -139,27 +139,32 @@ export const OptimizedLayout: React.FC<OptimizedLayoutProps> = ({ children }) =>
 
       
 
-      {/* Mobile Content - Compact */}
-      <div className="pb-12">
-        {children}
+      {/* Mobile Content - Enhanced Spacing */}
+      <div className="pb-20 px-4 pt-4 mobile-safe-area">
+        <div className="mobile-optimized">
+          {children}
+        </div>
       </div>
 
-      {/* Mobile Bottom Navigation - Compact */}
-      <div className="fixed bottom-0 left-0 right-0 bg-black/60 backdrop-blur-xl border-t border-white/20 z-30">
-        <div className="grid grid-cols-5 h-12">
+      {/* Mobile Bottom Navigation - Enhanced */}
+      <div className="fixed bottom-0 left-0 right-0 bg-black/70 backdrop-blur-xl border-t border-white/20 z-30">
+        <div className={cn(
+          "grid h-16 px-2",
+          filteredNavItems.length <= 3 ? "grid-cols-3" : filteredNavItems.length <= 4 ? "grid-cols-4" : "grid-cols-5"
+        )}>
           {filteredNavItems.slice(0, 5).map((item) => (
             <Link
               key={item.path}
               to={item.path}
               className={cn(
-                "flex flex-col items-center justify-center space-y-0.5 text-[10px] transition-all duration-200",
+                "flex flex-col items-center justify-center space-y-1 text-xs transition-all duration-200 p-2 rounded-lg m-1",
                 location.pathname === item.path
-                  ? "text-orange-400"
-                  : "text-white/70"
+                  ? "text-orange-400 bg-orange-500/20 border border-orange-500/30"
+                  : "text-white/70 hover:text-white hover:bg-white/10"
               )}
             >
-              <span className="text-sm">{item.emoji}</span>
-              <span className="font-medium">{item.label}</span>
+              <span className="text-lg">{item.emoji}</span>
+              <span className="font-medium text-xs">{item.label}</span>
             </Link>
           ))}
         </div>
