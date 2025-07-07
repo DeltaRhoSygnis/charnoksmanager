@@ -2,7 +2,9 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { OptimizedLayout } from "@/components/layout/OptimizedLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AnimatedCard } from "@/components/ui/animated-card";
 import { Button } from "@/components/ui/button";
+import { AnimatedButton } from "@/components/ui/animated-button";
 import { Badge } from "@/components/ui/badge";
 import { FirebaseTestButton } from "@/components/ui/firebase-test-button";
 import { CreateWorkerAccount } from "@/components/worker/CreateWorkerAccount";
@@ -50,7 +52,7 @@ export const Settings = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Profile Section */}
-            <Card className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-slide-in-left rounded-2xl overflow-hidden">
+            <AnimatedCard className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-slide-in-left rounded-2xl overflow-hidden">
               <CardHeader className="bg-black/20 border-b border-white/20">
                 <CardTitle className="text-white text-2xl font-bold flex items-center gap-3">
                   <User className="h-6 w-6 text-blue-400" />
@@ -89,11 +91,11 @@ export const Settings = () => {
                   </div>
                 </div>
               </CardContent>
-            </Card>
+            </AnimatedCard>
 
             {/* System Section */}
             <div className="space-y-8">
-              <Card className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-slide-in-right rounded-2xl overflow-hidden">
+              <AnimatedCard className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-slide-in-right rounded-2xl overflow-hidden">
                 <CardHeader className="bg-black/20 border-b border-white/20">
                   <CardTitle className="text-white text-2xl font-bold flex items-center gap-3">
                     <Star className="h-6 w-6 text-yellow-400" />
@@ -132,11 +134,11 @@ export const Settings = () => {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </AnimatedCard>
 
               {/* System Management - Owner Only */}
               {user?.role === "owner" && (
-                <Card className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-slide-in-right delay-200 rounded-2xl overflow-hidden">
+                <AnimatedCard className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-slide-in-right delay-200 rounded-2xl overflow-hidden">
                   <CardHeader className="bg-black/20 border-b border-white/20">
                     <CardTitle className="text-white text-2xl font-bold flex items-center gap-3">
                       <TestTube className="h-6 w-6 text-green-400" />
@@ -157,21 +159,22 @@ export const Settings = () => {
                       <div>
                         <h4 className="text-white font-bold text-lg mb-2">Worker Management</h4>
                         <p className="text-gray-400 mb-4">Create new worker accounts for your business</p>
-                        <Button
+                        <AnimatedButton
                           onClick={() => setShowCreateWorker(true)}
                           className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
+                          ripple={true}
                         >
                           <Plus className="h-5 w-5 mr-2" />
                           Add Worker Account
-                        </Button>
+                        </AnimatedButton>
                       </div>
                     </div>
                   </CardContent>
-                </Card>
+                </AnimatedCard>
               )}
 
               {/* Account Actions */}
-              <Card className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-slide-in-right delay-300 rounded-2xl overflow-hidden">
+              <AnimatedCard className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-slide-in-right delay-300 rounded-2xl overflow-hidden">
                 <CardHeader className="bg-black/20 border-b border-white/20">
                   <CardTitle className="text-white text-2xl font-bold">Account Actions</CardTitle>
                   <CardDescription className="text-gray-300 text-lg">
@@ -179,22 +182,23 @@ export const Settings = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="p-8">
-                  <Button
+                  <AnimatedButton
                     onClick={logout}
                     className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg text-lg"
+                    ripple={true}
                   >
                     <LogOut className="h-6 w-6 mr-3" />
                     Sign Out of Account
-                  </Button>
+                  </AnimatedButton>
                 </CardContent>
-              </Card>
+              </AnimatedCard>
             </div>
           </div>
 
 
 
           {/* Additional Info Section */}
-          <Card className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-bounce-in delay-500 rounded-2xl overflow-hidden">
+          <AnimatedCard className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-bounce-in delay-500 rounded-2xl overflow-hidden">
             <CardHeader className="bg-black/20 border-b border-white/20">
               <CardTitle className="text-white text-2xl font-bold text-center">
                 🌟 Charnoks Special Fried Chicken POS 🌟
@@ -212,7 +216,7 @@ export const Settings = () => {
                 voice-powered transactions, and a stunning galactic interface.
               </p>
             </CardContent>
-          </Card>
+          </AnimatedCard>
         </div>
       </div>
       

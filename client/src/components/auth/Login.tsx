@@ -5,9 +5,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
+import { AnimatedButton } from '@/components/ui/animated-button';
 import { Input } from '@/components/ui/input';
+import { AnimatedInput } from '@/components/ui/animated-input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { AnimatedCard } from '@/components/ui/animated-card';
 import { toast } from '@/hooks/use-toast';
 import { Stars, Sparkles, Lock, Mail, ChefHat } from 'lucide-react';
 import charnoksLogo from '@assets/389a9fc0-9ada-493a-a167-71ea82a7aabb_1751553002348.png';
@@ -81,7 +84,7 @@ export const Login = () => {
         </div>
 
         {/* Login Form */}
-        <Card className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-bounce-in delay-300 rounded-2xl overflow-hidden">
+        <AnimatedCard className="bg-black/40 backdrop-blur-xl border-white/20 shadow-2xl animate-bounce-in delay-300 rounded-2xl overflow-hidden">
           <div className="absolute inset-x-0 top-0 h-1 charnoks-gradient"></div>
           
           <CardHeader className="text-center pb-6">
@@ -102,12 +105,13 @@ export const Login = () => {
                   Email Address
                 </Label>
                 <div className="relative">
-                  <Input
+                  <AnimatedInput
                     id="email"
                     type="email"
                     placeholder="manager@charnoks.com"
                     {...register('email')}
                     className="bg-white/10 border-white/30 text-white placeholder-gray-400 h-14 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300 text-lg px-4"
+                    glow={true}
                   />
                 </div>
                 {errors.email && (
@@ -124,12 +128,13 @@ export const Login = () => {
                   Password
                 </Label>
                 <div className="relative">
-                  <Input
+                  <AnimatedInput
                     id="password"
                     type="password"
                     placeholder="••••••••"
                     {...register('password')}
                     className="bg-white/10 border-white/30 text-white placeholder-gray-400 h-14 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300 text-lg px-4"
+                    glow={true}
                   />
                 </div>
                 {errors.password && (
@@ -140,10 +145,12 @@ export const Login = () => {
                 )}
               </div>
 
-              <Button
+              <AnimatedButton
                 type="submit"
                 disabled={isLoading}
                 className="w-full charnoks-gradient hover:opacity-90 text-white font-bold py-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg text-lg h-14"
+                ripple={true}
+                lift={true}
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center gap-3">
@@ -156,7 +163,7 @@ export const Login = () => {
                     Enter Charnoks POS
                   </span>
                 )}
-              </Button>
+              </AnimatedButton>
             </form>
 
             <div className="mt-8 text-center">
@@ -171,7 +178,7 @@ export const Login = () => {
               </p>
             </div>
           </CardContent>
-        </Card>
+        </AnimatedCard>
       </div>
     </div>
   );

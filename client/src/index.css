@@ -252,6 +252,119 @@ html, body, #root {
   }
 }
 
+/* New Micro-Animation Keyframes */
+@keyframes button-press {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+@keyframes button-hover {
+  0% { transform: translateY(0px) scale(1); }
+  100% { transform: translateY(-2px) scale(1.02); }
+}
+
+@keyframes card-lift {
+  0% { 
+    transform: translateY(0px) scale(1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  100% { 
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  }
+}
+
+@keyframes input-focus {
+  0% { 
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+  }
+  100% { 
+    border-color: rgba(99, 102, 241, 0.5);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  }
+}
+
+@keyframes toast-slide-in {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes modal-backdrop {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes modal-slide-up {
+  0% {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes counter-increment {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes success-checkmark {
+  0% {
+    transform: scale(0) rotate(-45deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2) rotate(-45deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(-45deg);
+    opacity: 1;
+  }
+}
+
+@keyframes error-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes progress-fill {
+  0% { width: 0%; }
+  100% { width: var(--progress-width, 100%); }
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+@keyframes ripple-effect {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
 @keyframes slide-in-right {
   0% {
     transform: translateX(100%) scale(0.8);
@@ -424,6 +537,120 @@ html, body, #root {
 .hover-lift:hover {
   transform: translateY(-4px) scale(1.02);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Enhanced Micro-Animation Classes */
+
+/* Button Animations */
+.btn-animated {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-animated:hover {
+  animation: button-hover 0.2s ease-out forwards;
+}
+
+.btn-animated:active {
+  animation: button-press 0.1s ease-out;
+}
+
+.btn-animated::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transition: width 0.6s, height 0.6s, top 0.6s, left 0.6s;
+  transform: translate(-50%, -50%);
+}
+
+.btn-animated:active::before {
+  width: 300px;
+  height: 300px;
+  top: 50%;
+  left: 50%;
+}
+
+/* Card Animations */
+.card-animated {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+
+.card-animated:hover {
+  animation: card-lift 0.3s ease-out forwards;
+}
+
+/* Input Animations */
+.input-animated {
+  transition: all 0.2s ease-in-out;
+}
+
+.input-animated:focus {
+  animation: input-focus 0.2s ease-out forwards;
+}
+
+/* Loading Animations */
+.skeleton-animated {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+.counter-animated {
+  transition: all 0.2s ease-out;
+}
+
+.counter-animated.updating {
+  animation: counter-increment 0.3s ease-out;
+}
+
+/* Toast Animations */
+.toast-animated {
+  animation: toast-slide-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Modal Animations */
+.modal-backdrop-animated {
+  animation: modal-backdrop 0.2s ease-out;
+}
+
+.modal-content-animated {
+  animation: modal-slide-up 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Success/Error States */
+.success-animated {
+  animation: success-checkmark 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.error-animated {
+  animation: error-shake 0.5s ease-in-out;
+}
+
+/* Progress Animations */
+.progress-animated {
+  animation: progress-fill 1s ease-out;
+}
+
+/* Menu Animations */
+.menu-item-animated {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.menu-item-animated:hover {
+  transform: translateX(4px);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Navigation Animations */
+.nav-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Better focus states */

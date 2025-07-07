@@ -16,6 +16,7 @@ import {
   Users
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { AnimatedButton } from '@/components/ui/animated-button';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 
@@ -122,17 +123,18 @@ export const OptimizedLayout: React.FC<OptimizedLayoutProps> = ({ children }) =>
                 </div>
               </div>
               <Link to="/settings">
-                <Button variant="ghost" size="sm" className="text-white hover:bg-white/10 p-2">
+                <AnimatedButton variant="ghost" size="sm" className="text-white hover:bg-white/10 p-2" ripple={true}>
                   <Settings className="h-4 w-4" />
-                </Button>
+                </AnimatedButton>
               </Link>
-              <Button
+              <AnimatedButton
                 variant="ghost"
                 onClick={handleLogout}
                 className="text-red-400 hover:text-red-300 hover:bg-red-500/10 p-2"
+                ripple={true}
               >
                 <LogOut className="h-3 md:h-4 w-3 md:w-4" />
-              </Button>
+              </AnimatedButton>
             </div>
           </div>
         </div>

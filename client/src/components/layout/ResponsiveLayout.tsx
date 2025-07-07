@@ -16,6 +16,7 @@ import {
   Users
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { AnimatedButton } from '@/components/ui/animated-button';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 
@@ -133,13 +134,13 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
               key={item.path}
               to={item.path}
               className={cn(
-                "flex flex-col items-center justify-center space-y-1 text-xs transition-all duration-200 p-2 rounded-lg m-1",
+                "flex flex-col items-center justify-center space-y-1 text-xs nav-transition p-2 rounded-lg m-1 menu-item-animated",
                 location.pathname === item.path
-                  ? "text-orange-400 bg-orange-500/20 border border-orange-500/30"
-                  : "text-white/70 hover:text-white hover:bg-white/10"
+                  ? "text-orange-400 bg-orange-500/20 border border-orange-500/30 scale-105"
+                  : "text-white/70 hover:text-white hover:bg-white/10 hover:scale-105"
               )}
             >
-              <span className="text-lg">{item.emoji}</span>
+              <span className="text-lg transition-transform duration-200 hover:scale-110">{item.emoji}</span>
               <span className="font-medium text-xs">{item.label}</span>
             </Link>
           ))}
