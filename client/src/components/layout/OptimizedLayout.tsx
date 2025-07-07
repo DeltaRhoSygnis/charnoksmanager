@@ -31,7 +31,6 @@ export const OptimizedLayout: React.FC<OptimizedLayoutProps> = ({ children }) =>
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   
-  
   const isOwner = user?.role === 'owner';
 
   const navItems = [
