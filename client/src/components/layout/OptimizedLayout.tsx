@@ -87,28 +87,52 @@ export const OptimizedLayout: React.FC<OptimizedLayoutProps> = ({ children }) =>
 
   const MobileLayout = () => (
     <div className="min-h-screen w-full galaxy-animated cosmic-overlay">
-      {/* Mobile Header - Compact */}
+      {/* Mobile Header */}
       <div className="bg-black/40 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50">
-        <div className="px-2 py-1.5">
+        <div className="px-4 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-1.5">
-              <div className="flex items-center space-x-1.5">
-                <img 
-                  src={charnofsLogo} 
-                  alt="Charnoks" 
-                  className="h-8 w-8 object-contain animate-pulse-glow"
-                />
-                <div>
-                  <h1 className="text-xs font-bold charnoks-text">Charnoks</h1>
-                  <p className="text-[10px] text-white/70">{isOwner ? 'Owner' : 'Worker'}</p>
-                </div>
+            <div className="flex items-center space-x-3">
+              <img 
+                src={charnofsLogo} 
+                alt="Charnoks" 
+                className="h-10 w-10 object-contain animate-pulse-glow"
+              />
+              <div>
+                <h1 className="text-lg font-bold charnoks-text">Charnoks POS</h1>
+                <Badge className={cn(
+                  "text-xs",
+                  isOwner 
+                    ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0"
+                    : "bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0"
+                )}>
+                  {isOwner ? 'Owner' : 'Worker'} Dashboard
+                </Badge>
               </div>
             </div>
-            <Link to="/settings">
-              <Button variant="ghost" size="sm" className="text-white p-0.5 h-7 w-7">
-                ⚙️
+
+            <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2">
+                <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                  <Users className="h-3 w-3 text-white" />
+                </div>
+                <div className="hidden sm:block">
+                  <p className="text-xs font-medium text-white">{user?.email?.split('@')[0]}</p>
+                  <p className="text-[10px] text-white/70">{user?.email}</p>
+                </div>
+              </div>
+              <Link to="/settings">
+                <Button variant="ghost" size="sm" className="text-white">
+                  <Settings className="h-3 w-3" />
+                </Button>
+              </Link>
+              <Button
+                variant="ghost"
+                onClick={handleLogout}
+                className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+              >
+                <LogOut className="h-3 w-3" />
               </Button>
-            </Link>
+            </div>
           </div>
         </div>
       </div>
