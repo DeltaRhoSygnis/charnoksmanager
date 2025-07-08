@@ -1,1 +1,32 @@
-{}
+{
+  "client/src/components/sales/StreamlinedSalesInterface.tsx -> @/lib/dataService": {
+    "id": "client/src/components/sales/StreamlinedSalesInterface.tsx -> @/lib/dataService",
+    "files": [
+      "static/chunks/_app-pages-browser_client_src_lib_dataService_ts.js"
+    ]
+  },
+  "client/src/hooks/useAuth.tsx -> firebase/app": {
+    "id": "client/src/hooks/useAuth.tsx -> firebase/app",
+    "files": []
+  },
+  "client/src/hooks/useAuth.tsx -> firebase/auth": {
+    "id": "client/src/hooks/useAuth.tsx -> firebase/auth",
+    "files": []
+  },
+  "node_modules/@supabase/auth-js/dist/module/lib/helpers.js -> @supabase/node-fetch": {
+    "id": "node_modules/@supabase/auth-js/dist/module/lib/helpers.js -> @supabase/node-fetch",
+    "files": []
+  },
+  "node_modules/@supabase/functions-js/dist/module/helper.js -> @supabase/node-fetch": {
+    "id": "node_modules/@supabase/functions-js/dist/module/helper.js -> @supabase/node-fetch",
+    "files": []
+  },
+  "node_modules/@supabase/realtime-js/dist/module/RealtimeClient.js -> @supabase/node-fetch": {
+    "id": "node_modules/@supabase/realtime-js/dist/module/RealtimeClient.js -> @supabase/node-fetch",
+    "files": []
+  },
+  "node_modules/@supabase/storage-js/dist/module/lib/helpers.js -> @supabase/node-fetch": {
+    "id": "node_modules/@supabase/storage-js/dist/module/lib/helpers.js -> @supabase/node-fetch",
+    "files": []
+  }
+}
