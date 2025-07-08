@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { FirebaseTestButton } from "@/components/ui/firebase-test-button";
 import { CreateWorkerAccount } from "@/components/worker/CreateWorkerAccount";
 import { ThemeSelector } from "@/components/theme/ThemeSelector";
-import { Settings as SettingsIcon, User, LogOut, Crown, Shield, Star, Plus, TestTube, Palette } from "lucide-react";
+import { Settings as SettingsIcon, User, LogOut, Crown, Shield, Star, Plus, TestTube, Palette, Smartphone, Database } from "lucide-react";
 
 export const Settings = () => {
   const { user, logout } = useAuth();

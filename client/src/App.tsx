@@ -13,11 +13,11 @@ import { RoleBasedRoute } from "@/components/auth/RoleBasedRoute";
 import { FirebaseTest } from "@/lib/firebaseTest";
 import { Login } from "@/components/auth/Login";
 import { Register } from "@/components/auth/Register";
-import { Dashboard } from "@/components/dashboard/Dashboard";
-import { Products } from "@/components/products/Products";
-import { Sales } from "@/pages/Sales";
-import { Expenses } from "@/pages/Expenses";
-import { Analytics } from "@/components/analytics/Analytics";
+import { Home } from "@/pages/Home";
+import { ProductsModern } from "@/pages/ProductsModern";
+import { SalesModern } from "@/pages/SalesModern";
+import { ExpensesModern } from "@/pages/ExpensesModern";
+import { AnalysisModern } from "@/pages/AnalysisModern";
 import { Summary } from "@/components/reports/Summary";
 import { Settings } from "@/pages/Settings";
 import { Transactions } from "@/pages/Transactions";
@@ -76,10 +76,10 @@ function App() {
             <Route path="/register" element={<Register />} />
             {/* Shared Routes - Accessible by both owners and workers */}
             <Route
-              path="/dashboard"
+              path="/"
               element={
                 <RoleBasedRoute allowedRoles={['owner', 'worker']}>
-                  <Dashboard />
+                  <Home />
                 </RoleBasedRoute>
               }
             />
@@ -87,7 +87,7 @@ function App() {
               path="/sales"
               element={
                 <RoleBasedRoute allowedRoles={['owner', 'worker']}>
-                  <Sales />
+                  <SalesModern />
                 </RoleBasedRoute>
               }
             />
@@ -95,7 +95,7 @@ function App() {
               path="/expenses"
               element={
                 <RoleBasedRoute allowedRoles={['owner', 'worker']}>
-                  <Expenses />
+                  <ExpensesModern />
                 </RoleBasedRoute>
               }
             />
@@ -113,7 +113,7 @@ function App() {
               path="/products"
               element={
                 <RoleBasedRoute allowedRoles={['owner']} redirectTo="/">
-                  <Products />
+                  <ProductsModern />
                 </RoleBasedRoute>
               }
             />
@@ -126,18 +126,18 @@ function App() {
               }
             />
             <Route
-              path="/analytics"
+              path="/analysis"
               element={
                 <RoleBasedRoute allowedRoles={['owner']} redirectTo="/">
-                  <Analytics />
+                  <AnalysisModern />
                 </RoleBasedRoute>
               }
             />
             <Route
-              path="/analysis"
+              path="/analytics"
               element={
                 <RoleBasedRoute allowedRoles={['owner']} redirectTo="/">
-                  <DataAnalysis />
+                  <AnalysisModern />
                 </RoleBasedRoute>
               }
             />
@@ -145,7 +145,7 @@ function App() {
               path="/data-analysis"
               element={
                 <RoleBasedRoute allowedRoles={['owner']} redirectTo="/">
-                  <DataAnalysis />
+                  <AnalysisModern />
                 </RoleBasedRoute>
               }
             />
@@ -158,10 +158,10 @@ function App() {
               }
             />
             <Route
-              path="/"
+              path="/dashboard"
               element={
                 <RoleBasedRoute allowedRoles={['owner', 'worker']}>
-                  <Dashboard />
+                  <Home />
                 </RoleBasedRoute>
               }
             />
