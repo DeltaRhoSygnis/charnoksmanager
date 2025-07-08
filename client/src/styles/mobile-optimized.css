@@ -39,13 +39,82 @@
   margin-bottom: 0.75rem;
 }
 
-/* Spacious Card Design */
+/* Spacious Card Design - iPhone SE Optimized */
 .mobile-optimized .card,
 .mobile-optimized [class*="card"] {
-  padding: 1.25rem !important;
+  padding: 1rem !important;
   margin-bottom: 1rem !important;
   border-radius: 1rem !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  width: 100% !important;
+  min-height: 3rem !important;
+}
+
+/* iPhone SE Specific Optimizations (375px width) */
+@media (max-width: 375px) {
+  .mobile-optimized .card,
+  .mobile-optimized [class*="card"] {
+    padding: 0.75rem !important;
+    margin-bottom: 0.75rem !important;
+    min-height: 2.5rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  .mobile-optimized .card-header {
+    padding: 0.5rem !important;
+  }
+  
+  .mobile-optimized .card-content {
+    padding: 0.75rem !important;
+  }
+  
+  .mobile-optimized .card-title {
+    font-size: 1rem !important;
+    line-height: 1.3 !important;
+  }
+  
+  .mobile-optimized .card-description {
+    font-size: 0.75rem !important;
+    line-height: 1.3 !important;
+  }
+  
+  /* Make grids more mobile-friendly */
+  .mobile-optimized .grid-cols-2 {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+  
+  .mobile-optimized .grid-cols-3 {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+  
+  .mobile-optimized .grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+  
+  /* Wider text inputs and buttons */
+  .mobile-optimized input,
+  .mobile-optimized button,
+  .mobile-optimized select,
+  .mobile-optimized textarea {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Page container optimization */
+  .mobile-optimized .page-container {
+    padding: 0.75rem !important;
+  }
+  
+  .mobile-optimized .content-wrapper {
+    padding: 0.5rem !important;
+  }
 }
 
 .mobile-optimized .card-header {
@@ -282,15 +351,46 @@
   padding-right: max(1rem, env(safe-area-inset-right)) !important;
 }
 
-/* Mobile Container Improvements */
+/* Mobile Container Improvements - iPhone SE Optimized */
 .mobile-optimized .page-container {
-  padding: 1.5rem 1rem !important;
-  margin-bottom: 2rem !important;
+  padding: 1rem !important;
+  margin-bottom: 1.5rem !important;
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 .mobile-optimized .content-wrapper {
   max-width: 100% !important;
   margin: 0 auto !important;
+  padding: 0.5rem !important;
+  width: 100% !important;
+}
+
+/* Wider boxes and components for iPhone SE */
+.mobile-optimized .w-full,
+.mobile-optimized .width-full,
+.mobile-optimized [class*="w-full"] {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.mobile-optimized .container {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}
+
+/* Settings page specific optimizations */
+.mobile-optimized .settings-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0.5rem !important;
+}
+
+.mobile-optimized .theme-selector {
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 /* Desktop Optimizations */

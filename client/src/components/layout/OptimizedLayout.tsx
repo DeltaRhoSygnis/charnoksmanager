@@ -143,9 +143,11 @@ export const OptimizedLayout: React.FC<OptimizedLayoutProps> = ({ children }) =>
       
 
       {/* Mobile Content - Enhanced Spacing */}
-      <div className="pb-20 px-4 pt-4 mobile-safe-area">
-        <div className="mobile-optimized">
-          {children}
+      <div className="pb-20 px-2 pt-4 mobile-safe-area w-full">
+        <div className="mobile-optimized w-full max-w-full">
+          <div className="w-full max-w-full">
+            {children}
+          </div>
         </div>
       </div>
 

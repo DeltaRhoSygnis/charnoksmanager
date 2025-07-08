@@ -43,7 +43,7 @@ export const Home = () => {
       <div className="min-h-screen">
         {/* Hero Section */}
         <div className="relative overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="w-full max-w-full mx-auto px-2 sm:px-6 lg:px-8 py-6 md:py-12">
             <div className="text-center space-y-8">
               {/* Logo */}
               <div className="flex items-center justify-center gap-3 mb-6 animate-bounce-in">
@@ -95,7 +95,7 @@ export const Home = () => {
         </div>
 
         {/* Features Section */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="w-full max-w-full mx-auto px-2 sm:px-6 lg:px-8 py-8 md:py-16">
           <div className="text-center mb-12 animate-bounce-in">
             <div className="flex items-center justify-center gap-2 mb-4">
               <Sparkles className="w-8 h-8 text-yellow-400" />
@@ -109,17 +109,17 @@ export const Home = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 w-full">
             {features.map((feature, index) => (
-              <Card key={index} className="bg-black/20 border-white/20 backdrop-blur-sm hover:bg-black/30 transition-all duration-300 hover:scale-105 animate-slide-in-left" style={{ animationDelay: `${index * 100}ms` }}>
-                <CardHeader className="text-center">
-                  <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${feature.gradient} p-4 border border-white/20`}>
+              <Card key={index} className="bg-black/20 border-white/20 backdrop-blur-sm hover:bg-black/30 transition-all duration-300 hover:scale-105 animate-slide-in-left w-full" style={{ animationDelay: `${index * 100}ms` }}>
+                <CardHeader className="text-center pb-3">
+                  <div className={`w-12 h-12 md:w-16 md:h-16 mx-auto mb-2 md:mb-4 rounded-2xl bg-gradient-to-br ${feature.gradient} p-3 md:p-4 border border-white/20`}>
                     <feature.icon className="w-full h-full text-white" />
                   </div>
-                  <CardTitle className="text-xl text-white">{feature.title}</CardTitle>
+                  <CardTitle className="text-lg md:text-xl text-white">{feature.title}</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-center text-white/80">
+                <CardContent className="pt-0">
+                  <CardDescription className="text-center text-white/80 text-sm md:text-base">
                     {feature.description}
                   </CardDescription>
                 </CardContent>
@@ -130,7 +130,7 @@ export const Home = () => {
 
         {/* CTA Section */}
         <div className="bg-gradient-to-r from-orange-500/20 to-red-500/20 border-t border-white/20 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+          <div className="w-full max-w-full mx-auto px-2 sm:px-6 lg:px-8 py-8 md:py-16 text-center">
             <h2 className="text-3xl font-bold mb-4 text-white animate-bounce-in">
               Ready to modernize your restaurant?
             </h2>
