@@ -118,10 +118,7 @@ export const Settings = () => {
                     <Badge className="bg-purple-600 text-white font-bold px-3 py-1 mt-2 text-xs">Active</Badge>
                   </div>
                 </div>
-                
-                <div className="bg-white/5 rounded-lg p-4 border border-white/10 mt-4 w-full">
-                  <ThemeSelector showTitle={false} compact={false} />
-                </div>
+
               </CardContent>
             </AnimatedCard>
 
