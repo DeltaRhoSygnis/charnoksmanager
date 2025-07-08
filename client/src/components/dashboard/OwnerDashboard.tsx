@@ -237,46 +237,47 @@ export const OwnerDashboard = () => {
       <div className="p-2 space-y-3">
 
         {/* 2x2 Grid Cards - Reference Layout */}
-        <div className="grid grid-cols-2 gap-2 animate-bounce-in animation-resistant">
+        <div className="grid grid-cols-2 gap-4 animate-bounce-in animation-resistant">
           {/* Total Sales */}
-          <Card className="card-reference text-white aspect-square hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-2 h-full flex flex-col justify-center">
-              <div className="text-left space-y-0.5">
-                <p className="reference-title text-solid opacity-80">Total</p>
-                <p className="reference-title text-solid opacity-80">Sales 📈</p>
-                <p className="reference-value text-solid mt-1">₱{stats.totalSales.toLocaleString()}</p>
+          <Card className="card-smart-home aspect-square hover:scale-105 transition-transform duration-300">
+            <CardContent className="p-4 h-full flex flex-col justify-center">
+              <div className="text-left space-y-1">
+                <p className="text-smart-home-secondary text-sm font-medium">Total Sales</p>
+                <p className="text-smart-home-primary text-2xl font-bold">₱{stats.totalSales.toLocaleString()}</p>
+                <p className="text-smart-home-secondary text-xs">📈 Revenue</p>
               </div>
             </CardContent>
           </Card>
 
           {/* Total Expenses */}
-          <Card className="card-reference text-white aspect-square hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-2 h-full flex flex-col justify-center">
-              <div className="text-left space-y-0.5">
-                <p className="reference-title text-solid opacity-80">Total</p>
-                <p className="reference-title text-solid opacity-80">Expenses 📊</p>
-                <p className="reference-value text-solid mt-1">₱{stats.totalExpenses.toLocaleString()}</p>
+          <Card className="card-smart-home aspect-square hover:scale-105 transition-transform duration-300">
+            <CardContent className="p-4 h-full flex flex-col justify-center">
+              <div className="text-left space-y-1">
+                <p className="text-smart-home-secondary text-sm font-medium">Total Expenses</p>
+                <p className="text-smart-home-primary text-2xl font-bold">₱{stats.totalExpenses.toLocaleString()}</p>
+                <p className="text-smart-home-secondary text-xs">📊 Costs</p>
               </div>
             </CardContent>
           </Card>
 
           {/* Net Profit */}
-          <Card className="card-reference text-white aspect-square hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-2 h-full flex flex-col justify-center">
-              <div className="text-left space-y-0.5">
-                <p className="reference-title text-solid opacity-80">Net Profit 📊</p>
-                <p className="reference-value text-solid mt-1">₱{(stats.totalSales - stats.totalExpenses).toLocaleString()}</p>
+          <Card className="card-smart-home aspect-square hover:scale-105 transition-transform duration-300">
+            <CardContent className="p-4 h-full flex flex-col justify-center">
+              <div className="text-left space-y-1">
+                <p className="text-smart-home-secondary text-sm font-medium">Net Profit</p>
+                <p className="text-smart-home-accent text-2xl font-bold">₱{(stats.totalSales - stats.totalExpenses).toLocaleString()}</p>
+                <p className="text-smart-home-secondary text-xs">💰 Earnings</p>
               </div>
             </CardContent>
           </Card>
 
           {/* Today's Revenue */}
-          <Card className="card-reference text-white aspect-square hover:scale-105 transition-transform duration-300">
-            <CardContent className="p-2 h-full flex flex-col justify-center">
-              <div className="text-left space-y-0.5">
-                <p className="reference-title text-solid opacity-80">Today's</p>
-                <p className="reference-title text-solid opacity-80">Revenue 💰</p>
-                <p className="reference-value text-solid mt-1">₱0</p>
+          <Card className="card-smart-home aspect-square hover:scale-105 transition-transform duration-300">
+            <CardContent className="p-4 h-full flex flex-col justify-center">
+              <div className="text-left space-y-1">
+                <p className="text-smart-home-secondary text-sm font-medium">Today's Revenue</p>
+                <p className="text-smart-home-primary text-2xl font-bold">₱0</p>
+                <p className="text-smart-home-secondary text-xs">📅 Daily</p>
               </div>
             </CardContent>
           </Card>
@@ -284,10 +285,10 @@ export const OwnerDashboard = () => {
 
         {/* Weekly Performance Chart - Reference Style */}
         <div className="animate-bounce-in animation-resistant delay-200">
-          <Card className="card-reference text-white">
-            <CardContent className="p-2">
-              <div className="mb-2">
-                <h3 className="reference-title text-solid opacity-80">📊 Weekly Performance</h3>
+          <Card className="card-smart-home">
+            <CardContent className="p-4">
+              <div className="mb-4">
+                <h3 className="text-smart-home-primary text-lg font-semibold">📊 Weekly Performance</h3>
               </div>
               <div className="h-24">
                 <ResponsiveContainer width="100%" height="100%">
@@ -299,19 +300,19 @@ export const OwnerDashboard = () => {
                       tick={{ fill: 'white', fontSize: 10 }}
                     />
                     <YAxis hide />
-                    <Bar dataKey="sales" fill="#22c55e" radius={[3, 3, 0, 0]} />
-                    <Bar dataKey="expenses" fill="#ef4444" radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="sales" fill="hsl(239, 84%, 67%)" radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="expenses" fill="hsl(340, 82%, 70%)" radius={[3, 3, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <div className="flex justify-center gap-3 mt-2">
-                <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-green-500 rounded"></div>
-                  <span className="reference-title text-solid opacity-80">Sales</span>
+              <div className="flex justify-center gap-4 mt-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded" style={{backgroundColor: 'hsl(239, 84%, 67%)'}}></div>
+                  <span className="text-smart-home-secondary text-sm">Sales</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-red-500 rounded"></div>
-                  <span className="reference-title text-solid opacity-80">Expenses</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded" style={{backgroundColor: 'hsl(340, 82%, 70%)'}}></div>
+                  <span className="text-smart-home-secondary text-sm">Expenses</span>
                 </div>
               </div>
             </CardContent>

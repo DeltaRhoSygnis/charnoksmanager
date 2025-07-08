@@ -241,6 +241,26 @@ export const themes: Record<string, Theme> = {
     gradient: 'linear-gradient(135deg, hsl(267, 87%, 62%), hsl(273, 85%, 70%), hsl(280, 84%, 76%))',
     isDark: false,
   },
+  smartHome: {
+    id: 'smartHome',
+    name: 'Smart Home Blue',
+    colors: {
+      primary: 'hsl(239, 84%, 67%)',      // #4F46E5 - Deep royal blue from reference
+      secondary: 'hsl(340, 82%, 70%)',    // #FF6B9D - Vibrant pink accent
+      accent: 'hsl(280, 60%, 50%)',       // Purple highlights
+      background: 'hsl(235, 39%, 15%)',   // Very dark blue background
+      surface: 'hsl(0, 0%, 100%)',        // Pure white cards like reference
+      text: 'hsl(0, 0%, 98%)',            // Light text for dark areas
+      textSecondary: 'hsl(220, 13%, 91%)', // Light gray muted text
+      border: 'hsl(220, 13%, 91%)',       // Light borders
+      success: 'hsl(142, 76%, 36%)',
+      warning: 'hsl(38, 92%, 50%)',
+      error: 'hsl(0, 84%, 60%)',
+      info: 'hsl(199, 89%, 48%)',
+    },
+    gradient: 'linear-gradient(135deg, hsl(235, 39%, 15%), hsl(239, 84%, 67%), hsl(340, 82%, 70%))',
+    isDark: true,
+  },
   cyberpunk: {
     id: 'cyberpunk',
     name: 'Cyberpunk',
@@ -264,7 +284,7 @@ export const themes: Record<string, Theme> = {
 };
 
 export class ThemeManager {
-  private static currentTheme: Theme = themes.charnoks;
+  private static currentTheme: Theme = themes.smartHome;
   private static listeners: ((theme: Theme) => void)[] = [];
 
   static init() {
@@ -272,7 +292,7 @@ export class ThemeManager {
     if (savedTheme && themes[savedTheme]) {
       this.setTheme(savedTheme);
     } else {
-      this.setTheme('charnoks');
+      this.setTheme('smartHome');
     }
   }
 

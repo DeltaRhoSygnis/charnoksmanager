@@ -536,6 +536,42 @@ html, body, #root {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8);
 }
 
+/* Smart Home inspired cards - Clean white cards like reference */
+.card-smart-home {
+  background: rgba(255, 255, 255, 0.98) !important; /* Pure white cards */
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(79, 70, 229, 0.1); /* Subtle blue border */
+  box-shadow: 0 4px 20px rgba(79, 70, 229, 0.1);
+  border-radius: 16px; /* More rounded like modern apps */
+  position: relative;
+  z-index: 15;
+  transition: all 0.3s ease;
+  min-height: 80px;
+}
+
+.card-smart-home:hover {
+  background: rgba(255, 255, 255, 1) !important;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(79, 70, 229, 0.15);
+  border-color: rgba(79, 70, 229, 0.2);
+}
+
+/* Smart Home text styling - Better contrast for white cards */
+.text-smart-home-primary {
+  color: hsl(239, 84%, 67%) !important; /* Blue primary text */
+  font-weight: 600;
+}
+
+.text-smart-home-secondary {
+  color: hsl(220, 13%, 46%) !important; /* Muted gray text */
+  font-weight: 400;
+}
+
+.text-smart-home-accent {
+  color: hsl(340, 82%, 70%) !important; /* Pink accent text */
+  font-weight: 600;
+}
+
 /* Aspect ratio utility for square cards */
 .aspect-square {
   aspect-ratio: 1 / 1;

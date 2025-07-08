@@ -152,10 +152,16 @@ export const ThemeSelector = ({ showTitle = true, compact = false }: ThemeSelect
                       Default
                     </Badge>
                   )}
+                  {theme.id === 'smartHome' && (
+                    <Badge className="text-[10px] bg-blue-500/20 text-blue-400 border-blue-500/30 mt-1">
+                      <Sparkles className="h-2 w-2 mr-1" />
+                      New
+                    </Badge>
+                  )}
                   {theme.id === 'cyberpunk' && (
                     <Badge className="text-[10px] bg-cyan-500/20 text-cyan-400 border-cyan-500/30 mt-1">
                       <Sparkles className="h-2 w-2 mr-1" />
-                      New
+                      Featured
                     </Badge>
                   )}
                   {(theme.id === 'modernTeal' || theme.id === 'navyProfessional') && (
