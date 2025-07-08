@@ -1,7 +1,7 @@
 
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { ShoppingCart, BarChart3, Package, Users, Star, Sparkles } from 'lucide-react';
+import { ShoppingCart, BarChart3, Package, Users, Star, Sparkles, TrendingUp, DollarSign, Clock, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { OptimizedLayout } from '@/components/layout/OptimizedLayout';
@@ -11,142 +11,196 @@ const charnofsLogo = "/lovable-uploads/389a9fc0-9ada-493a-a167-71ea82a7aabb.png"
 export const Home = () => {
   const { user } = useAuth();
 
-  const features = [
-    {
-      icon: ShoppingCart,
-      title: "Quick Sales",
-      description: "Streamlined sales recording without shopping cart for faster transactions",
-      gradient: "from-green-500 to-emerald-600"
-    },
-    {
-      icon: Package,
-      title: "Smart Inventory",
-      description: "Real-time product tracking with automatic stock updates",
-      gradient: "from-blue-500 to-indigo-600"
-    },
-    {
-      icon: BarChart3,
-      title: "Advanced Analytics",
-      description: "Comprehensive reports and performance insights with beautiful charts",
-      gradient: "from-purple-500 to-pink-600"
-    },
-    {
-      icon: Users,
-      title: "Multi-User System",
-      description: "Owner and worker roles with different access levels and permissions",
-      gradient: "from-orange-500 to-red-600"
-    }
-  ];
-
   return (
-    <OptimizedLayout>
-      <div className="min-h-screen">
-        {/* Hero Section */}
-        <div className="relative overflow-hidden">
-          <div className="w-full max-w-full mx-auto px-2 sm:px-6 lg:px-8 py-6 md:py-12">
-            <div className="text-center space-y-8">
-              {/* Logo */}
-              <div className="flex items-center justify-center gap-3 mb-6 animate-bounce-in">
-                <img 
-                  src={charnofsLogo} 
-                  alt="Charnoks Logo" 
-                  className="w-48 h-48 object-contain animate-pulse-glow"
-                />
-              </div>
-              
-              <div className="space-y-4 animate-slide-in-left">
-                <h1 className="text-4xl md:text-6xl font-bold charnoks-text mb-6">
-                  Charnoks POS System
-                </h1>
-                <p className="text-xl md:text-2xl text-white font-medium mb-8 max-w-3xl mx-auto">
-                  Complete Point of Sale solution for your Special Fried Chicken restaurant
-                </p>
-              </div>
-              
-              {user ? (
-                <div className="space-y-4 animate-slide-in-right">
-                  <div className="flex items-center justify-center gap-2">
-                    <Star className="w-6 h-6 text-yellow-400" />
-                    <p className="text-lg text-white font-medium">Welcome back, {user.email?.split('@')[0]}!</p>
-                    <Star className="w-6 h-6 text-yellow-400" />
-                  </div>
-                  <Link to="/dashboard">
-                    <Button size="lg" className="text-lg px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 border-none">
-                      Go to Dashboard
-                    </Button>
-                  </Link>
-                </div>
-              ) : (
-                <div className="space-x-4 animate-slide-in-right">
-                  <Link to="/login">
-                    <Button size="lg" className="text-lg px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 border-none">
-                      Login
-                    </Button>
-                  </Link>
-                  <Link to="/register">
-                    <Button variant="outline" size="lg" className="text-lg px-8 py-3 border-white/30 text-white hover:bg-white/10">
-                      Get Started
-                    </Button>
-                  </Link>
-                </div>
-              )}
-            </div>
-          </div>
+    <div className="modern-app-container">
+      {/* Modern App Header */}
+      <div className="modern-app-header">
+        <div className="modern-app-title">
+          🌟 Charnoks POS
         </div>
-
-        {/* Features Section */}
-        <div className="w-full max-w-full mx-auto px-2 sm:px-6 lg:px-8 py-8 md:py-16">
-          <div className="text-center mb-12 animate-bounce-in">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Sparkles className="w-8 h-8 text-yellow-400" />
-              <h2 className="text-3xl font-bold text-white">
-                Everything you need to run your restaurant
-              </h2>
-              <Sparkles className="w-8 h-8 text-yellow-400" />
-            </div>
-            <p className="text-xl text-white/80">
-              Powerful features designed for modern restaurant management
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 w-full">
-            {features.map((feature, index) => (
-              <Card key={index} className="bg-black/20 border-white/20 backdrop-blur-sm hover:bg-black/30 transition-all duration-300 hover:scale-105 animate-slide-in-left w-full" style={{ animationDelay: `${index * 100}ms` }}>
-                <CardHeader className="text-center pb-3">
-                  <div className={`w-12 h-12 md:w-16 md:h-16 mx-auto mb-2 md:mb-4 rounded-2xl bg-gradient-to-br ${feature.gradient} p-3 md:p-4 border border-white/20`}>
-                    <feature.icon className="w-full h-full text-white" />
-                  </div>
-                  <CardTitle className="text-lg md:text-xl text-white">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <CardDescription className="text-center text-white/80 text-sm md:text-base">
-                    {feature.description}
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* CTA Section */}
-        <div className="bg-gradient-to-r from-orange-500/20 to-red-500/20 border-t border-white/20 backdrop-blur-sm">
-          <div className="w-full max-w-full mx-auto px-2 sm:px-6 lg:px-8 py-8 md:py-16 text-center">
-            <h2 className="text-3xl font-bold mb-4 text-white animate-bounce-in">
-              Ready to modernize your restaurant?
-            </h2>
-            <p className="text-xl mb-8 text-white/80 animate-slide-in-left">
-              Join the digital revolution in restaurant management
-            </p>
-            {!user && (
-              <Link to="/register">
-                <Button size="lg" className="text-lg px-8 py-3 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 border-none animate-slide-in-right">
-                  Start Free Trial
-                </Button>
-              </Link>
-            )}
-          </div>
+        <div className="modern-app-subtitle">
+          Welcome back, {user?.email?.split('@')[0]}!
         </div>
       </div>
-    </OptimizedLayout>
+
+      {/* Main Content */}
+      <div className="px-4 pb-20">
+        {user?.role === "owner" ? <ModernOwnerDashboard /> : <ModernWorkerDashboard />}
+      </div>
+    </div>
+  );
+};
+
+const ModernOwnerDashboard = () => {
+  return (
+    <div className="space-y-4">
+      {/* Quick Stats */}
+      <div className="modern-stats-grid">
+        <div className="modern-stats-card">
+          <div className="modern-stats-value">$2,847</div>
+          <div className="modern-stats-label">Today's Sales</div>
+        </div>
+        <div className="modern-stats-card">
+          <div className="modern-stats-value">156</div>
+          <div className="modern-stats-label">Transactions</div>
+        </div>
+        <div className="modern-stats-card">
+          <div className="modern-stats-value">23</div>
+          <div className="modern-stats-label">Products</div>
+        </div>
+        <div className="modern-stats-card">
+          <div className="modern-stats-value">5</div>
+          <div className="modern-stats-label">Workers</div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="modern-card">
+        <div className="modern-card-header">
+          <div className="modern-card-icon">
+            <TrendingUp className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="modern-card-title">Quick Actions</div>
+            <div className="modern-card-subtitle">Manage your business efficiently</div>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Link to="/sales">
+            <button className="modern-btn text-sm w-full">
+              <ShoppingCart className="w-4 h-4 mr-2" />
+              New Sale
+            </button>
+          </Link>
+          <Link to="/products">
+            <button className="modern-btn-secondary text-sm w-full">
+              <Package className="w-4 h-4 mr-2" />
+              Add Product
+            </button>
+          </Link>
+          <Link to="/settings">
+            <button className="modern-btn-secondary text-sm w-full">
+              <Users className="w-4 h-4 mr-2" />
+              Add Worker
+            </button>
+          </Link>
+          <Link to="/analysis">
+            <button className="modern-btn text-sm w-full">
+              <BarChart3 className="w-4 h-4 mr-2" />
+              View Reports
+            </button>
+          </Link>
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <div className="modern-card">
+        <div className="modern-card-header">
+          <div className="modern-card-icon">
+            <Clock className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="modern-card-title">Recent Activity</div>
+            <div className="modern-card-subtitle">Latest transactions and updates</div>
+          </div>
+        </div>
+        <div className="space-y-3">
+          {[1, 2, 3].map((item) => (
+            <div key={item} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                  <ShoppingCart className="w-4 h-4 text-purple-600" />
+                </div>
+                <div>
+                  <div className="font-medium text-sm">Sale #00{item}</div>
+                  <div className="text-xs text-gray-500">2 minutes ago</div>
+                </div>
+              </div>
+              <div className="modern-badge">
+                $45.00
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ModernWorkerDashboard = () => {
+  return (
+    <div className="space-y-4">
+      {/* Today's Performance */}
+      <div className="modern-stats-grid">
+        <div className="modern-stats-card">
+          <div className="modern-stats-value">$456</div>
+          <div className="modern-stats-label">Your Sales</div>
+        </div>
+        <div className="modern-stats-card">
+          <div className="modern-stats-value">12</div>
+          <div className="modern-stats-label">Transactions</div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="modern-card">
+        <div className="modern-card-header">
+          <div className="modern-card-icon">
+            <ShoppingCart className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="modern-card-title">Quick Sale</div>
+            <div className="modern-card-subtitle">Record a new transaction</div>
+          </div>
+        </div>
+        <Link to="/sales">
+          <button className="modern-btn w-full">
+            <Zap className="w-4 h-4 mr-2" />
+            Start New Sale
+          </button>
+        </Link>
+      </div>
+
+      {/* Record Expense */}
+      <div className="modern-card">
+        <div className="modern-card-header">
+          <div className="modern-card-icon">
+            <DollarSign className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="modern-card-title">Record Expense</div>
+            <div className="modern-card-subtitle">Track business expenses</div>
+          </div>
+        </div>
+        <Link to="/expenses">
+          <button className="modern-btn-secondary w-full">
+            Add Expense
+          </button>
+        </Link>
+      </div>
+
+      {/* Recent Sales */}
+      <div className="modern-card">
+        <div className="modern-card-header">
+          <div className="modern-card-icon">
+            <TrendingUp className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="modern-card-title">Your Recent Sales</div>
+            <div className="modern-card-subtitle">Today's transaction history</div>
+          </div>
+        </div>
+        <div className="space-y-2">
+          {[1, 2, 3].map((item) => (
+            <div key={item} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+              <div className="text-sm">Chicken Meal #{item}</div>
+              <div className="modern-badge-orange">
+                $15.00
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 };
