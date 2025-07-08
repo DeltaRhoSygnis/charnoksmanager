@@ -1,6 +1,7 @@
 import { users, products, sales, expenses, type User, type InsertUser, type Product, type InsertProduct, type Sale, type InsertSale, type Expense, type InsertExpense } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
+import { MockStorage } from "./mock-storage";
 
 export interface IStorage {
   // User operations
@@ -121,4 +122,17 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+// Create storage instance with fallback to mock data
+async function createStorage(): Promise<IStorage> {
+  try {
+    // Test database connection
+    await db.select().from(users).limit(1);
+    console.log('✅ Using database storage');
+    return new DatabaseStorage();
+  } catch (error) {
+    console.log('⚠️  Database unavailable, using mock storage with sample data');
+    return new MockStorage();
+  }
+}
+
+export const storage = await createStorage();

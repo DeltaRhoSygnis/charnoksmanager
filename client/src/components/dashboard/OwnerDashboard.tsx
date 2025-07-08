@@ -88,105 +88,19 @@ export const OwnerDashboard = () => {
     }
 
     try {
-      // Use DataService to get real database data
-      const { DataService } = await import("@/lib/dataService");
-      const allTransactions = await DataService.getTransactions();
+      // Use new Express API to get real database data
+      const { api } = await import("@/lib/api");
+      const allTransactions = await api.analytics.getTransactions();
       
-      // Convert to dashboard format and take recent 10
-      const dashboardTransactions = allTransactions
-        .slice(0, 10)
-        .map((t) => ({
-          id: t.id,
-          type: (t.type || "sale") as "sale" | "expense",
-          amount: t.totalAmount || t.amount || 0,
-          workerEmail: t.workerEmail,
-          items: t.items?.map(item => ({
-            name: item.productName,
-            quantity: item.quantity,
-            price: item.price
-          })) || [],
-          timestamp: t.timestamp,
-        }));
-      
-      setTransactions(dashboardTransactions);
+      // Take recent 10 transactions
+      const recentTransactions = allTransactions.slice(0, 10);
+      setTransactions(recentTransactions);
     } catch (error) {
       console.error("Error fetching transactions:", error);
-      // Fallback to empty array instead of demo data
       setTransactions([]);
     }
 
-    try {
-      if (OfflineState.hasFirebaseAccess()) {
-        // Fetch recent sales
-        const salesQuery = query(
-          collection(db, "sales"),
-          orderBy("timestamp", "desc"),
-          limit(10),
-        );
-        const salesSnapshot = await getDocs(salesQuery);
-        const sales = salesSnapshot.docs.map((doc) => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            type: "sale" as const,
-            amount: data.total || 0,
-            workerEmail: data.workerEmail,
-            items: data.items || [],
-            timestamp: data.timestamp?.toDate() || new Date(),
-          };
-        });
 
-        // Fetch recent expenses
-        const expensesQuery = query(
-          collection(db, "expenses"),
-          orderBy("timestamp", "desc"),
-          limit(10),
-        );
-        const expensesSnapshot = await getDocs(expensesQuery);
-        const expenses = expensesSnapshot.docs.map((doc) => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            type: "expense" as const,
-            amount: data.amount,
-            description: data.description,
-            timestamp: data.timestamp?.toDate() || new Date(),
-          };
-        });
-
-        const allTransactions = [...sales, ...expenses]
-          .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-          .slice(0, 10);
-
-        setTransactions(allTransactions);
-      } else {
-        // Firebase not available - no transactions to show
-        setTransactions([]);
-      }
-    } catch (error: any) {
-      console.error("Error fetching transactions:", error);
-
-      if (OfflineState.isNetworkError(error)) {
-        // Fallback to local storage
-        const localTransactions = LocalStorageDB.getTransactions()
-          .slice(0, 10)
-          .map((t) => ({
-            id: t.id,
-            type: "sale" as const,
-            amount: t.totalAmount || 0,
-            workerEmail: t.workerEmail,
-            items: t.items?.map(item => ({
-              name: item.productName,
-              quantity: item.quantity,
-              price: item.price
-            })) || [],
-            timestamp: t.timestamp,
-          }));
-        setTransactions(localTransactions);
-      } else {
-        console.error("Unexpected error:", error);
-      }
-    }
   };
 
   const calculateStats = async () => {
@@ -196,49 +110,18 @@ export const OwnerDashboard = () => {
     }
 
     try {
-      // Use DataService to get real database data
-      const { DataService } = await import("@/lib/dataService");
-      const allTransactions = await DataService.getTransactions();
-      
-      // Calculate real stats from database
-      let totalSales = 0;
-      let totalExpenses = 0;
-      let todaysRevenue = 0;
-      
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
-      allTransactions.forEach(transaction => {
-        const amount = transaction.totalAmount || transaction.amount || 0;
-        
-        if (transaction.type === 'sale') {
-          totalSales += amount;
-          
-          // Check if transaction is from today
-          const transactionDate = new Date(transaction.timestamp);
-          transactionDate.setHours(0, 0, 0, 0);
-          if (transactionDate.getTime() === today.getTime()) {
-            todaysRevenue += amount;
-          }
-        } else if (transaction.type === 'expense') {
-          totalExpenses += amount;
-        }
-      });
-      
-      // Count unique workers
-      const uniqueWorkers = new Set(
-        allTransactions.map(t => t.workerId).filter(Boolean)
-      );
+      // Use new Express API to get analytics summary
+      const { api } = await import("@/lib/api");
+      const summary = await api.analytics.getSummary();
       
       setStats({
-        totalSales,
-        totalExpenses,
-        totalWorkers: uniqueWorkers.size,
-        todaysRevenue,
+        totalSales: summary.totalSales || 0,
+        totalExpenses: summary.totalExpenses || 0,
+        totalWorkers: 0, // Will be calculated separately when user management is added
+        todaysRevenue: summary.todaysRevenue || 0,
       });
     } catch (error) {
       console.error("Error calculating stats:", error);
-      // Set empty stats instead of demo data
       setStats({
         totalSales: 0,
         totalExpenses: 0,

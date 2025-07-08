@@ -1,0 +1,102 @@
+I’ve already imported an existing full-stack POS (Point of Sale) web app into this Replit project.
+My system is not new — it’s already built with:
+
+React (frontend)
+
+Tailwind CSS (for styling)
+
+Firebase Auth (user authentication)
+
+Express + Drizzle ORM + PostgreSQL (backend logic and data handling)
+
+
+🔁 I just need help reviewing, completing, and fixing existing backend data logic for:
+
+Sales
+
+Expenses
+
+Dashboard/Analytics (Charts, Graphs, KPI)
+
+
+
+---
+
+✅ SYSTEM IS ALREADY SET UP:
+
+All files are in place (client, server, database, routing).
+
+Firebase is used only for authentication.
+
+Supabase/PostgreSQL is the main database using Drizzle ORM.
+
+Express routes are under /api/....
+
+Frontend uses TanStack Query to fetch data.
+The app works on Replit, and has working UI and auth.
+
+For more details just go to Replit.md
+
+
+---
+
+❗ CURRENT PROBLEM TO FIX:
+
+Owner Dashboard and Analysis components are not showing correct data (blank charts, empty stats).
+
+I suspect the API routes for fetching sales/expenses aren’t wired to the Drizzle database properly.
+
+I need to confirm whether the API is:
+
+Querying the PostgreSQL database correctly using Drizzle
+
+Returning usable data formats to the frontend
+
+Matching the role-based or UID-based filters (e.g. only fetching for current user)
+
+
+
+
+---
+
+🔧 TASKS FOR YOU:
+
+1. Review backend API routes related to sales, expenses, summary, dashboard, or analysis.
+
+
+2. Verify Drizzle queries – make sure they connect to Supabase/PostgreSQL and return expected results.
+
+
+3. Fix or create working API endpoints for:
+
+
+
+Total Sales
+
+Expenses
+
+Profit
+
+Charts for Top Products, Time Patterns, KPIs
+
+
+4. Ensure frontend pages (like /dashboard, /analysis) are receiving correct data.
+
+
+
+
+---
+
+✅ Important:
+
+Don’t change or delete existing working parts like Firebase Auth, Product Image Upload, or UI code.
+
+Don’t reset or start over — just help connect/fix/refactor what’s already here.
+
+
+
+---
+
+Let me know where the issue is (API, DB query, frontend mapping), and suggest specific code fixes or additions.
+
+

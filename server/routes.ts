@@ -177,6 +177,140 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Analytics and Dashboard endpoints
+  app.get("/api/analytics/summary", async (req, res) => {
+    try {
+      const [sales, expenses, products] = await Promise.all([
+        storage.getSales(),
+        storage.getExpenses(),
+        storage.getProducts()
+      ]);
+
+      const totalSales = sales.reduce((sum, sale) => sum + parseFloat(sale.totalAmount?.toString() || '0'), 0);
+      const totalExpenses = expenses.reduce((sum, expense) => sum + parseFloat(expense.amount?.toString() || '0'), 0);
+      const netProfit = totalSales - totalExpenses;
+
+      // Calculate today's revenue
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const todaysRevenue = sales
+        .filter(sale => sale.createdAt && new Date(sale.createdAt) >= today)
+        .reduce((sum, sale) => sum + parseFloat(sale.totalAmount?.toString() || '0'), 0);
+
+      res.json({
+        totalSales,
+        totalExpenses,
+        netProfit,
+        todaysRevenue,
+        totalProducts: products.length,
+        totalTransactions: sales.length + expenses.length
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/analytics/transactions", async (req, res) => {
+    try {
+      const [sales, expenses] = await Promise.all([
+        storage.getSales(),
+        storage.getExpenses()
+      ]);
+
+      // Convert to unified transaction format
+      const transactions = [
+        ...sales.map(sale => ({
+          id: `sale_${sale.id}`,
+          type: 'sale' as const,
+          amount: parseFloat(sale.totalAmount?.toString() || '0'),
+          description: `Sale - ${sale.items ? JSON.parse(sale.items as string).length : 0} items`,
+          timestamp: sale.createdAt || new Date(),
+          workerId: sale.workerId
+        })),
+        ...expenses.map(expense => ({
+          id: `expense_${expense.id}`,
+          type: 'expense' as const,
+          amount: parseFloat(expense.amount?.toString() || '0'),
+          description: expense.description || 'Expense',
+          timestamp: expense.createdAt || new Date(),
+          workerId: expense.workerId
+        }))
+      ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+      res.json(transactions);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/analytics/charts/sales-over-time", async (req, res) => {
+    try {
+      const { period = '7' } = req.query;
+      const days = parseInt(period as string);
+      
+      const sales = await storage.getSales();
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - days);
+
+      // Group sales by date
+      const salesByDate: { [key: string]: { sales: number; transactions: number } } = {};
+      
+      sales
+        .filter(sale => sale.createdAt && new Date(sale.createdAt) >= startDate)
+        .forEach(sale => {
+          const dateKey = new Date(sale.createdAt!).toISOString().split('T')[0];
+          if (!salesByDate[dateKey]) {
+            salesByDate[dateKey] = { sales: 0, transactions: 0 };
+          }
+          salesByDate[dateKey].sales += parseFloat(sale.totalAmount?.toString() || '0');
+          salesByDate[dateKey].transactions += 1;
+        });
+
+      const chartData = Object.entries(salesByDate).map(([date, data]) => ({
+        date,
+        sales: data.sales,
+        transactions: data.transactions
+      })).sort((a, b) => a.date.localeCompare(b.date));
+
+      res.json(chartData);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/analytics/top-products", async (req, res) => {
+    try {
+      const sales = await storage.getSales();
+      const productSales: { [key: string]: { name: string; quantity: number; revenue: number } } = {};
+
+      sales.forEach(sale => {
+        if (sale.items) {
+          try {
+            const items = JSON.parse(sale.items);
+            items.forEach((item: any) => {
+              const key = item.name || 'Unknown Product';
+              if (!productSales[key]) {
+                productSales[key] = { name: key, quantity: 0, revenue: 0 };
+              }
+              productSales[key].quantity += item.quantity || 0;
+              productSales[key].revenue += (item.quantity || 0) * (item.price || 0);
+            });
+          } catch (e) {
+            // Skip invalid JSON
+          }
+        }
+      });
+
+      const topProducts = Object.values(productSales)
+        .sort((a, b) => b.revenue - a.revenue)
+        .slice(0, 10);
+
+      res.json(topProducts);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

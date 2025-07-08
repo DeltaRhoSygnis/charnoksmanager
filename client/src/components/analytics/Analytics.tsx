@@ -57,74 +57,18 @@ export const Analytics = () => {
     }
 
     try {
-      const days = parseInt(period);
-      const startDate = new Date();
-      startDate.setDate(startDate.getDate() - days);
-
-      const salesQuery = query(
-        collection(db, "sales"),
-        where("timestamp", ">=", startDate),
-        orderBy("timestamp", "desc"),
-      );
-
-      const snapshot = await getDocs(salesQuery);
-      const sales: Sale[] = snapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          items: data.items || [],
-          total: data.total || 0,
-          timestamp: data.timestamp?.toDate() || new Date(),
-        };
-      });
-
-      // Group sales by date
-      const salesByDate: {
-        [key: string]: { sales: number; transactions: number };
-      } = {};
-
-      sales.forEach((sale) => {
-        const dateKey = sale.timestamp.toDateString();
-        if (!salesByDate[dateKey]) {
-          salesByDate[dateKey] = { sales: 0, transactions: 0 };
-        }
-        salesByDate[dateKey].sales += sale.total;
-        salesByDate[dateKey].transactions += 1;
-      });
-
-      // Convert to array format for charts
-      const chartData = Object.entries(salesByDate)
-        .map(([date, data]) => ({
-          date: new Date(date).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-          }),
-          sales: data.sales,
-          transactions: data.transactions,
-        }))
-        .sort(
-          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-        );
-
+      // Use new Express API for analytics data
+      const { api } = await import("@/lib/api");
+      
+      // Get sales over time chart data
+      const chartData = await api.analytics.getSalesOverTime(period);
       setSalesData(chartData);
-
-      // Calculate totals
-      const totalSalesAmount = chartData.reduce(
-        (sum, day) => sum + day.sales,
-        0,
-      );
-      const totalTransactionsCount = chartData.reduce(
-        (sum, day) => sum + day.transactions,
-        0,
-      );
-      const avgOrder =
-        totalTransactionsCount > 0
-          ? totalSalesAmount / totalTransactionsCount
-          : 0;
-
-      setTotalSales(totalSalesAmount);
-      setTotalTransactions(totalTransactionsCount);
-      setAverageOrder(avgOrder);
+      
+      // Get summary statistics
+      const summary = await api.analytics.getSummary();
+      setTotalSales(summary.totalSales || 0);
+      setTotalTransactions(summary.totalTransactions || 0);
+      setAverageOrder(summary.totalTransactions > 0 ? summary.totalSales / summary.totalTransactions : 0);
     } catch (error: any) {
       console.error("Error fetching analytics data:", error);
       if (error.code === "permission-denied") {
