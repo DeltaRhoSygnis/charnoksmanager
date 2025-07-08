@@ -50,168 +50,156 @@ export const Settings = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Profile Section */}
-            <AnimatedCard className="card-visible shadow-2xl animate-slide-in-left rounded-2xl overflow-hidden">
-              <CardHeader className="bg-black/20 border-b border-white/20">
-                <CardTitle className="text-white text-2xl font-bold flex items-center gap-3">
-                  <User className="h-6 w-6 text-blue-400" />
+          {/* Wide Rectangle Layout - No Grid */}
+          <div className="space-y-4 w-full">
+            {/* Profile Section - Wide Rectangle */}
+            <AnimatedCard className="card-visible shadow-2xl animate-slide-in-left rounded-xl overflow-hidden w-full">
+              <CardHeader className="bg-black/20 border-b border-white/20 p-4">
+                <CardTitle className="text-white text-xl font-bold flex items-center gap-3">
+                  <User className="h-5 w-5 text-blue-400" />
                   Profile Information
                 </CardTitle>
-                <CardDescription className="text-gray-300 text-lg">
+                <CardDescription className="text-gray-300 text-sm">
                   Your account details and role information
                 </CardDescription>
               </CardHeader>
-              <CardContent className="p-8 space-y-6">
-                <div className="space-y-3">
-                  <label className="text-lg font-semibold text-gray-300">Email Address</label>
-                  <div className="bg-white/10 border border-white/20 rounded-xl p-4">
-                    <p className="text-white text-lg font-medium">{user?.email}</p>
+              <CardContent className="p-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+                  <div className="bg-white/10 border border-white/20 rounded-lg p-3">
+                    <label className="text-sm font-semibold text-gray-300">Email Address</label>
+                    <p className="text-white text-base font-medium">{user?.email}</p>
                   </div>
-                </div>
-                
-                <div className="space-y-3">
-                  <label className="text-lg font-semibold text-gray-300">Account Role</label>
-                  <div className="bg-white/10 border border-white/20 rounded-xl p-4">
-                    <p className="text-white text-lg font-medium capitalize flex items-center gap-2">
+                  
+                  <div className="bg-white/10 border border-white/20 rounded-lg p-3">
+                    <label className="text-sm font-semibold text-gray-300">Account Role</label>
+                    <p className="text-white text-base font-medium capitalize flex items-center gap-2">
                       {user?.role === "owner" ? (
-                        <Crown className="h-5 w-5 text-yellow-400" />
+                        <Crown className="h-4 w-4 text-yellow-400" />
                       ) : (
-                        <Shield className="h-5 w-5 text-blue-400" />
+                        <Shield className="h-4 w-4 text-blue-400" />
                       )}
                       {user?.role}
                     </p>
                   </div>
-                </div>
-                
-                <div className="space-y-3">
-                  <label className="text-lg font-semibold text-gray-300">User ID</label>
-                  <div className="bg-white/10 border border-white/20 rounded-xl p-4">
-                    <p className="text-white font-mono text-sm break-all">{user?.uid}</p>
+                  
+                  <div className="bg-white/10 border border-white/20 rounded-lg p-3">
+                    <label className="text-sm font-semibold text-gray-300">User ID</label>
+                    <p className="text-white font-mono text-xs break-all">{user?.uid}</p>
                   </div>
                 </div>
               </CardContent>
             </AnimatedCard>
 
-            {/* System Section */}
-            <div className="space-y-8">
-              <AnimatedCard className="card-visible shadow-2xl animate-slide-in-right rounded-2xl overflow-hidden">
-                <CardHeader className="bg-black/20 border-b border-white/20">
-                  <CardTitle className="text-white text-2xl font-bold flex items-center gap-3">
-                    <Star className="h-6 w-6 text-yellow-400" />
-                    System Status
-                  </CardTitle>
-                  <CardDescription className="text-gray-300 text-lg">
-                    Application preferences and configuration
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-8 space-y-6">
-                  <div className="flex items-center justify-between p-4 bg-white/10 rounded-xl border border-white/20">
-                    <div>
-                      <p className="text-white font-bold text-lg">Demo Mode</p>
-                      <p className="text-gray-400">Running with sample data</p>
-                    </div>
-                    <Badge className="bg-green-600 text-white font-bold px-4 py-2">
-                      Active
-                    </Badge>
+            {/* App Preferences - Wide Rectangle */}
+            <AnimatedCard className="card-visible shadow-2xl animate-slide-in-right rounded-xl overflow-hidden w-full">
+              <CardHeader className="bg-black/20 border-b border-white/20 p-4">
+                <CardTitle className="text-white text-xl font-bold flex items-center gap-3">
+                  <SettingsIcon className="h-5 w-5 text-green-400" />
+                  App Preferences
+                </CardTitle>
+                <CardDescription className="text-gray-300 text-sm">
+                  Application preferences and configuration
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                  <div className="bg-white/10 border border-white/20 rounded-lg p-3">
+                    <p className="text-white font-bold text-base">Demo Mode</p>
+                    <p className="text-gray-400 text-sm">Running with sample data</p>
+                    <Badge className="bg-green-600 text-white font-bold px-3 py-1 mt-2 text-xs">Active</Badge>
                   </div>
                   
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 bg-white/10 rounded-xl border border-white/20">
-                      <div>
-                        <p className="text-white font-bold text-lg flex items-center gap-2">
-                          <Palette className="h-5 w-5 text-purple-400" />
-                          Theme Settings
-                        </p>
-                        <p className="text-gray-400">Customize your visual experience</p>
-                      </div>
-                      <Badge className="bg-purple-600 text-white font-bold px-4 py-2">
-                        Active
-                      </Badge>
+                  <div className="bg-white/10 border border-white/20 rounded-lg p-3">
+                    <p className="text-white font-bold text-base flex items-center gap-2">
+                      <Palette className="h-4 w-4 text-purple-400" />
+                      Theme Settings
+                    </p>
+                    <p className="text-gray-400 text-sm">Customize your visual experience</p>
+                    <Badge className="bg-purple-600 text-white font-bold px-3 py-1 mt-2 text-xs">Active</Badge>
+                  </div>
+                </div>
+                
+                <div className="bg-white/5 rounded-lg p-4 border border-white/10 mt-4 w-full">
+                  <ThemeSelector showTitle={false} compact={false} />
+                </div>
+              </CardContent>
+            </AnimatedCard>
+
+            {/* System Management - Owner Only - Wide Rectangle */}
+            {user?.role === "owner" && (
+              <AnimatedCard className="card-visible shadow-2xl animate-slide-in-right rounded-xl overflow-hidden w-full">
+                <CardHeader className="bg-black/20 border-b border-white/20 p-4">
+                  <CardTitle className="text-white text-xl font-bold flex items-center gap-3">
+                    <TestTube className="h-5 w-5 text-green-400" />
+                    System Management
+                  </CardTitle>
+                  <CardDescription className="text-gray-300 text-sm">
+                    Database testing and worker account management
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                    <div className="bg-white/10 border border-white/20 rounded-lg p-3">
+                      <h4 className="text-white font-bold text-base mb-2">Database Connection</h4>
+                      <p className="text-gray-400 mb-3 text-sm">Test Firebase connectivity and database access</p>
+                      <FirebaseTestButton />
                     </div>
-                    <div className="bg-white/5 rounded-xl p-6 border border-white/10">
-                      <ThemeSelector showTitle={false} compact={false} />
+                    
+                    <div className="bg-white/10 border border-white/20 rounded-lg p-3">
+                      <h4 className="text-white font-bold text-base mb-2">Worker Management</h4>
+                      <p className="text-gray-400 mb-3 text-sm">Create new worker accounts for your business</p>
+                      <AnimatedButton
+                        onClick={() => setShowCreateWorker(true)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg text-sm"
+                        ripple={true}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Worker Account
+                      </AnimatedButton>
                     </div>
                   </div>
                 </CardContent>
               </AnimatedCard>
+            )}
 
-              {/* System Management - Owner Only */}
-              {user?.role === "owner" && (
-                <AnimatedCard className="card-visible shadow-2xl animate-slide-in-right delay-200 rounded-2xl overflow-hidden">
-                  <CardHeader className="bg-black/20 border-b border-white/20">
-                    <CardTitle className="text-white text-2xl font-bold flex items-center gap-3">
-                      <TestTube className="h-6 w-6 text-green-400" />
-                      System Management
-                    </CardTitle>
-                    <CardDescription className="text-gray-300 text-lg">
-                      Database testing and worker account management
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-8 space-y-6">
-                    <div className="space-y-4">
-                      <div>
-                        <h4 className="text-white font-bold text-lg mb-2">Database Connection</h4>
-                        <p className="text-gray-400 mb-4">Test Firebase connectivity and database access</p>
-                        <FirebaseTestButton />
-                      </div>
-                      
-                      <div>
-                        <h4 className="text-white font-bold text-lg mb-2">Worker Management</h4>
-                        <p className="text-gray-400 mb-4">Create new worker accounts for your business</p>
-                        <AnimatedButton
-                          onClick={() => setShowCreateWorker(true)}
-                          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
-                          ripple={true}
-                        >
-                          <Plus className="h-5 w-5 mr-2" />
-                          Add Worker Account
-                        </AnimatedButton>
-                      </div>
-                    </div>
-                  </CardContent>
-                </AnimatedCard>
-              )}
-
-              {/* Account Actions */}
-              <AnimatedCard className="card-visible shadow-2xl animate-slide-in-right delay-300 rounded-2xl overflow-hidden">
-                <CardHeader className="bg-black/20 border-b border-white/20">
-                  <CardTitle className="text-white text-2xl font-bold">Account Actions</CardTitle>
-                  <CardDescription className="text-gray-300 text-lg">
-                    Manage your account and session
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-8">
-                  <AnimatedButton
-                    onClick={logout}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg text-lg"
-                    ripple={true}
-                  >
-                    <LogOut className="h-6 w-6 mr-3" />
-                    Sign Out of Account
-                  </AnimatedButton>
-                </CardContent>
-              </AnimatedCard>
-            </div>
+            {/* Account Actions - Wide Rectangle */}
+            <AnimatedCard className="card-visible shadow-2xl animate-slide-in-right rounded-xl overflow-hidden w-full">
+              <CardHeader className="bg-black/20 border-b border-white/20 p-4">
+                <CardTitle className="text-white text-xl font-bold">Account Actions</CardTitle>
+                <CardDescription className="text-gray-300 text-sm">
+                  Manage your account and session
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-4">
+                <AnimatedButton
+                  onClick={logout}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg text-base"
+                  ripple={true}
+                >
+                  <LogOut className="h-5 w-5 mr-3" />
+                  Sign Out of Account
+                </AnimatedButton>
+              </CardContent>
+            </AnimatedCard>
           </div>
 
 
 
-          {/* Additional Info Section */}
-          <AnimatedCard className="card-visible shadow-2xl animate-bounce-in delay-500 rounded-2xl overflow-hidden">
-            <CardHeader className="bg-black/20 border-b border-white/20">
-              <CardTitle className="text-white text-2xl font-bold text-center">
+          {/* Additional Info Section - Wide Rectangle */}
+          <AnimatedCard className="card-visible shadow-2xl animate-bounce-in rounded-xl overflow-hidden w-full">
+            <CardHeader className="bg-black/20 border-b border-white/20 p-4 text-center">
+              <CardTitle className="text-white text-xl font-bold">
                 🌟 Charnoks Special Fried Chicken POS 🌟
               </CardTitle>
-              <CardDescription className="text-gray-300 text-lg text-center">
+              <CardDescription className="text-gray-300 text-sm">
                 Powering your restaurant with modern technology and cosmic style
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-8 text-center">
-              <p className="text-white text-lg font-medium">
+            <CardContent className="p-4 text-center">
+              <p className="text-white text-base font-medium">
                 Thank you for using our advanced point-of-sale system!
               </p>
-              <p className="text-gray-300 mt-2">
+              <p className="text-gray-300 mt-2 text-sm">
                 Experience the future of restaurant management with real-time analytics, 
                 voice-powered transactions, and a stunning galactic interface.
               </p>
